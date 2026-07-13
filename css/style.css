@@ -1,0 +1,196 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#081826;
+    color:#ffffff;
+    padding-bottom:90px;
+}
+
+.topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px;
+}
+
+.logo h1{
+    color:#D4AF37;
+    font-size:28px;
+}
+
+.logo p{
+    color:#cfcfcf;
+    font-size:14px;
+    margin-top:4px;
+}
+
+.perfil{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:#12304a;
+    color:#D4AF37;
+    font-size:22px;
+}
+
+.pesquisa{
+    padding:0 20px 20px;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:#10263b;
+    color:white;
+    font-size:16px;
+}
+
+.banner{
+    margin:0 20px;
+    padding:25px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#12304a,#1f4f77);
+}
+
+.banner h2{
+    color:#D4AF37;
+    margin-bottom:10px;
+}
+
+.banner p{
+    margin-bottom:20px;
+    line-height:1.5;
+}
+
+.banner button{
+    background:#D4AF37;
+    color:#081826;
+    border:none;
+    padding:12px 22px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+.secao{
+    margin:30px 20px;
+}
+
+.secao h3{
+    color:#D4AF37;
+    margin-bottom:15px;
+}
+
+#continueOuvindo,
+#albuns{
+    display:flex;
+    gap:15px;
+    overflow-x:auto;
+}
+
+.card{
+    min-width:120px;
+    background:#10263b;
+    border-radius:16px;
+    padding:10px;
+}
+
+.card img{
+    width:100%;
+    border-radius:12px;
+}
+
+.card p{
+    margin-top:10px;
+    text-align:center;
+    font-size:14px;
+}
+
+.categorias{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.categorias button{
+    border:none;
+    background:#12304a;
+    color:#D4AF37;
+    padding:10px 16px;
+    border-radius:25px;
+}
+
+#listaMusicas{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.musica{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#10263b;
+    padding:15px;
+    border-radius:14px;
+}
+
+.musica button{
+    border:none;
+    background:#D4AF37;
+    color:#081826;
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    font-size:18px;
+}
+
+.mini-player{
+    position:fixed;
+    bottom:70px;
+    left:10px;
+    right:10px;
+    background:#12304a;
+    border-radius:16px;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.4);
+}
+
+.mini-player button{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:#D4AF37;
+    color:#081826;
+    font-size:18px;
+}
+
+.menu{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#06121d;
+    display:flex;
+    justify-content:space-around;
+    padding:10px 0;
+    border-top:1px solid #12304a;
+}
+
+.menu button{
+    background:none;
+    border:none;
+    color:#ffffff;
+    font-size:12px;
+}
