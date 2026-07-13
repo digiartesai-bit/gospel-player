@@ -61,7 +61,8 @@ function anterior(){
 function atualizarMiniPlayer() {
     if(!playlist.length || !playlist[musicaAtual]) return;
 
-    const musica = playlist[musicaAtual];
+    const miniPlayer = document.getElementById("miniPlayer");
+    miniPlayer.style.display = "flex"; // Revela o player na tela!
 
     // Atualiza textos
     miniTitulo.textContent = musica.titulo;
