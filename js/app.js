@@ -59,36 +59,6 @@ function carregarTela(){
 
 }
 
-function atualizarMiniPlayer(){
-
-    if(!playlist.length) return;
-
-    const mini = document.querySelector(".mini-player");
-
-    mini.innerHTML = `
-
-        <div>
-
-            <strong>${playlist[musicaAtual].titulo}</strong><br>
-
-            <small>${playlist[musicaAtual].artista}</small>
-
-        </div>
-
-        <div>
-
-            <button onclick="anterior()">⏮</button>
-
-            <button onclick="playPause()">
-
-                ${tocando ? "⏸" : "▶"}
-
-            </button>
-
-            <button onclick="proxima()">⏭</button>
-
-        </div>
-
-    `;
-
+document.getElementById("btnPlay").textContent =
+    tocando ? "❚❚" : "▶";
 }
