@@ -240,29 +240,21 @@ body{
 }
 
 .mini-botoes{
-
     display:flex;
-
-    gap:8px;
-
+    align-items:center;
+    gap:18px;
 }
 
 .mini-botoes button{
-
-    width:40px;
-
-    height:40px;
-
+    background:none;
     border:none;
-
-    border-radius:50%;
-
-    background:#D4AF37;
-
-    color:#081826;
-
-    font-size:18px;
-
+    color:#D4AF37;
+    font-size:24px;
     cursor:pointer;
+    padding:0;
+    transition:transform .2s ease;
+}
 
+.mini-botoes button:hover{
+    transform:scale(1.15);
 }
