@@ -29,14 +29,17 @@ body{
     margin-top:4px;
 }
 
+/* Ajustado para centralizar o SVG do perfil */
 .perfil{
     width:45px;
     height:45px;
     border:none;
     border-radius:50%;
     background:#12304a;
-    color:#D4AF37;
-    font-size:22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .pesquisa{
@@ -70,13 +73,23 @@ body{
     line-height:1.5;
 }
 
-.banner button{
-    background:#D4AF37;
-    color:#081826;
-    border:none;
-    padding:12px 22px;
-    border-radius:12px;
-    font-weight:bold;
+/* Alinhamento perfeito do botão de Play do banner principal */
+.banner button {
+    background: #D4AF37;
+    color: #081826;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* Inverte a cor do play no banner para contraste (preto/azul escuro) */
+.banner button img {
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 }
 
 .secao{
@@ -142,40 +155,108 @@ body{
     border-radius:14px;
 }
 
+/* Botões circulares na lista de músicas */
 .musica button{
     border:none;
     background:#D4AF37;
-    color:#081826;
     width:42px;
     height:42px;
     border-radius:50%;
-    font-size:18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
 }
 
+/* Deixa o ícone de Play escuro para contrastar sobre o fundo dourado do botão circular */
+.musica button img {
+    width: 14px;
+    height: 14px;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
+}
+
+/* CONSOLIDAÇÃO DO MINI-PLAYER: Corrigido display e estrutura */
 .mini-player{
     position:fixed;
-    bottom:70px;
+    bottom:75px; /* Levemente ajustado para flutuar acima do menu */
     left:10px;
     right:10px;
     background:#12304a;
     border-radius:16px;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
+    padding:12px 15px;
+    /* Começa oculto por padrão no CSS, mas o player.js cuidará de torná-lo flex ao tocar */
+    display: none; 
     align-items:center;
+    gap:15px;
     box-shadow:0 5px 15px rgba(0,0,0,.4);
+    z-index: 100;
 }
 
-.mini-player button{
-    width:45px;
-    height:45px;
-    border:none;
-    border-radius:50%;
-    background:#D4AF37;
-    color:#081826;
-    font-size:18px;
+.mini-player img{
+    width:55px;
+    height:55px;
+    border-radius:10px;
+    object-fit:cover;
 }
 
+.mini-info{
+    flex:1;
+}
+
+.mini-info strong{
+    display:block;
+    font-size:15px;
+}
+
+.mini-info small{
+    color:#d0d0d0;
+}
+
+/* Container de botões de controle de áudio */
+.mini-botoes{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+/* Removemos qualquer estilo circular antigo que herdava de .mini-player button */
+.mini-botoes button {
+    width: auto !important;
+    height: auto !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s ease;
+}
+
+.mini-botoes button:hover{
+    transform:scale(1.15);
+}
+
+/* Estilo específico do botão de Play/Pause para se destacar mais no player */
+#btnPlay {
+    background: #D4AF37 !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Inverte a cor do play/pause central para dar contraste de cor no fundo dourado */
+#btnPlay img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
+}
+
+/* MENU DE NAVEGAÇÃO INFERIOR */
 .menu{
     position:fixed;
     bottom:0;
@@ -184,77 +265,30 @@ body{
     background:#06121d;
     display:flex;
     justify-content:space-around;
-    padding:10px 0;
+    padding:8px 0;
     border-top:1px solid #12304a;
+    z-index: 101;
 }
 
+/* Centraliza os SVGs e os textos perfeitamente empilhados */
 .menu button{
     background:none;
     border:none;
     color:#ffffff;
-    font-size:12px;
+    font-size:11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    flex: 1;
 }
+
+.menu button span {
+    color: #cfcfcf;
+}
+
 .secao:last-of-type{
     margin-bottom:120px;
-}
-.mini-player{
-
-    display:none;
-
-    align-items:center;
-
-    gap:15px;
-
-}
-
-.mini-player img{
-
-    width:55px;
-
-    height:55px;
-
-    border-radius:10px;
-
-    object-fit:cover;
-
-}
-
-.mini-info{
-
-    flex:1;
-
-}
-
-.mini-info strong{
-
-    display:block;
-
-    font-size:15px;
-
-}
-
-.mini-info small{
-
-    color:#d0d0d0;
-
-}
-
-.mini-botoes{
-    display:flex;
-    align-items:center;
-    gap:18px;
-}
-
-.mini-botoes button{
-    background:none;
-    border:none;
-    color:#D4AF37;
-    font-size:24px;
-    cursor:pointer;
-    padding:0;
-    transition:transform .2s ease;
-}
-
-.mini-botoes button:hover{
-    transform:scale(1.15);
 }
