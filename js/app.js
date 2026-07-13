@@ -1,85 +1,39 @@
-// ================================
-// APP.JS - DIGIARTES AI STREAMING
-// ================================
+const continueOuvindo = document.getElementById("continueOuvindo");
+const albuns = document.getElementById("albuns");
+const listaMusicas = document.getElementById("listaMusicas");
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    console.log("Digiartes AI iniciado");
-
-    carregarVideos();
-
-});
-
-
-// ================================
-// BANCO DE VÍDEOS TEMPORÁRIO
-// (depois ligaremos ao banco de dados)
-// ================================
-
-const videos = [
-    {
-        titulo: "Os Cinco Pãezinhos",
-        categoria: "Infantil",
-        imagem: "assets/capa1.jpg",
-        video: "videos/paozinhos.mp4"
-    },
-    {
-        titulo: "A Criação do Universo",
-        categoria: "Documentário",
-        imagem: "assets/capa2.jpg",
-        video: "videos/criacao.mp4"
-    }
+const musicas = [
+  {titulo:"Graça Infinita", artista:"AdoraPlay"},
+  {titulo:"Tu És Santo", artista:"AdoraPlay"},
+  {titulo:"Perto de Ti", artista:"AdoraPlay"},
+  {titulo:"Esperança", artista:"AdoraPlay"},
+  {titulo:"Rei dos Reis", artista:"AdoraPlay"}
 ];
 
+musicas.forEach(musica => {
 
-// ================================
-// CARREGAR CATÁLOGO
-// ================================
+  continueOuvindo.innerHTML += `
+    <div class="card">
+      <img src="https://placehold.co/300x300?text=Album" alt="Capa">
+      <p>${musica.titulo}</p>
+    </div>
+  `;
 
-function carregarVideos(){
+  albuns.innerHTML += `
+    <div class="card">
+      <img src="https://placehold.co/300x300?text=Album" alt="Álbum">
+      <p>${musica.artista}</p>
+    </div>
+  `;
 
-    const lista = document.getElementById("listaVideos");
+  listaMusicas.innerHTML += `
+    <div class="musica">
+      <div>
+        <strong>${musica.titulo}</strong><br>
+        <small>${musica.artista}</small>
+      </div>
 
-    if(!lista) return;
-
-
-    videos.forEach(video => {
-
-        const card = document.createElement("div");
-
-        card.className = "card-video";
-
-
-        card.innerHTML = `
-            <img src="${video.imagem}">
-            <h3>${video.titulo}</h3>
-            <p>${video.categoria}</p>
-            <button onclick="abrirVideo('${video.video}')">
-                Assistir
-            </button>
-        `;
-
-
-        lista.appendChild(card);
-
-    });
-
-}
-
-
-// ================================
-// ABRIR PLAYER
-// ================================
-
-function abrirVideo(video){
-
-    const player = document.getElementById("player");
-
-    if(player){
-
-        player.src = video;
-        player.play();
-
-    }
-
-}
+      <button onclick="alert('Player será implementado na próxima etapa')">▶</button>
+    </div>
+  `;
+});
