@@ -197,3 +197,72 @@ body{
 .secao:last-of-type{
     margin-bottom:120px;
 }
+.mini-player{
+
+    display:none;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.mini-player img{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:10px;
+
+    object-fit:cover;
+
+}
+
+.mini-info{
+
+    flex:1;
+
+}
+
+.mini-info strong{
+
+    display:block;
+
+    font-size:15px;
+
+}
+
+.mini-info small{
+
+    color:#d0d0d0;
+
+}
+
+.mini-botoes{
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+.mini-botoes button{
+
+    width:40px;
+
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#D4AF37;
+
+    color:#081826;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
