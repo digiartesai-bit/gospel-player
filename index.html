@@ -1,11 +1,83 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Gospel Player</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#081826">
+
+    <title>AdoraPlay</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-<h1>Gospel Player</h1>
-<p>Meu aplicativo está funcionando!</p>
+
+<header class="topo">
+    <div class="logo">
+        <h1>AdoraPlay</h1>
+        <p>Sua música. Sua adoração.</p>
+    </div>
+
+    <button class="perfil">👤</button>
+</header>
+
+<section class="pesquisa">
+    <input type="search" placeholder="Buscar músicas...">
+</section>
+
+<section class="banner">
+    <h2>Álbum em Destaque</h2>
+    <p>Ouça os lançamentos mais recentes.</p>
+    <button>▶ Ouvir Agora</button>
+</section>
+
+<section class="secao">
+    <h3>Continue ouvindo</h3>
+    <div id="continueOuvindo"></div>
+</section>
+
+<section class="secao">
+    <h3>Álbuns</h3>
+    <div id="albuns"></div>
+</section>
+
+<section class="secao">
+    <h3>Categorias</h3>
+
+    <div class="categorias">
+        <button>Infantil</button>
+        <button>Adoração</button>
+        <button>Louvor</button>
+        <button>Playback</button>
+        <button>Instrumental</button>
+    </div>
+</section>
+
+<section class="secao">
+    <h3>Adicionados recentemente</h3>
+
+    <div id="listaMusicas"></div>
+</section>
+
+<div class="mini-player">
+    <div>
+        <strong>Nenhuma música</strong><br>
+        <small>Selecione uma música</small>
+    </div>
+
+    <button>▶</button>
+</div>
+
+<nav class="menu">
+    <button>🏠<br>Início</button>
+    <button>🔍<br>Buscar</button>
+    <button>❤<br>Favoritos</button>
+    <button>📚<br>Biblioteca</button>
+    <button>👤<br>Perfil</button>
+</nav>
+
+<script src="js/app.js"></script>
+
 </body>
 </html>
