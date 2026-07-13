@@ -176,54 +176,62 @@ body{
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 }
 
-/* CONSOLIDAÇÃO DO MINI-PLAYER: Corrigido display e estrutura */
-.mini-player{
-    position:fixed;
-    bottom:75px; /* Levemente ajustado para flutuar acima do menu */
-    left:10px;
-    right:10px;
-    background:#12304a;
-    border-radius:16px;
-    padding:12px 15px;
-    /* Começa oculto por padrão no CSS, mas o player.js cuidará de torná-lo flex ao tocar */
+/* CONSOLIDAÇÃO DO MINI-PLAYER */
+.mini-player {
+    position: fixed;
+    bottom: 75px; 
+    left: 10px;
+    right: 10px;
+    background: #12304a;
+    border-radius: 16px;
+    padding: 10px 12px; /* Reduzido o padding interno */
     display: none; 
-    align-items:center;
-    gap:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.4);
+    align-items: center;
+    gap: 10px; /* Reduzido o espaço para caber tudo em telas menores */
+    box-shadow: 0 5px 15px rgba(0,0,0,.4);
     z-index: 100;
 }
 
-.mini-player img{
-    width:55px;
-    height:55px;
-    border-radius:10px;
-    object-fit:cover;
+.mini-player img {
+    width: 45px; /* Reduzido de 55px para 45px */
+    height: 45px;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
-.mini-info{
-    flex:1;
+.mini-info {
+    flex: 1;
+    min-width: 0; /* Impede que o texto empurre os botões para fora */
 }
 
-.mini-info strong{
-    display:block;
-    font-size:15px;
+.mini-info strong {
+    display: block;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Corta o texto com "..." se o título for muito longo */
 }
 
-.mini-info small{
-    color:#d0d0d0;
+.mini-info small {
+    color: #d0d0d0;
+    font-size: 12px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Container de botões de controle de áudio */
-.mini-botoes{
-    display:flex;
-    align-items:center;
-    gap:16px;
+.mini-botoes {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espaço reduzido para caber perfeitamente no celular */
 }
 
-/* Removemos qualquer estilo circular antigo que herdava de .mini-player button */
+/* Limita o tamanho de TODOS os SVGs normais de controle */
 .mini-botoes button {
-    width: auto !important;
-    height: auto !important;
+    width: 24px !important;
+    height: 24px !important;
     background: none !important;
     border: none !important;
     cursor: pointer;
@@ -234,26 +242,32 @@ body{
     transition: transform .2s ease;
 }
 
-.mini-botoes button:hover{
-    transform:scale(1.15);
+/* Controla o tamanho exato dos ícones internos (como shuffle, previous, next, repeat) */
+.mini-botoes button img {
+    width: 18px !important;
+    height: 18px !important;
 }
 
-/* Estilo específico do botão de Play/Pause para se destacar mais no player */
+.mini-botoes button:hover {
+    transform: scale(1.15);
+}
+
+/* Estilo específico do botão de Play/Pause Central */
 #btnPlay {
     background: #D4AF37 !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 36px !important; /* Tamanho do círculo perfeito */
+    height: 36px !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 }
 
-/* Inverte a cor do play/pause central para dar contraste de cor no fundo dourado */
+/* Garante o tamanho exato do ícone interno do Play/Pause */
 #btnPlay img {
-    width: 16px;
-    height: 16px;
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
+    width: 14px !important;
+    height: 14px !important;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
 }
 
 /* MENU DE NAVEGAÇÃO INFERIOR */
