@@ -56,21 +56,46 @@ function playPause() {
 
 // Atualização da Interface
 function atualizarMiniPlayer() {
-    if (!playlist[musicaAtual]) return;
+    const miniPlayer = document.getElementById("miniPlayer");
+    
+    // Força o player a aparecer na tela
+    miniPlayer.style.display = "flex"; 
+
+    if (!playlist || !playlist[musicaAtual]) return;
 
     const musica = playlist[musicaAtual];
 
+    // Atualiza os textos da música ativa
     miniTitulo.textContent = musica.titulo;
     miniArtista.textContent = musica.artista;
-    
-    // Fallback de imagem
-    miniCapa.src = musica.capa || "assets/icons/album.svg";
-    miniCapa.onerror = function() { this.src = "assets/icons/album.svg"; };
 
-    // Troca o ícone (SVG)
-    const img = btnPlay.querySelector("img");
-    if (img) {
-        img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
+    // Atualiza a capa
+    miniCapa.src = musica.capa || "assets/icons/album.svg";
+    miniCapa.onerror = function() { 
+        this.src = "assets/icons/album.svg"; 
+    };
+
+    // ALTERAÇÃO DO ÍCONE DE PLAY/PAUSE (Super Segura)
+    const btnPlay = document.getElementById("btnPlay");
+    if (btnPlay) {
+        let img = btnPlay.querySelector("img");
+        
+        // Se por algum motivo a imagem sumiu de dentro do botão, nós a recriamos
+        if (!img) {
+            img = document.createElement("img");
+            img.width = 14;
+            img.height = 14;
+            btnPlay.appendChild(img);
+        }
+
+        // Troca a imagem dependendo de estar tocando ou pausado
+        if (tocando) {
+            img.src = "assets/icons/pause.svg";
+            img.alt = "Pausar";
+        } else {
+            img.src = "assets/icons/play.svg";
+            img.alt = "Reproduzir";
+        }
     }
 }
 
