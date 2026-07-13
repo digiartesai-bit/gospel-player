@@ -19,17 +19,28 @@
         <p>Sua música. Sua adoração.</p>
     </div>
 
-    <button class="perfil">👤</button>
+    <!-- Substituído o emoji de perfil pelo SVG correspondente -->
+    <button class="perfil">
+        <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24">
+    </button>
 </header>
 
 <section class="pesquisa">
-    <input type="search" placeholder="Buscar músicas...">
+    <div class="campo-pesquisa" style="position: relative; display: flex; align-items: center;">
+        <!-- Ícone de lupa posicionado dentro ou ao lado da barra de busca -->
+        <img src="assets/icons/search.svg" alt="Buscar" class="icone-pesquisa" width="20" height="20" style="position: absolute; left: 12px; pointer-events: none;">
+        <input type="search" placeholder="Buscar músicas..." style="padding-left: 40px; width: 100%;">
+    </div>
 </section>
 
 <section class="banner">
     <h2>Álbum em Destaque</h2>
     <p>Ouça os lançamentos mais recentes.</p>
-    <button>▶ Ouvir Agora</button>
+    <!-- Substituído o caractere ▶ pelo SVG play -->
+    <button class="btn-banner">
+        <img src="assets/icons/play.svg" alt="Play" width="16" height="16">
+        <span>Ouvir Agora</span>
+    </button>
 </section>
 
 <section class="secao">
@@ -62,34 +73,65 @@
 
 <div class="mini-player" id="miniPlayer">
 
+    <!-- Se a música não tiver capa, você pode usar assets/icons/album.svg como fallback no seu JS -->
     <img id="miniCapa" src="https://placehold.co/60x60" alt="Capa">
 
     <div class="mini-info">
-
         <strong id="miniTitulo">Nenhuma música</strong>
-
         <small id="miniArtista">Selecione uma música</small>
-
     </div>
 
     <div class="mini-botoes">
+        <!-- Botão Shuffle (Opcional - útil para o player completo ou mini-player avançado) -->
+        <button id="btnShuffle" onclick="alternarShuffle()">
+            <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="20" height="20">
+        </button>
 
-        <button onclick="anterior()">⏮</button>
+        <!-- Botão Anterior -->
+        <button onclick="anterior()">
+            <img src="assets/icons/previous.svg" alt="Anterior" width="22" height="22">
+        </button>
 
-        <button id="btnPlay" onclick="playPause()">▶</button>
+        <!-- Botão Play/Pause dinâmico -->
+        <button id="btnPlay" onclick="playPause()">
+            <img src="assets/icons/play.svg" alt="Reproduzir" width="24" height="24">
+        </button>
 
-        <button onclick="proxima()">⏭</button>
+        <!-- Botão Próxima -->
+        <button onclick="proxima()">
+            <img src="assets/icons/next.svg" alt="Próxima" width="22" height="22">
+        </button>
 
+        <!-- Botão Repeat (Opcional) -->
+        <button id="btnRepeat" onclick="alternarRepeat()">
+            <img src="assets/icons/repeat.svg" alt="Repetir" width="20" height="20">
+        </button>
     </div>
 
 </div>
 
+<!-- Menu de Navegação Inferior com SVGs elegantes -->
 <nav class="menu">
-    <button>🏠<br>Início</button>
-    <button>🔍<br>Buscar</button>
-    <button>❤<br>Favoritos</button>
-    <button>📚<br>Biblioteca</button>
-    <button>👤<br>Perfil</button>
+    <button>
+        <img src="assets/icons/home.svg" alt="Início" width="24" height="24"><br>
+        <span>Início</span>
+    </button>
+    <button>
+        <img src="assets/icons/search.svg" alt="Buscar" width="24" height="24"><br>
+        <span>Buscar</span>
+    </button>
+    <button>
+        <img src="assets/icons/heart.svg" alt="Favoritos" width="24" height="24"><br>
+        <span>Favoritos</span>
+    </button>
+    <button>
+        <img src="assets/icons/library.svg" alt="Biblioteca" width="24" height="24"><br>
+        <span>Biblioteca</span>
+    </button>
+    <button>
+        <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24"><br>
+        <span>Perfil</span>
+    </button>
 </nav>
 
 <audio id="audioPlayer"></audio>
