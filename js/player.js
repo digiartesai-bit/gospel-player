@@ -1,91 +1,96 @@
+// Elementos Globais
 const audioPlayer = document.getElementById("audioPlayer");
+const miniPlayer = document.getElementById("miniPlayer");
 const miniCapa = document.getElementById("miniCapa");
 const miniTitulo = document.getElementById("miniTitulo");
 const miniArtista = document.getElementById("miniArtista");
 const btnPlay = document.getElementById("btnPlay");
 
+// Estado
 let playlist = [];
 let musicaAtual = 0;
 let tocando = false;
 
-function carregarPlaylist(lista){
+// Função para receber os dados do app.js
+function carregarPlaylist(lista) {
     playlist = lista;
 }
 
-function tocar(indice){
-    if(!playlist.length) return;
+// Lógica de Tocar
+function tocar(indice) {
+    if (!playlist || playlist.length === 0) return;
 
     musicaAtual = indice;
-    audioPlayer.src = playlist[indice].audio;
-    audioPlayer.play();
-    tocando = true;
+    const musica = playlist[indice];
 
-    atualizarMiniPlayer();
+    // Carrega o áudio
+    audioPlayer.src = musica.audio;
+    
+    // Força o player a aparecer na tela
+    miniPlayer.style.display = "flex";
+
+    audioPlayer.play()
+        .then(() => {
+            tocando = true;
+            atualizarMiniPlayer();
+        })
+        .catch(error => {
+            console.error("Erro ao reproduzir:", error);
+            alert("Não foi possível reproduzir este arquivo.");
+        });
 }
 
-function playPause(){
-    if(!audioPlayer.src || audioPlayer.src === window.location.href) return;
+// Lógica de Play/Pause
+function playPause() {
+    if (!audioPlayer.src) return;
 
-    if(tocando){
+    if (tocando) {
         audioPlayer.pause();
         tocando = false;
     } else {
         audioPlayer.play();
         tocando = true;
     }
-
     atualizarMiniPlayer();
 }
 
-function proxima(){
-    if(!playlist.length) return;
-
-    musicaAtual++;
-    if(musicaAtual >= playlist.length){
-        musicaAtual = 0;
-    }
-    tocar(musicaAtual);
-}
-
-function anterior(){
-    if(!playlist.length) return;
-
-    musicaAtual--;
-    if(musicaAtual < 0){
-        musicaAtual = playlist.length - 1;
-    }
-    tocar(musicaAtual);
-}
-
-// Atualiza a interface do Mini Player com base no estado da música atual
+// Atualização da Interface
 function atualizarMiniPlayer() {
-    if(!playlist.length || !playlist[musicaAtual]) return;
+    if (!playlist[musicaAtual]) return;
 
-    const miniPlayer = document.getElementById("miniPlayer");
-    miniPlayer.style.display = "flex"; // Revela o player na tela!
+    const musica = playlist[musicaAtual];
 
-    // Atualiza textos
     miniTitulo.textContent = musica.titulo;
     miniArtista.textContent = musica.artista;
-
-    // Atualiza a imagem da capa (usa o album.svg como fallback se falhar)
+    
+    // Fallback de imagem
     miniCapa.src = musica.capa || "assets/icons/album.svg";
-    miniCapa.onerror = function() {
-        this.src = "assets/icons/album.svg";
-    };
+    miniCapa.onerror = function() { this.src = "assets/icons/album.svg"; };
 
-    // Alterna o SVG do botão principal entre Play e Pause de forma limpa
-    const imgPlay = btnPlay.querySelector("img");
-    if (imgPlay) {
-        if (tocando) {
-            imgPlay.src = "assets/icons/pause.svg";
-            imgPlay.alt = "Pausar";
-        } else {
-            imgPlay.src = "assets/icons/play.svg";
-            imgPlay.alt = "Reproduzir";
-        }
+    // Troca o ícone (SVG)
+    const img = btnPlay.querySelector("img");
+    if (img) {
+        img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
     }
 }
 
-// Evento disparado quando a música chega ao fim
+// Navegação
+function proxima() {
+    musicaAtual = (musicaAtual + 1) % playlist.length;
+    tocar(musicaAtual);
+}
+
+function anterior() {
+    musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length;
+    tocar(musicaAtual);
+}
+
+// Eventos
 audioPlayer.addEventListener("ended", proxima);
+
+// Tratamento de erro de áudio (caso o link do R2 falhe)
+audioPlayer.addEventListener("error", () => {
+    console.error("Erro no arquivo de áudio.");
+    tocando = false;
+    atualizarMiniPlayer();
+});
