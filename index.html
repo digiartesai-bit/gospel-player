@@ -60,13 +60,28 @@
     <div id="listaMusicas"></div>
 </section>
 
-<div class="mini-player">
-    <div>
-        <strong>Nenhuma música</strong><br>
-        <small>Selecione uma música</small>
+<div class="mini-player" id="miniPlayer">
+
+    <img id="miniCapa" src="https://placehold.co/60x60" alt="Capa">
+
+    <div class="mini-info">
+
+        <strong id="miniTitulo">Nenhuma música</strong>
+
+        <small id="miniArtista">Selecione uma música</small>
+
     </div>
 
-    <button>▶</button>
+    <div class="mini-botoes">
+
+        <button onclick="anterior()">⏮</button>
+
+        <button id="btnPlay" onclick="playPause()">▶</button>
+
+        <button onclick="proxima()">⏭</button>
+
+    </div>
+
 </div>
 
 <nav class="menu">
