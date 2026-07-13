@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "titulo": "Graça Infinita",
+    "artista": "AdoraPlay",
+    "album": "Coleção 1",
+    "categoria": "Adoração",
+    "capa": "capas/graca.jpg",
+    "audio": "musicas/graca.mp3",
+    "letra": ""
+  },
+  {
+    "id": 2,
+    "titulo": "Tu És Santo",
+    "artista": "AdoraPlay",
+    "album": "Coleção 1",
+    "categoria": "Louvor",
+    "capa": "capas/santo.jpg",
+    "audio": "musicas/santo.mp3",
+    "letra": ""
+  },
+  {
+    "id": 3,
+    "titulo": "Esperança",
+    "artista": "AdoraPlay",
+    "album": "Coleção 2",
+    "categoria": "Instrumental",
+    "capa": "capas/esperanca.jpg",
+    "audio": "musicas/esperanca.mp3",
+    "letra": ""
+  }
+]
