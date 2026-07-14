@@ -24,24 +24,17 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
-// [NOVO] Função auxiliar para descobrir a capa individual da música
+// [CORRIGIDO] Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
     if (!musica) return "assets/icons/album.svg";
     
-    // Extrai o nome do arquivo .mp3 sem o caminho e sem a extensão para usar como nome da imagem
-    try {
-        const partesUrl = musica.audio.split('/');
-        const nomeArquivo = partesUrl[partesUrl.length - 1]; // ex: "A_criacao.mp3" ou "A%20batalha...mp3"
-        const nomeSemExtensao = decodeURIComponent(nomeArquivo).replace(/\.[^/.]+$/, ""); // ex: "A_criacao" ou "A batalha é do Senhor"
-        
-        // Substitui espaços por underscores para bater com o padrão de arquivos do sistema
-        const nomeFormatado = nomeSemExtensao.replace(/\s+/g, '_'); 
-        
-        // Retorna o caminho correto dentro de assets/capamusica/
-        return `assets/capamusica/${nomeFormatado}.png`;
-    } catch (e) {
-        return musica.capa || "assets/icons/album.svg";
+    // Se você definiu o caminho da capa da música no JSON, usa ele diretamente!
+    if (musica.capa_musica) {
+        return musica.capa_musica;
     }
+    
+    // Caso não exista a propriedade "capa_musica", usa a capa do álbum ou o ícone padrão
+    return musica.capa || "assets/icons/album.svg";
 }
 
 // Garante o carregamento da playlist dinâmica do app.js
@@ -317,7 +310,8 @@ function salvarNoHistorico(musica) {
 
     localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
     
-    if (typeof renderizarContinueOuvindo === "function") {
-        renderizarContinueOuvindo();
+    // [CORRIGIDO] Nome da função atualizado para refletir o novo padrão "Últimas Ouvidas"
+    if (typeof renderizarUltimasOuvidas === "function") {
+        renderizarUltimasOuvidas();
     }
 }
