@@ -2,26 +2,22 @@
   {
     "titulo": "A Batalha é do Senhor",
     "artista": "AdoraPlay",
-    "capa": "",
-    "album": "Lançamentos",
-    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A%20batalha%20%C3%A9%20do%20Senhor.mp3"
-  }
-]
-[
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A%20batalha%20%C3%A9%20do%20Senhor.mp3",
+    "capa": "assets/icons/album.svg",
+    "categoria": "Adoração"
+  },
   {
-    "titulo": "A Cada manhã",
+    "titulo": "A Cada Manhã",
     "artista": "AdoraPlay",
-    "capa": "",
-    "album": "Lançamentos",
-    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_cada_manh%C3%A3.mp3"
-  }
-]
-[
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_cada_manh%C3%A3.mp3",
+    "capa": "assets/icons/album.svg",
+    "categoria": "Adoração"
+  },
   {
-    "titulo": "A chuva vai cair",
+    "titulo": "A Chuva Vai Cair",
     "artista": "AdoraPlay",
-    "capa": "",
-    "album": "Lançamentos",
-    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_chuva_vai_cair.mp3"
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_chuva_vai_cair.mp3",
+    "capa": "assets/icons/album.svg",
+    "categoria": "Louvor"
   }
 ]
