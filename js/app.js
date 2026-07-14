@@ -37,8 +37,9 @@ function carregarTela() {
     // 1. Renderiza os Favoritos horizontais
     renderizarFavoritosHorizontais();
 
-    // 2. Renderiza o histórico real de 3 músicas no "Continue Ouvindo"
-    renderizarContinueOuvindo();
+    // 2. [CORRIGIDO] Renderiza o histórico real de 3 músicas usando o novo nome da função
+    renderizarUltimasOuvidas();
+    
     // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
     const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
     
@@ -66,8 +67,8 @@ function carregarTela() {
     });
 }
 
-// Renderiza a seção de "Continue Ouvindo" (com a capa da música!)
-function renderizarContinueOuvindo() {
+// [CORRIGIDO] Alterado o nome para bater com o player.js e atualizado o comportamento
+function renderizarUltimasOuvidas() {
     const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
     if (!continueOuvindo) return;
 
