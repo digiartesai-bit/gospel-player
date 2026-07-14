@@ -7,17 +7,15 @@ const listaMusicas = document.getElementById("listaMusicas");
 let musicas = [];
 let filtroAtivo = null;
 
-// Carrega as músicas inicialmente com garantia de sincronia
+// Carrega as músicas inicialmente do JSON
 fetch("musicas.json")
 .then(response => response.json())
 .then(data => {
     musicas = data;
     
-    // Tenta carregar na playlist global do player.js
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
     } else {
-        // Se o player.js demorou a carregar, define uma propriedade global temporária
         window.playlist = musicas;
     }
     
@@ -26,9 +24,8 @@ fetch("musicas.json")
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
 
-// Renderiza a tela inicial padrão com os Favoritos horizontais
+// Renderiza os dados iniciais na tela
 function carregarTela() {
-    // Garante que todas as seções voltem a aparecer
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
 
     const titulo = document.getElementById("tituloListaMusicas");
@@ -37,20 +34,27 @@ function carregarTela() {
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // Renderiza os Favoritos de forma Horizontal
+    // 1. Renderiza os Favoritos horizontais
     renderizarFavoritosHorizontais();
 
-    // [MODIFICADO] Chama a renderização do histórico gerenciada pelo player.js
-    if (typeof renderizarContinueOuvindo === "function") {
-        renderizarContinueOuvindo();
-    }
+    // 2. Renderiza o histórico de 3 músicas "Continue Ouvindo"
+    renderizarContinueOuvindo();
 
+    // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas músicas do JSON)
+    const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
+    
+    ultimasAdicionadas.forEach((musica) => {
+        // Acha o índice original da música na lista completa do JSON
+        const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
+        
+        if (listaMusicas) {
+            renderizarItemMusica(musica, indexOriginal, listaMusicas);
+        }
+    });
+
+    // 4. Renderiza os Álbuns baseados em todas as músicas
     const albunsAdicionados = new Set();
-
-    musicas.forEach((musica, index) => {
-        // [REMOVIDO] Antiga lógica que jogava todas as músicas no "Continue Ouvindo"
-
-        // Seção de Álbuns (Cards dos Álbuns)
+    musicas.forEach((musica) => {
         if (musica.album && !albunsAdicionados.has(musica.album)) {
             albunsAdicionados.add(musica.album);
             
@@ -62,21 +66,49 @@ function carregarTela() {
                 </div>`;
             }
         }
-
-        // Adicionados Recentemente (Lista Vertical)
-        if (listaMusicas) {
-            renderizarItemMusica(musica, index, listaMusicas);
-        }
     });
 }
 
-// Renderiza a linha de música na lista vertical
+// Renderiza a lista de 3 itens no "Continue Ouvindo" puxando dados do Histórico real
+function renderizarContinueOuvindo() {
+    const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
+    if (!continueOuvindo) return;
+
+    const historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
+
+    // Se o usuário não ouviu nada ainda, esconde a seção para ficar elegante
+    if (historico.length === 0) {
+        if (secaoContinue) secaoContinue.style.display = "none";
+        return;
+    }
+
+    if (secaoContinue) secaoContinue.style.display = "block";
+    continueOuvindo.innerHTML = "";
+
+    // Pega as 3 últimas músicas salvas no histórico do player
+    historico.forEach((musica) => {
+        // Encontra o index do arquivo original para tocar na ordem certa
+        let indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
+        if (indexOriginal === -1) indexOriginal = 0;
+
+        continueOuvindo.innerHTML += `
+        <div class="card" onclick="tocar(${indexOriginal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
+            <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
+            <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
+        </div>`;
+    });
+}
+
+// Renderiza o item de música da lista vertical de adicionados recentemente
 function renderizarItemMusica(musica, index, container) {
     container.innerHTML += `
     <div class="musica">
-        <div>
-            <strong>${musica.titulo}</strong><br>
-            <small>${musica.artista}</small>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+            <div>
+                <strong>${musica.titulo}</strong><br>
+                <small>${musica.artista}</small>
+            </div>
         </div>
         <button onclick="tocar(${index})">
             <img src="assets/icons/play.svg" alt="Tocar" width="16" height="16">
@@ -84,13 +116,13 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Renderiza a seção horizontal de favoritos apenas se houver itens favoritados
+// Renderiza os Favoritos horizontais
 function renderizarFavoritosHorizontais() {
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
-    if (favorites.length === 0) {
+    if (favoritos.length === 0) {
         secaoFavoritos.style.display = "none";
         return;
     }
@@ -99,7 +131,7 @@ function renderizarFavoritosHorizontais() {
     favoritosHorizontal.innerHTML = "";
 
     favoritos.forEach((musica) => {
-        let indexReal = musicas.findIndex(m => m.titulo.trim() === musica.titulo.trim());
+        let indexReal = musicas.findIndex(m => m.audio === musica.audio);
         if (indexReal === -1) indexReal = 0;
 
         favoritosHorizontal.innerHTML += `
@@ -110,7 +142,7 @@ function renderizarFavoritosHorizontais() {
     });
 }
 
-// Filtra por Álbum na lista vertical de baixo
+// Filtra por álbum ao clicar na seção de álbuns
 function filtrarPorAlbum(nomeAlbum) {
     const titulo = document.getElementById("tituloListaMusicas");
     if (!listaMusicas) return;
@@ -119,8 +151,12 @@ function filtrarPorAlbum(nomeAlbum) {
     if (filtroAtivo === nomeAlbum) {
         filtroAtivo = null;
         if (titulo) titulo.textContent = "Adicionados recentemente";
-        musicas.forEach((musica, index) => {
-            renderizarItemMusica(musica, index, listaMusicas);
+        
+        // Retorna a mostrar apenas as 3 últimas criadas
+        const ultimasAdicionadas = [...musicas].slice(-3).reverse();
+        ultimasAdicionadas.forEach((musica) => {
+            const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
+            renderizarItemMusica(musica, indexOriginal, listaMusicas);
         });
         return;
     }
