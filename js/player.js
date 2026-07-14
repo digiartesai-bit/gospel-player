@@ -24,9 +24,11 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
-// Garante o carregamento da playlist
+// Garante o carregamento da playlist dinâmica do app.js
 function carregarPlaylist(lista) { 
     playlist = [...lista]; 
+    // Se o shuffle já estiver ativo ao carregar uma nova lista, garante a consistência do estado
+    atualizarBotoesModo();
 }
 
 if (window.playlist && window.playlist.length > 0) {
@@ -121,7 +123,7 @@ function proxima() {
     if (playlist.length === 0) return;
 
     if (modoShuffle) {
-        // Escolhe um índice aleatório diferente do atual (para não repetir a mesma música)
+        // Escolhe um índice aleatório dentro da playlist ativa na tela
         if (playlist.length > 1) {
             let novoIndice;
             do {
@@ -132,19 +134,18 @@ function proxima() {
             musicaAtual = 0;
         }
     } else {
-        // Segue a ordem normal da lista
+        // Segue a ordem normal da lista ativa na tela
         musicaAtual = (musicaAtual + 1) % playlist.length; 
     }
     
     tocar(musicaAtual); 
 }
 
-// Volta para a música anterior (Lógica de Shuffle integrada)
+// Volta para a música anterior
 function anterior() { 
     if (playlist.length === 0) return;
 
     if (modoShuffle) {
-        // No modo aleatório, voltar também escolhe uma música aleatória
         if (playlist.length > 1) {
             let novoIndice;
             do {
@@ -155,7 +156,6 @@ function anterior() {
             musicaAtual = 0;
         }
     } else {
-        // Segue a ordem normal voltando
         musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
     }
     
@@ -165,15 +165,25 @@ function anterior() {
 // FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
     modoShuffle = !modoShuffle;
-    console.log(modoShuffle ? "Modo Aleatório Ativado 🔀" : "Modo Aleatório Desativado ➡️");
     
-    // Apenas atualiza o visual do botão (a mágica de pular aleatório acontece no proxima() / anterior())
+    // Se ativou o Shuffle, desativa o Repeat imediatamente para evitar conflito!
+    if (modoShuffle) {
+        modoRepeat = false;
+    }
+    
+    console.log(modoShuffle ? "Modo Aleatório Ativado 🔀" : "Modo Aleatório Desativado ➡️");
     atualizarBotoesModo();
 }
 
 // FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
 function alternarRepeat() {
     modoRepeat = !modoRepeat;
+    
+    // Se ativou o Repeat, desativa o Shuffle imediatamente!
+    if (modoRepeat) {
+        modoShuffle = false;
+    }
+    
     console.log(modoRepeat ? "Repetição Ativada 🔁" : "Repetição Desativada ➡️");
     atualizarBotoesModo();
 }
@@ -224,11 +234,9 @@ if (audioPlayer) {
     // Ao acabar a música atual...
     audioPlayer.addEventListener("ended", () => {
         if (modoRepeat) {
-            // Se o Repeat estiver ativo, volta o tempo para zero e toca de novo a mesma música
             audioPlayer.currentTime = 0;
             audioPlayer.play().catch(err => console.log(err));
         } else {
-            // Se não estiver no Repeat, pula normalmente para a próxima
             proxima();
         }
     });
