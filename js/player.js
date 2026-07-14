@@ -162,3 +162,30 @@ audioPlayer.addEventListener("error", () => {
     tocando = false;
     atualizarMiniPlayer();
 });
+// Função para alternar o status de favorito
+function toggleFavorito(musica) {
+    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    const index = favoritos.findIndex(f => f.titulo === musica.titulo);
+
+    if (index > -1) {
+        favoritos.splice(index, 1); // Remove dos favoritos
+    } else {
+        favoritos.push(musica); // Adiciona aos favoritos
+    }
+    
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    atualizarBotaoFavorito(); // Atualiza o ícone visualmente
+}
+
+// Verifica se a música atual é favorita para definir o visual do coração
+function atualizarBotaoFavorito() {
+    const btnFavorito = document.getElementById("btnFavorito"); // Certifique-se de ter esse id no seu botão
+    if (!btnFavorito) return;
+    
+    const musica = playlist[musicaAtual];
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    const ehFavorito = favoritos.find(f => f.titulo === musica.titulo);
+    
+    // Altera a cor ou a imagem do coração baseado no status
+    btnFavorito.style.filter = ehFavorito ? "brightness(1) saturate(10)" : "brightness(0.5)";
+}
