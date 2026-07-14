@@ -44,58 +44,69 @@
     <div id="listaMusicas"></div>
 </section>
 
-<!-- MINI PLAYER UNIFICADO E CORRIGIDO -->
-<div class="mini-player" id="miniPlayer">
+ <!-- MINI PLAYER UNIFICADO E PROTEGIDO CONTRA SOBREPOSIÇÃO -->
+<div class="mini-player" id="miniPlayer" style="display: none; flex-direction: column; align-items: center; padding: 10px; gap: 8px;">
 
-    <!-- Capa da música ativa com fallback para imagem padrão -->
-    <img id="miniCapa" src="assets/icons/album.svg" onerror="this.src='assets/icons/album.svg'" alt="Capa">
-    
-    <div class="progress-container">
-        <input type="range" id="progressBar" value="0" min="0" max="100">
-        <div class="progress-times">
+    <!-- Linha 1: Progresso (Ocupa o topo do player isoladamente) -->
+    <div class="progress-container" style="width: 100%; margin-bottom: 5px; position: relative; z-index: 10;">
+        <input type="range" id="progressBar" value="0" min="0" max="100" style="width: 100%; cursor: pointer;">
+        <div class="progress-times" style="display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-top: 2px;">
             <span id="currentTime">0:00</span>
             <span id="durationTime">0:00</span>
         </div>
     </div>
 
-    <div class="mini-info">
-        <strong id="miniTitulo">Nenhuma música</strong>
-        <small id="miniArtista">Selecione uma música</small>
-    </div>
+    <!-- Linha 2: Informações da Música, Favorito e Controles -->
+    <div class="player-controls-row" style="display: flex; width: 100%; align-items: center; justify-content: space-between; position: relative; z-index: 5;">
+        
+        <!-- Esquerda: Capa e Info -->
+        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+            <img id="miniCapa" src="assets/icons/album.svg" onerror="this.src='assets/icons/album.svg'" alt="Capa" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">
+            <div class="mini-info" style="display: flex; flex-direction: column; min-width: 0;">
+                <strong id="miniTitulo" style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">Nenhuma música</strong>
+                <small id="miniArtista" style="font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Selecione uma música</small>
+            </div>
+        </div>
 
-    <!-- BOTÃO DE FAVORITO (ESTILO SPOTIFY, AO LADO DO TÍTULO) -->
-    <button id="btnFavorito" onclick="toggleFavorito()" style="background: none; border: none; padding: 0; margin: 0 15px; cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-        <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar" width="24" height="24" style="pointer-events: none; transition: transform 0.1s ease;">
-    </button>
-
-    <div class="mini-botoes">
-        <!-- Botão Shuffle -->
-        <button id="btnShuffle" onclick="alternarShuffle()">
-            <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="20" height="20">
+        <!-- Centro: Botão de Favorito -->
+        <button id="btnFavorito" onclick="toggleFavorito()" style="background: none; border: none; padding: 0; margin: 0 15px; cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; flex-shrink: 0;">
+            <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar" width="24" height="24" style="pointer-events: none; transition: transform 0.1s ease;">
         </button>
 
-        <!-- Botão Anterior -->
-        <button onclick="anterior()">
-            <img src="assets/icons/previous.svg" alt="Anterior" width="22" height="22">
-        </button>
+        <!-- Direita: Controles de Mídia (Com botões totalmente clicáveis) -->
+        <div class="mini-botoes" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+            
+            <!-- Botão Shuffle -->
+            <button id="btnShuffle" onclick="alternarShuffle()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+                <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="18" height="18" style="pointer-events: none;">
+            </button>
 
-        <!-- Botão Play/Pause dinâmico -->
-        <button id="btnPlay" onclick="playPause()">
-            <img src="assets/icons/play.svg" alt="Reproduzir" width="24" height="24">
-        </button>
+            <!-- Botão Anterior -->
+            <button onclick="anterior()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+                <img src="assets/icons/previous.svg" alt="Anterior" width="20" height="20" style="pointer-events: none;">
+            </button>
 
-        <!-- Botão Próxima -->
-        <button onclick="proxima()">
-            <img src="assets/icons/next.svg" alt="Próxima" width="22" height="22">
-        </button>
+            <!-- Botão Play/Pause -->
+            <button id="btnPlay" onclick="playPause()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+                <img src="assets/icons/play.svg" alt="Reproduzir" width="24" height="24" style="pointer-events: none;">
+            </button>
 
-        <!-- Botão Repeat -->
-        <button id="btnRepeat" onclick="alternarRepeat()">
-            <img src="assets/icons/repeat.svg" alt="Repetir" width="20" height="20">
-        </button>
+            <!-- Botão Próxima -->
+            <button onclick="proxima()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+                <img src="assets/icons/next.svg" alt="Próxima" width="20" height="20" style="pointer-events: none;">
+            </button>
+
+            <!-- Botão Repeat -->
+            <button id="btnRepeat" onclick="alternarRepeat()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+                <img src="assets/icons/repeat.svg" alt="Repetir" width="18" height="18" style="pointer-events: none;">
+            </button>
+            
+        </div>
+        
     </div>
 
 </div>
+
 
 <!-- MENU DE NAVEGAÇÃO INFERIOR COM OPÇÕES DESATIVADAS E ESTILIZADAS -->
 <nav class="menu">
