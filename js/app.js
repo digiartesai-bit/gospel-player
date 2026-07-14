@@ -69,6 +69,8 @@ function carregarFavoritosNaTela() {
     if (tituloSecao) tituloSecao.textContent = "Meus Favoritos";
 
     listaMusicas.innerHTML = "";
+    
+    // Busca a lista atualizada do localStorage na hora do clique!
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
     if (favoritos.length === 0) {
@@ -77,8 +79,13 @@ function carregarFavoritosNaTela() {
     }
 
     favoritos.forEach((musica) => {
-        // Encontra o índice real desta música na playlist global para tocar corretamente
-        const indexReal = musicas.findIndex(m => m.titulo === musica.titulo);
+        // Busca o índice real com base no título (removendo espaços extras para segurança)
+        let indexReal = musicas.findIndex(m => m.titulo.trim() === musica.titulo.trim());
+
+        // Se por acaso não achar o índice (música antiga ou erro), usa o primeiro índice como fallback
+        if (indexReal === -1) {
+            indexReal = 0;
+        }
 
         listaMusicas.innerHTML += `
         <div class="musica">
