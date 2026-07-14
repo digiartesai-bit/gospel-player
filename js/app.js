@@ -7,17 +7,24 @@ const listaMusicas = document.getElementById("listaMusicas");
 let musicas = [];
 let filtroAtivo = null;
 
-// Carrega as músicas inicialmente
+// Carrega as músicas inicialmente com garantia de sincronia
 fetch("musicas.json")
 .then(response => response.json())
 .then(data => {
     musicas = data;
+    
+    // Tenta carregar na playlist global do player.js
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
+    } else {
+        // Se o player.js demorou a carregar, define uma propriedade global temporária
+        window.playlist = musicas;
     }
+    
     carregarTela();
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
+
 
 // Renderiza a tela inicial padrão com os Favoritos horizontais
 function carregarTela() {
