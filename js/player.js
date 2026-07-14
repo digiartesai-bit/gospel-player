@@ -189,3 +189,45 @@ function atualizarBotaoFavorito() {
     // Altera a cor ou a imagem do coração baseado no status
     btnFavorito.style.filter = ehFavorito ? "brightness(1) saturate(10)" : "brightness(0.5)";
 }
+// ==========================================
+// LOGICA DE FAVORITOS (LOCALSTORAGE)
+// ==========================================
+
+// Função para alternar o status de favorito
+function toggleFavorito(musica) {
+    if (!musica) return;
+    
+    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    const index = favoritos.findIndex(f => f.titulo === musica.titulo);
+
+    if (index > -1) {
+        favoritos.splice(index, 1); // Remove dos favoritos se já existia
+    } else {
+        favoritos.push(musica); // Adiciona aos favoritos se não existia
+    }
+    
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    atualizarBotaoFavorito(); // Atualiza o visual do coração na hora
+}
+
+// Verifica se a música atual é favorita para definir o visual do coração
+function atualizarBotaoFavorito() {
+    const imgFavorito = document.getElementById("imgFavorito");
+    if (!imgFavorito) return;
+    
+    if (!playlist || !playlist[musicaAtual]) return;
+    
+    const musica = playlist[musicaAtual];
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    const ehFavorito = favoritos.some(f => f.titulo === musica.titulo);
+    
+    // Deixa o coração dourado/aceso se for favorito, ou meio apagado (cinza) se não for
+    if (ehFavorito) {
+        imgFavorito.style.filter = "brightness(1) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))";
+        imgFavorito.style.opacity = "1";
+    } else {
+        imgFavorito.style.filter = "none";
+        imgFavorito.style.opacity = "0.4";
+    }
+}
+
