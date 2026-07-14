@@ -79,21 +79,15 @@ progressBar.addEventListener("input", () => {
     if (audioPlayer.duration) audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
 });
 
-// LOGICA DE FAVORITOS
+// LOGICA DE FAVORITOS CORRIGIDA
 function toggleFavorito() {
-    // ... (sua lógica atual para salvar/remover do localStorage e trocar o ícone do coração) ...
-    
-    // LINHA PARA ADICIONAR NO FINAL DA FUNÇÃO:
-    // Isso garante que o carrossel do topo atualize em tempo real!
-    if (typeof renderizarFavoritosHorizontais === "function") {
-        renderizarFavoritosHorizontais();
-    }
-}
+    if (!playlist || !playlist[musicaAtual]) return;
+    const musica = playlist[musicaAtual];
 
     console.log("Favoritando/Desfavoritando:", musica.titulo);
     
     let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const index = favoritos.findIndex(f => f.titulo === musica.titulo);
+    const index = favoritos.findIndex(f => f.titulo.trim() === musica.titulo.trim());
     
     if (index > -1) {
         favoritos.splice(index, 1);
@@ -105,8 +99,12 @@ function toggleFavorito() {
     
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarBotaoFavorito();
-}
 
+    // Isso garante que o carrossel do topo atualize em tempo real!
+    if (typeof renderizarFavoritosHorizontais === "function") {
+        renderizarFavoritosHorizontais();
+    }
+}
 
 function atualizarBotaoFavorito() {
     const imgFavorito = document.getElementById("imgFavorito");
@@ -114,7 +112,7 @@ function atualizarBotaoFavorito() {
     const musica = playlist[musicaAtual];
     if (!musica) return;
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const ehFavorito = favoritos.some(f => f.titulo === musica.titulo);
+    const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
     
     imgFavorito.style.filter = ehFavorito ? "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
