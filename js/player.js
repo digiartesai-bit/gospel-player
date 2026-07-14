@@ -45,6 +45,9 @@ function tocar(indice) {
     musicaAtual = indice;
     const musica = playlist[indice];
     
+    // [NOVO] Salva a música tocada no histórico do "Continue Ouvindo"
+    salvarNoHistorico(musica);
+    
     // Define o áudio
     audioPlayer.src = musica.audio;
     
@@ -163,7 +166,6 @@ function anterior() {
 }
 
 // FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
-// FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
     modoShuffle = !modoShuffle;
     
@@ -177,22 +179,6 @@ function alternarShuffle() {
     // Força a atualização visual imediata de ambos os botões!
     atualizarBotoesModo();
 }
-
-// FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
-function alternarRepeat() {
-    modoRepeat = !modoRepeat;
-    
-    // Se ativou o Repeat, desativa o Shuffle imediatamente!
-    if (modoRepeat) {
-        modoShuffle = false;
-    }
-    
-    console.log(modoRepeat ? "Repetição Ativada 🔁" : "Repetição Desativada ➡️");
-    
-    // Força a atualização visual imediata de ambos os botões!
-    atualizarBotoesModo();
-}
-
 
 // FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
 function alternarRepeat() {
@@ -308,3 +294,83 @@ function atualizarBotaoFavorito() {
     imgFavorito.style.filter = ehFavorito ? "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
 }
+
+
+// ==========================================
+// [NOVO] LÓGICA DO "CONTINUE OUVINDO" (History)
+// ==========================================
+
+function salvarNoHistorico(musica) {
+    let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
+
+    // Remove para não ter duplicado e garantir que fique no topo da lista
+    historico = historico.filter(m => m.audio !== musica.audio);
+
+    // Adiciona ao topo
+    historico.unshift(musica);
+
+    // Exibe no máximo as últimas 4 músicas tocadas
+    if (historico.length > 4) {
+        historico.pop();
+    }
+
+    localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
+    renderizarContinueOuvindo();
+}
+
+function renderizarContinueOuvindo() {
+    // Procura por classe ou por id para garantir a compatibilidade com seu HTML
+    const container = document.querySelector('.continue-ouvindo-container') || document.getElementById('continue-ouvindo-container');
+    const secaoContinue = document.querySelector('.continue-ouvindo') || document.getElementById('secao-continue');
+
+    const historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
+
+    // Se o histórico estiver vazio, esconde a seção para deixar a tela limpa
+    if (historico.length === 0) {
+        if (secaoContinue) secaoContinue.style.display = 'none';
+        return;
+    } else {
+        if (secaoContinue) secaoContinue.style.display = 'block';
+    }
+
+    if (!container) return;
+    container.innerHTML = '';
+    
+    historico.forEach(musica => {
+        const card = document.createElement('div');
+        card.className = 'card-musica-recente';
+        card.style.cursor = 'pointer';
+        
+        // Clique para tocar a música diretamente do histórico
+        card.onclick = () => {
+            tocarMusicaDoHistorico(musica);
+        };
+
+        card.innerHTML = `
+            <img src="${musica.capa_musica || musica.capa || 'assets/icons/album.svg'}" alt="${musica.titulo}">
+            <div class="info">
+                <h4>${musica.titulo}</h4>
+                <p>${musica.artista}</p>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Auxiliar para tocar a música do histórico de forma segura
+function tocarMusicaDoHistorico(musica) {
+    // Verifica se ela já existe na playlist ativa para tocar pelo índice correto
+    const index = playlist.findIndex(m => m.audio === musica.audio);
+    if (index > -1) {
+        tocar(index);
+    } else {
+        // Se ela não estiver na playlist atual (mudou de aba), adiciona e toca
+        playlist.push(musica);
+        tocar(playlist.length - 1);
+    }
+}
+
+// Garante a renderização correta assim que o app carregar na tela
+document.addEventListener("DOMContentLoaded", () => {
+    renderizarContinueOuvindo();
+});
