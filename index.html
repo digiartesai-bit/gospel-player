@@ -19,42 +19,31 @@
         <p>Sua música. Sua adoração.</p>
     </div>
 
-    <!-- Substituído o emoji de perfil pelo SVG correspondente -->
+    <!-- Botão de perfil com o SVG correspondente -->
     <button class="perfil">
         <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24">
     </button>
 </header>
 
-<section class="pesquisa">
-    <div class="campo-pesquisa" style="position: relative; display: flex; align-items: center;">
-        <!-- Ícone de lupa posicionado dentro ou ao lado da barra de busca -->
-        <img src="assets/icons/search.svg" alt="Buscar" class="icone-pesquisa" width="20" height="20" style="position: absolute; left: 12px; pointer-events: none;">
-        <input type="search" placeholder="Buscar músicas..." style="padding-left: 40px; width: 100%;">
-    </div>
+<!-- SEÇÃO: SEUS FAVORITOS (Inicia oculta e aparece dinamicamente via JS se houver músicas favoritadas) -->
+<section class="secao" id="secaoFavoritos" style="display: none;">
+    <h3>Seus Favoritos</h3>
+    <div id="favoritosHorizontal" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
 </section>
 
-<section class="banner">
-    <h2>Álbum em Destaque</h2>
-    <p>Ouça os lançamentos mais recentes.</p>
-    <!-- Substituído o caractere ▶ pelo SVG play -->
-    <button class="btn-banner">
-        <img src="assets/icons/play.svg" alt="Play" width="16" height="16">
-        <span>Ouvir Agora</span>
-    </button>
-</section>
-
+<!-- SEÇÃO: CONTINUE OUVINDO -->
 <section class="secao">
     <h3>Continue ouvindo</h3>
-    <div id="continueOuvindo"></div>
+    <div id="continueOuvindo" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
 </section>
 
 <!-- SEÇÃO DE ÁLBUNS E CATEGORIAS UNIFICADA -->
 <section class="secao">
     <h3>Navegar por Álbuns</h3>
-    <div id="albuns"></div>
+    <div id="albuns" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
 </section>
 
-<!-- LISTA QUE SERÁ FILTRADA -->
+<!-- LISTA PRINCIPAL (FILTRÁVEL) -->
 <section class="secao">
     <h3 id="tituloListaMusicas">Adicionados recentemente</h3>
     <div id="listaMusicas"></div>
@@ -63,8 +52,8 @@
 <!-- MINI PLAYER UNIFICADO E CORRIGIDO -->
 <div class="mini-player" id="miniPlayer">
 
-    <!-- Se a música não tiver capa, você pode usar assets/icons/album.svg como fallback no seu JS -->
-    <img id="miniCapa" src="https://placehold.co/60x60" alt="Capa">
+    <!-- Capa da música ativa com fallback para imagem padrão -->
+    <img id="miniCapa" src="assets/icons/album.svg" onerror="this.src='assets/icons/album.svg'" alt="Capa">
     
     <div class="progress-container">
         <input type="range" id="progressBar" value="0" min="0" max="100">
@@ -80,13 +69,12 @@
     </div>
 
     <!-- BOTÃO DE FAVORITO (ESTILO SPOTIFY, AO LADO DO TÍTULO) -->
-    <!-- BOTÃO DE FAVORITO CORRIGIDO -->
-<button id="btnFavorito" onclick="toggleFavorito()" style="background: none; border: none; padding: 0; margin: 0 15px; cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-    <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar" width="24" height="24" style="pointer-events: none; transition: transform 0.1s ease;">
-</button>
+    <button id="btnFavorito" onclick="toggleFavorito()" style="background: none; border: none; padding: 0; margin: 0 15px; cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
+        <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar" width="24" height="24" style="pointer-events: none; transition: transform 0.1s ease;">
+    </button>
 
     <div class="mini-botoes">
-        <!-- Botão Shuffle (Opcional) -->
+        <!-- Botão Shuffle -->
         <button id="btnShuffle" onclick="alternarShuffle()">
             <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="20" height="20">
         </button>
@@ -106,7 +94,7 @@
             <img src="assets/icons/next.svg" alt="Próxima" width="22" height="22">
         </button>
 
-        <!-- Botão Repeat (Opcional) -->
+        <!-- Botão Repeat -->
         <button id="btnRepeat" onclick="alternarRepeat()">
             <img src="assets/icons/repeat.svg" alt="Repetir" width="20" height="20">
         </button>
@@ -114,19 +102,11 @@
 
 </div>
 
-<!-- Menu de Navegação Inferior com SVGs elegantes -->
+<!-- MENU DE NAVEGAÇÃO INFERIOR AJUSTADO (Mais espaçado, limpo e focado) -->
 <nav class="menu">
-    <button>
+    <button onclick="carregarTela()">
         <img src="assets/icons/home.svg" alt="Início" width="24" height="24"><br>
         <span>Início</span>
-    </button>
-    <button>
-        <img src="assets/icons/search.svg" alt="Buscar" width="24" height="24"><br>
-        <span>Buscar</span>
-    </button>
-    <button>
-        <img src="assets/icons/heart.svg" alt="Favoritos" width="24" height="24"><br>
-        <span>Favoritos</span>
     </button>
     <button>
         <img src="assets/icons/library.svg" alt="Biblioteca" width="24" height="24"><br>
