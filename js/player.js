@@ -6,6 +6,10 @@ const miniTitulo = document.getElementById("miniTitulo");
 const miniArtista = document.getElementById("miniArtista");
 const btnPlay = document.getElementById("btnPlay");
 
+// Novos Elementos Globais para Shuffle e Repeat
+const btnShuffle = document.getElementById("btnShuffle");
+const btnRepeat = document.getElementById("btnRepeat");
+
 // Elementos da Barra de Progresso
 const progressBar = document.getElementById("progressBar");
 const currentTime = document.getElementById("currentTime");
@@ -13,16 +17,23 @@ const durationTime = document.getElementById("durationTime");
 
 // Estado
 let playlist = [];
+let playlistOriginal = []; // Guarda a ordem original para quando desativar o Shuffle
 let musicaAtual = 0;
 let tocando = false;
 
-// Garante o carregamento da playlist e verifica se há alguma pendência global do app.js
+// Estados das novas funções
+let modoShuffle = false;
+let modoRepeat = false; // false = sem repetição, true = repete a música atual
+
+// Garante o carregamento da playlist e inicializa a cópia original
 function carregarPlaylist(lista) { 
-    playlist = lista; 
+    playlist = [...lista]; 
+    playlistOriginal = [...lista];
 }
 
 if (window.playlist && window.playlist.length > 0) {
-    playlist = window.playlist;
+    playlist = [...window.playlist];
+    playlistOriginal = [...window.playlist];
 }
 
 // Toca uma música com base no índice
@@ -38,7 +49,7 @@ function tocar(indice) {
     // Define o áudio
     audioPlayer.src = musica.audio;
     
-    // Exibe o mini-player IMEDIATAMENTE (não espera o áudio carregar/tocar)
+    // Exibe o mini-player IMEDIATAMENTE
     if (miniPlayer) {
         miniPlayer.style.display = "flex";
     }
@@ -54,7 +65,6 @@ function tocar(indice) {
         })
         .catch(erro => {
             console.warn("A reprodução foi impedida pelo navegador ou o áudio falhou:", erro);
-            // Mantém o player aberto, mas visualmente "pausado" para o usuário clicar manualmente
             tocando = false;
             atualizarMiniPlayer();
         });
@@ -102,6 +112,9 @@ function atualizarMiniPlayer() {
         }
     }
     
+    // Atualiza o estado dos botões de Shuffle e Repeat (muda a opacidade/brilho)
+    atualizarBotoesModo();
+    
     // Atualiza o estado visual do coração do favorito
     atualizarBotaoFavorito();
 }
@@ -116,6 +129,68 @@ function anterior() {
     if (playlist.length === 0) return;
     musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
     tocar(musicaAtual); 
+}
+
+// FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
+function alternarShuffle() {
+    if (playlistOriginal.length === 0) return;
+    
+    modoShuffle = !modoShuffle;
+    
+    if (modoShuffle) {
+        // Guarda a música que está tocando agora para não perdê-la de vista
+        const musicaTocandoAgora = playlist[musicaAtual];
+        
+        // Embaralha a playlist (Algoritmo de Fisher-Yates)
+        let playlistEmbaralhada = [...playlistOriginal];
+        for (let i = playlistEmbaralhada.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [playlistEmbaralhada[i], playlistEmbaralhada[j]] = [playlistEmbaralhada[j], playlistEmbaralhada[i]];
+        }
+        
+        // Garante que a música atual seja colocada no início da nova lista embaralhada
+        playlistEmbaralhada = playlistEmbaralhada.filter(m => m.titulo !== musicaTocandoAgora.titulo);
+        playlistEmbaralhada.unshift(musicaTocandoAgora);
+        
+        playlist = playlistEmbaralhada;
+        musicaAtual = 0;
+        console.log("Modo Aleatório Ativado 🔀");
+    } else {
+        // Restaura a ordem original do musicas.json
+        const musicaTocandoAgora = playlist[musicaAtual];
+        playlist = [...playlistOriginal];
+        musicaAtual = playlist.findIndex(m => m.titulo === musicaTocandoAgora.titulo);
+        if (musicaAtual === -1) musicaAtual = 0;
+        console.log("Modo Aleatório Desativado ➡️");
+    }
+    
+    atualizarBotoesModo();
+}
+
+// FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
+function alternarRepeat() {
+    modoRepeat = !modoRepeat;
+    console.log(modoRepeat ? "Repetição Ativada 🔁" : "Repetição Desativada ➡️");
+    atualizarBotoesModo();
+}
+
+// Atualiza o visual dos botões de Shuffle e Repeat
+function atualizarBotoesModo() {
+    if (btnShuffle) {
+        let img = btnShuffle.querySelector("img");
+        if (img) {
+            img.style.filter = modoShuffle ? "brightness(1.3) saturate(10) drop-shadow(0px 0px 3px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
+            img.style.opacity = modoShuffle ? "1" : "0.4";
+        }
+    }
+    
+    if (btnRepeat) {
+        let img = btnRepeat.querySelector("img");
+        if (img) {
+            img.style.filter = modoRepeat ? "brightness(1.3) saturate(10) drop-shadow(0px 0px 3px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
+            img.style.opacity = modoRepeat ? "1" : "0.4";
+        }
+    }
 }
 
 function formatarTempo(segundos) {
@@ -137,9 +212,16 @@ if (audioPlayer) {
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
     });
 
-    // Ao acabar a música atual, pula automaticamente para a próxima
+    // Ao acabar a música atual...
     audioPlayer.addEventListener("ended", () => {
-        proxima();
+        if (modoRepeat) {
+            // Se o Repeat estiver ativo, volta o tempo para zero e toca de novo a mesma música
+            audioPlayer.currentTime = 0;
+            audioPlayer.play().catch(err => console.log(err));
+        } else {
+            // Se não estiver no Repeat, pula normalmente para a próxima
+            proxima();
+        }
     });
 }
 
@@ -172,7 +254,6 @@ function toggleFavorito() {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarBotaoFavorito();
 
-    // Atualiza o carrossel na tela inicial instantaneamente
     if (typeof renderizarFavoritosHorizontais === "function") {
         renderizarFavoritosHorizontais();
     }
@@ -188,7 +269,6 @@ function atualizarBotaoFavorito() {
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
     
-    // Efeito visual sofisticado no coração de favorito
     imgFavorito.style.filter = ehFavorito ? "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
 }
