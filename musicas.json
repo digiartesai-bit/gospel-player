@@ -23,6 +23,7 @@
     "album": "Louvor",
     "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_chuva_vai_cair.mp3",
     "capa": "assets/capas/louvor.png",
+    "capa_musica": "assets/capamusica/a_chuva_vai_cair.jpg",
     "categoria": "Louvor"
   },
   {
