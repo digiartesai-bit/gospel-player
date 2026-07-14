@@ -10,7 +10,7 @@ const API_URL = "https://aged-pine-6b20.digiartesai.workers.dev";
 let musicas = [];
 let filtroAtivo = null;
 
-// Dispara a inicialização assim que o navegador terminar de ler o HTML e Scripts
+// Garante que o aplicativo carregue apenas quando o navegador estiver totalmente pronto
 document.addEventListener("DOMContentLoaded", () => {
     carregarDadosMusicas();
 });
@@ -27,15 +27,14 @@ function carregarDadosMusicas() {
             inicializarApp();
         })
         .catch(err => {
-            console.warn("Erro ao buscar musicas.json. Tentando iniciar de forma segura:", err);
-            // Fallback de segurança vazio para que a página monte mesmo em erros locais
+            console.warn("Aviso: Falha ao puxar JSON. Iniciando em modo de segurança vazio:", err);
             musicas = [];
             inicializarApp();
         });
 }
 
 function inicializarApp() {
-    // Sincroniza a playlist com o player.js carregado
+    // Sincroniza a playlist com o player.js carregado na memória do celular
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
     } else {
@@ -44,7 +43,7 @@ function inicializarApp() {
     carregarTela();
 }
 
-// Renderiza os dados iniciais na tela do app
+// Renderiza as seções visuais da tela
 function carregarTela() {
     const titulo = document.getElementById("tituloListaMusicas");
     if (titulo) titulo.textContent = "Adicionados recentemente";
@@ -52,16 +51,16 @@ function carregarTela() {
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // 1. Ranking Global (Mais Ouvidas)
+    // 1. Carrega Ranking Global
     renderizarMaisOuvidas();
 
-    // 2. Favoritos do Usuário
+    // 2. Carrega Seção Horizontal de Favoritos
     renderizarFavoritosHorizontais();
 
-    // 3. Histórico de Reprodução local (Últimas ouvidas)
+    // 3. Carrega Histórico de Últimas Ouvidas
     renderizarContinueOuvindo();
 
-    // 4. Seção "Adicionados Recentemente" (Mostra as últimas 3 cadastradas)
+    // 4. Carrega as últimas 3 músicas adicionadas na lista vertical
     if (musicas && musicas.length > 0) {
         const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
         
@@ -73,7 +72,7 @@ function carregarTela() {
         });
     }
 
-    // 5. Seção Dinâmica de Álbuns
+    // 5. Carrega os Álbuns Dinamicamente
     const albunsAdicionados = new Set();
     musicas.forEach((musica) => {
         if (musica.album && !albunsAdicionados.has(musica.album)) {
@@ -90,7 +89,7 @@ function carregarTela() {
     });
 }
 
-// Busca o ranking global no Cloudflare KV
+// Puxa as mais ouvida da API do Cloudflare KV
 function renderizarMaisOuvidas() {
     const secaoMaisOuvidas = document.getElementById("secaoMaisOuvidas");
     const maisOuvidas = document.getElementById("maisOuvidas");
@@ -107,7 +106,6 @@ function renderizarMaisOuvidas() {
             if (secaoMaisOuvidas) secaoMaisOuvidas.style.display = "block";
             maisOuvidas.innerHTML = "";
 
-            // Seleciona no máximo as 3 mais tocadas
             const top3 = rankingGlobal.slice(0, 3);
 
             top3.forEach((itemDoRanking) => {
@@ -152,7 +150,7 @@ function renderizarContinueOuvindo() {
 
     historico.forEach((musica) => {
         let indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexOriginal === -1) return; // ignora se não achar a música no banco atual
+        if (indexOriginal === -1) return;
 
         const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
 
@@ -164,7 +162,7 @@ function renderizarContinueOuvindo() {
     });
 }
 
-// Cria os blocos de música na lista vertical
+// Desenha o item individual na lista
 function renderizarItemMusica(musica, index, container) {
     if (!container) return;
     const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
@@ -183,7 +181,7 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Renderiza os favoritos horizontais de forma sincronizada
+// Renderiza os Favoritos horizontais
 function renderizarFavoritosHorizontais() {
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
@@ -199,7 +197,7 @@ function renderizarFavoritosHorizontais() {
 
     favoritos.forEach((musica) => {
         let indexReal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexReal === -1) return; // ignora se não existir mais na lista oficial
+        if (indexReal === -1) return;
 
         const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
 
@@ -211,7 +209,7 @@ function renderizarFavoritosHorizontais() {
     });
 }
 
-// Controla o filtro dinâmico ao clicar nos álbuns
+// Filtra por álbum ao clicar
 function filtrarPorAlbum(nomeAlbum) {
     const titulo = document.getElementById("tituloListaMusicas");
     if (!listaMusicas) return;
