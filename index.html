@@ -75,6 +75,13 @@
 
     <!-- Se a música não tiver capa, você pode usar assets/icons/album.svg como fallback no seu JS -->
     <img id="miniCapa" src="https://placehold.co/60x60" alt="Capa">
+<div class="progress-container">
+    <input type="range" id="progressBar" value="0" min="0" max="100">
+    <div class="progress-times">
+        <span id="currentTime">0:00</span>
+        <span id="durationTime">0:00</span>
+    </div>
+</div>
 
     <div class="mini-info">
         <strong id="miniTitulo">Nenhuma música</strong>
