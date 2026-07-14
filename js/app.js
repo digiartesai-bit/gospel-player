@@ -16,7 +16,7 @@ fetch("musicas.json")
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
-// Renderiza a tela inicial padrão
+// Renderiza a tela inicial padrão com suporte às novas capas dos álbuns
 function carregarTela() {
     // Garante que todas as seções voltem a aparecer
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
@@ -32,17 +32,18 @@ function carregarTela() {
     const albunsAdicionados = new Set();
 
     musicas.forEach((musica, index) => {
-        // Continue Ouvindo
+        // Continue Ouvindo (Card Individual da Música com sua respectiva capa)
         continueOuvindo.innerHTML += `
         <div class="card" onclick="tocar(${index})" style="cursor: pointer;">
             <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
             <p>${musica.titulo}</p>
         </div>`;
 
-        // Seção de Álbuns (Gera os cards clicáveis usando onclick direto)
+        // Seção de Álbuns (Gera o card do Álbum com a capa da música que o representa)
         if (musica.album && !albunsAdicionados.has(musica.album)) {
             albunsAdicionados.add(musica.album);
             
+            // Usamos a mesma capa definida na música para ilustrar o Álbum de forma automática!
             albuns.innerHTML += `
             <div class="card" onclick="filtrarPorAlbum('${musica.album}')" style="cursor: pointer;">
                 <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
