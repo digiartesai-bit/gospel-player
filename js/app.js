@@ -10,45 +10,58 @@ const API_URL = "https://aged-pine-6b20.digiartesai.workers.dev";
 let musicas = [];
 let filtroAtivo = null;
 
-// Carrega as músicas inicialmente do JSON
-fetch("musicas.json")
-.then(response => response.json())
-.then(data => {
-    musicas = data;
-    
-    // Envia de forma segura a playlist para o player.js
+// Dispara a inicialização assim que o navegador terminar de ler o HTML e Scripts
+document.addEventListener("DOMContentLoaded", () => {
+    carregarDadosMusicas();
+});
+
+// Busca as músicas de forma segura
+function carregarDadosMusicas() {
+    fetch("musicas.json")
+        .then(response => {
+            if (!response.ok) throw new Error("Falha ao abrir musicas.json");
+            return response.json();
+        })
+        .then(data => {
+            musicas = data;
+            inicializarApp();
+        })
+        .catch(err => {
+            console.warn("Erro ao buscar musicas.json. Tentando iniciar de forma segura:", err);
+            // Fallback de segurança vazio para que a página monte mesmo em erros locais
+            musicas = [];
+            inicializarApp();
+        });
+}
+
+function inicializarApp() {
+    // Sincroniza a playlist com o player.js carregado
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
     } else {
         window.playlist = musicas;
     }
-    
     carregarTela();
-})
-.catch(err => console.error("Erro ao carregar músicas do JSON:", err));
+}
 
-
-// Renderiza os dados iniciais na tela
+// Renderiza os dados iniciais na tela do app
 function carregarTela() {
-    // Garante que as seções fiquem visíveis ao carregar
-    document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
-
     const titulo = document.getElementById("tituloListaMusicas");
     if (titulo) titulo.textContent = "Adicionados recentemente";
 
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // 1. Renderiza a seção "Mais Ouvidas" vinda do Cloudflare KV
+    // 1. Ranking Global (Mais Ouvidas)
     renderizarMaisOuvidas();
 
-    // 2. Renderiza os Favoritos horizontais
+    // 2. Favoritos do Usuário
     renderizarFavoritosHorizontais();
 
-    // 3. Renderiza o histórico de 3 músicas "Últimas ouvidas"
+    // 3. Histórico de Reprodução local (Últimas ouvidas)
     renderizarContinueOuvindo();
 
-    // 4. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas músicas do JSON)
+    // 4. Seção "Adicionados Recentemente" (Mostra as últimas 3 cadastradas)
     if (musicas && musicas.length > 0) {
         const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
         
@@ -60,7 +73,7 @@ function carregarTela() {
         });
     }
 
-    // 5. Renderiza os Álbuns baseados em todas as músicas
+    // 5. Seção Dinâmica de Álbuns
     const albunsAdicionados = new Set();
     musicas.forEach((musica) => {
         if (musica.album && !albunsAdicionados.has(musica.album)) {
@@ -77,7 +90,7 @@ function carregarTela() {
     });
 }
 
-// Renderiza o Ranking Global puxado do Cloudflare KV
+// Busca o ranking global no Cloudflare KV
 function renderizarMaisOuvidas() {
     const secaoMaisOuvidas = document.getElementById("secaoMaisOuvidas");
     const maisOuvidas = document.getElementById("maisOuvidas");
@@ -139,7 +152,7 @@ function renderizarContinueOuvindo() {
 
     historico.forEach((musica) => {
         let indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexOriginal === -1) indexOriginal = 0;
+        if (indexOriginal === -1) return; // ignora se não achar a música no banco atual
 
         const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
 
@@ -151,7 +164,7 @@ function renderizarContinueOuvindo() {
     });
 }
 
-// Renderiza o item de música da lista vertical de adicionados recentemente
+// Cria os blocos de música na lista vertical
 function renderizarItemMusica(musica, index, container) {
     if (!container) return;
     const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
@@ -170,7 +183,7 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Renderiza os Favoritos horizontais
+// Renderiza os favoritos horizontais de forma sincronizada
 function renderizarFavoritosHorizontais() {
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
@@ -186,7 +199,7 @@ function renderizarFavoritosHorizontais() {
 
     favoritos.forEach((musica) => {
         let indexReal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexReal === -1) indexReal = 0;
+        if (indexReal === -1) return; // ignora se não existir mais na lista oficial
 
         const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
 
@@ -198,7 +211,7 @@ function renderizarFavoritosHorizontais() {
     });
 }
 
-// Filtra por álbum ao clicar na seção de álbuns
+// Controla o filtro dinâmico ao clicar nos álbuns
 function filtrarPorAlbum(nomeAlbum) {
     const titulo = document.getElementById("tituloListaMusicas");
     if (!listaMusicas) return;
