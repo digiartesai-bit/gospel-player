@@ -34,24 +34,21 @@ function carregarTela() {
     const titulo = document.getElementById("tituloListaMusicas");
     if (titulo) titulo.textContent = "Adicionados recentemente";
 
-    if (continueOuvindo) continueOuvindo.innerHTML = "";
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
     // Renderiza os Favoritos de forma Horizontal
     renderizarFavoritosHorizontais();
 
+    // [MODIFICADO] Chama a renderização do histórico gerenciada pelo player.js
+    if (typeof renderizarContinueOuvindo === "function") {
+        renderizarContinueOuvindo();
+    }
+
     const albunsAdicionados = new Set();
 
     musicas.forEach((musica, index) => {
-        // Continue Ouvindo (Cards das Músicas)
-        if (continueOuvindo) {
-            continueOuvindo.innerHTML += `
-            <div class="card" onclick="tocar(${index})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
-                <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
-                <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
-            </div>`;
-        }
+        // [REMOVIDO] Antiga lógica que jogava todas as músicas no "Continue Ouvindo"
 
         // Seção de Álbuns (Cards dos Álbuns)
         if (musica.album && !albunsAdicionados.has(musica.album)) {
@@ -93,7 +90,7 @@ function renderizarFavoritosHorizontais() {
 
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
-    if (favoritos.length === 0) {
+    if (favorites.length === 0) {
         secaoFavoritos.style.display = "none";
         return;
     }
