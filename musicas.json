@@ -22,5 +22,14 @@
     "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_chuva_vai_cair.mp3",
     "capa": "assets/capas/louvor.png",
     "categoria": "Louvor"
-  }
+  },
+  {
+  "titulo": "A Criação",
+  "artista": "AdoraPlay",
+  "album": "Infantil",
+  "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/infantil/A_criacao.mp3",
+  "capa": "assets/capa/infantil.jpg",
+  "categoria": "Infantil"
+}
+
 ]
