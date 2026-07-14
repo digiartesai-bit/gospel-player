@@ -46,7 +46,6 @@ if (window.playlist && window.playlist.length > 0) {
 // Toca uma música com base no índice
 function tocar(indice) {
     if (!playlist || playlist.length === 0) {
-        // Tenta buscar do escopo global do app.js caso a playlist local esteja vazia
         if (typeof musicas !== 'undefined' && musicas.length > 0) {
             playlist = [...musicas];
         } else {
@@ -77,7 +76,7 @@ function tocar(indice) {
         })
         .then(res => res.json())
         .then(data => {
-            console.log("Play gravado com sucesso no Cloudflare KV. Total acumulado:", data.plays);
+            console.log("Play gravado no Cloudflare KV. Total acumulado:", data.plays);
             if (typeof renderizarMaisOuvidas === "function") {
                 renderizarMaisOuvidas();
             }
@@ -86,7 +85,9 @@ function tocar(indice) {
     }, 30000); 
     
     // Configura o áudio
-    audioPlayer.src = musica.audio;
+    if (audioPlayer) {
+        audioPlayer.src = musica.audio;
+    }
     
     // Exibe o mini-player IMEDIATAMENTE
     if (miniPlayer) {
@@ -95,17 +96,18 @@ function tocar(indice) {
     
     atualizarMiniPlayer();
     
-    audioPlayer.play()
-        .then(() => {
-            tocando = true;
-            atualizarMiniPlayer(); 
-        })
-        .catch(erro => {
-            console.warn("A reprodução foi impedida pelo navegador, tentando novamente...", erro);
-            // Tenta forçar o play caso o navegador bloqueie por falta de interação prévia
-            tocando = false;
-            atualizarMiniPlayer();
-        });
+    if (audioPlayer) {
+        audioPlayer.play()
+            .then(() => {
+                tocando = true;
+                atualizarMiniPlayer(); 
+            })
+            .catch(erro => {
+                console.warn("A reprodução necessita de interação do usuário:", erro);
+                tocando = false;
+                atualizarMiniPlayer();
+            });
+    }
 }
 
 // Controla o Play e o Pause com segurança
@@ -137,7 +139,6 @@ function playPause() {
 function atualizarMiniPlayer() {
     if (!miniPlayer) return;
     
-    // Garante que o player seja exibido caso haja uma música selecionada
     miniPlayer.style.display = "flex";
     
     if (!playlist || !playlist[musicaAtual]) return;
@@ -329,7 +330,9 @@ function salvarNoHistorico(musica) {
 
     localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
     
+    // Dispara a atualização no app.js de forma segura
     if (typeof renderizarContinueOuvindo === "function") {
         renderizarContinueOuvindo();
     }
 }
+
