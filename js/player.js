@@ -6,6 +6,11 @@ const miniTitulo = document.getElementById("miniTitulo");
 const miniArtista = document.getElementById("miniArtista");
 const btnPlay = document.getElementById("btnPlay");
 
+// Elementos da Barra de Progresso
+const progressBar = document.getElementById("progressBar");
+const currentTime = document.getElementById("currentTime");
+const durationTime = document.getElementById("durationTime");
+
 // Estado
 let playlist = [];
 let musicaAtual = 0;
@@ -105,12 +110,50 @@ function proxima() {
     tocar(musicaAtual);
 }
 
+// Anterior
 function anterior() {
     musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length;
     tocar(musicaAtual);
 }
 
-// Eventos
+// Função auxiliar para formatar o tempo (0:00)
+function formatarTempo(segundos) {
+    if (isNaN(segundos)) return "0:00";
+    const min = Math.floor(segundos / 60);
+    const seg = Math.floor(segundos % 60);
+    return `${min}:${seg < 10 ? '0' : ''}${seg}`;
+}
+
+// ==========================================
+// MONITORAMENTO E EVENTOS DO PROGRESO
+// ==========================================
+
+// Atualiza a barra de progresso e textos de minutos conforme o áudio toca
+audioPlayer.addEventListener("timeupdate", () => {
+    const current = audioPlayer.currentTime;
+    const duration = audioPlayer.duration;
+
+    if (duration) {
+        // Atualiza o valor do slide (input range) proporcionalmente de 0 a 100
+        progressBar.value = (current / duration) * 100;
+    } else {
+        progressBar.value = 0;
+    }
+
+    // Atualiza os tempos textuais na interface
+    currentTime.textContent = formatarTempo(current);
+    durationTime.textContent = formatarTempo(duration || 0);
+});
+
+// Permite clicar ou arrastar na barra para avançar/voltar a música
+progressBar.addEventListener("input", () => {
+    if (!audioPlayer.duration) return;
+    // Calcula o tempo em segundos com base na posição da barra (0-100)
+    const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+    audioPlayer.currentTime = seekTime;
+});
+
+// Eventos de Navegação e Erro do reprodutor
 audioPlayer.addEventListener("ended", proxima);
 
 // Tratamento de erro de áudio (caso o link do R2 falhe)
