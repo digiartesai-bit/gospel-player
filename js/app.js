@@ -4,7 +4,7 @@ const listaMusicas = document.getElementById("listaMusicas");
 const tituloListaMusicas = document.getElementById("tituloListaMusicas");
 
 let musicas = [];
-let filtroAtivo = null; // Guarda qual álbum/categoria está filtrado no momento
+let filtroAtivo = null;
 
 // Carrega as músicas inicialmente
 fetch("musicas.json")
@@ -18,9 +18,12 @@ fetch("musicas.json")
 
 // Renderiza a tela inicial padrão
 function carregarTela() {
-    // Mostra as seções que o favoritos ou filtros podem ter escondido
+    // Garante que todas as seções voltem a aparecer
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
-    if (tituloListaMusicas) tituloListaMusicas.textContent = "Adicionados recentemente";
+    
+    // Altera o título da lista se o elemento existir
+    const titulo = document.getElementById("tituloListaMusicas") || document.querySelector(".secao h3:last-of-type");
+    if (titulo) titulo.textContent = "Adicionados recentemente";
 
     continueOuvindo.innerHTML = "";
     albuns.innerHTML = "";
@@ -31,34 +34,28 @@ function carregarTela() {
     musicas.forEach((musica, index) => {
         // Continue Ouvindo
         continueOuvindo.innerHTML += `
-        <div class="card" onclick="tocar(${index})">
+        <div class="card" onclick="tocar(${index})" style="cursor: pointer;">
             <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
             <p>${musica.titulo}</p>
         </div>`;
 
-        // Seção de Álbuns Única (Gera os cards clicáveis)
+        // Seção de Álbuns (Gera os cards clicáveis usando onclick direto)
         if (musica.album && !albunsAdicionados.has(musica.album)) {
             albunsAdicionados.add(musica.album);
             
-            // Criamos um elemento div para podermos adicionar o evento de clique de forma limpa
-            const cardAlbum = document.createElement("div");
-            cardAlbum.className = "card";
-            cardAlbum.style.cursor = "pointer";
-            cardAlbum.innerHTML = `
+            albuns.innerHTML += `
+            <div class="card" onclick="filtrarPorAlbum('${musica.album}')" style="cursor: pointer;">
                 <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
                 <p>${musica.album}</p>
-            `;
-            // Ao clicar no card do Álbum, filtra as músicas abaixo!
-            cardAlbum.addEventListener("click", () => filtrarPorAlbum(musica.album));
-            albuns.appendChild(cardAlbum);
+            </div>`;
         }
 
-        // Adicionados Recentemente (Lista completa inicial)
+        // Adicionados Recentemente
         renderizarItemMusica(musica, index, listaMusicas);
     });
 }
 
-// Função auxiliar para renderizar a linha da música
+// Função para renderizar cada linha de música na lista
 function renderizarItemMusica(musica, index, container) {
     container.innerHTML += `
     <div class="musica">
@@ -72,42 +69,43 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Filtra a lista de baixo para mostrar apenas as músicas do álbum clicado
+// Filtra as músicas da seção de baixo com base no álbum clicado
 function filtrarPorAlbum(nomeAlbum) {
-    // Se clicar no mesmo álbum que já está filtrado, desativa o filtro e mostra tudo
+    console.log("Álbum clicado:", nomeAlbum); // Veja se isso aparece no seu console!
+
+    const titulo = document.getElementById("tituloListaMusicas") || document.querySelector(".secao h3:last-of-type");
+    listaMusicas.innerHTML = "";
+
+    // Se clicar no mesmo álbum ativo, desativa o filtro e mostra todas as músicas de novo
     if (filtroAtivo === nomeAlbum) {
         filtroAtivo = null;
-        tituloListaMusicas.textContent = "Adicionados recentemente";
-        listaMusicas.innerHTML = "";
+        if (titulo) titulo.textContent = "Adicionados recentemente";
         musicas.forEach((musica, index) => {
             renderizarItemMusica(musica, index, listaMusicas);
         });
         return;
     }
 
+    // Caso contrário, ativa o filtro do álbum correspondente
     filtroAtivo = nomeAlbum;
-    tituloListaMusicas.textContent = `Músicas de: ${nomeAlbum}`;
-    listaMusicas.innerHTML = "";
+    if (titulo) titulo.textContent = `Músicas de: ${nomeAlbum}`;
 
     musicas.forEach((musica, index) => {
         if (musica.album === nomeAlbum) {
             renderizarItemMusica(musica, index, listaMusicas);
         }
     });
-
-    // Rola a tela suavemente para a lista de músicas filtradas
-    listaMusicas.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Renderiza a lista de Favoritos na tela
 function carregarFavoritosNaTela() {
-    // Esconde os blocos que não pertencem aos favoritos
     continueOuvindo.parentElement.style.display = "none"; 
     albuns.parentElement.style.display = "none";
     
-    if (tituloListaMusicas) tituloListaMusicas.textContent = "Meus Favoritos";
-    listaMusicas.innerHTML = "";
+    const titulo = document.getElementById("tituloListaMusicas") || document.querySelector(".secao h3:last-of-type");
+    if (titulo) titulo.textContent = "Meus Favoritos";
     
+    listaMusicas.innerHTML = "";
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
     if (favoritos.length === 0) {
@@ -123,7 +121,7 @@ function carregarFavoritosNaTela() {
     });
 }
 
-// Configuração de cliques no menu inferior para navegar pelas abas
+// Escuta os cliques no menu inferior
 document.addEventListener("DOMContentLoaded", () => {
     const botoesMenu = document.querySelectorAll(".menu button");
 
@@ -132,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (texto === "Início") {
             botao.addEventListener("click", () => {
-                filtroAtivo = null; // reseta filtros ao voltar para o início
+                filtroAtivo = null;
                 carregarTela();
             });
         } 
