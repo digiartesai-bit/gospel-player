@@ -13,16 +13,11 @@
 
 <body>
 
-<header class="topo">
+<header class="topo" style="justify-content: center; text-align: center;">
     <div class="logo">
         <h1>AdoraPlay</h1>
         <p>Sua música. Sua adoração.</p>
     </div>
-
-    <!-- Botão de perfil com o SVG correspondente -->
-    <button class="perfil">
-        <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24">
-    </button>
 </header>
 
 <!-- SEÇÃO: SEUS FAVORITOS (Inicia oculta e aparece dinamicamente via JS se houver músicas favoritadas) -->
@@ -102,17 +97,19 @@
 
 </div>
 
-<!-- MENU DE NAVEGAÇÃO INFERIOR AJUSTADO (Mais espaçado, limpo e focado) -->
+<!-- MENU DE NAVEGAÇÃO INFERIOR COM OPÇÕES DESATIVADAS E ESTILIZADAS -->
 <nav class="menu">
     <button onclick="carregarTela()">
         <img src="assets/icons/home.svg" alt="Início" width="24" height="24"><br>
         <span>Início</span>
     </button>
-    <button>
+    <!-- Biblioteca Desativada -->
+    <button style="opacity: 0.35; cursor: default;" onclick="event.preventDefault();" tabindex="-1">
         <img src="assets/icons/library.svg" alt="Biblioteca" width="24" height="24"><br>
         <span>Biblioteca</span>
     </button>
-    <button>
+    <!-- Perfil Desativado -->
+    <button style="opacity: 0.35; cursor: default;" onclick="event.preventDefault();" tabindex="-1">
         <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24"><br>
         <span>Perfil</span>
     </button>
