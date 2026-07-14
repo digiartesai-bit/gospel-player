@@ -176,10 +176,14 @@ function alternarRepeat() {
 
 // Atualiza o visual dos botões de Shuffle e Repeat
 function atualizarBotoesModo() {
+    const btnShuffle = document.getElementById("btnShuffle");
+    const btnRepeat = document.getElementById("btnRepeat");
+
     if (btnShuffle) {
         let img = btnShuffle.querySelector("img");
         if (img) {
-            img.style.filter = modoShuffle ? "brightness(1.3) saturate(10) drop-shadow(0px 0px 3px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
+            img.style.transition = "all 0.2s ease";
+            img.style.filter = modoShuffle ? "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))" : "grayscale(100%)";
             img.style.opacity = modoShuffle ? "1" : "0.4";
         }
     }
@@ -187,11 +191,13 @@ function atualizarBotoesModo() {
     if (btnRepeat) {
         let img = btnRepeat.querySelector("img");
         if (img) {
-            img.style.filter = modoRepeat ? "brightness(1.3) saturate(10) drop-shadow(0px 0px 3px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
+            img.style.transition = "all 0.2s ease";
+            img.style.filter = modoRepeat ? "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))" : "grayscale(100%)";
             img.style.opacity = modoRepeat ? "1" : "0.4";
         }
     }
 }
+
 
 function formatarTempo(segundos) {
     if (isNaN(segundos)) return "0:00";
