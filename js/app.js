@@ -1,3 +1,5 @@
+
+localStorage.clear(); // Limpa o lixo antigo. Remova essa linha após carregar a página uma vez!
 const continueOuvindo = document.getElementById("continueOuvindo");
 const albuns = document.getElementById("albuns");
 const listaMusicas = document.getElementById("listaMusicas");
