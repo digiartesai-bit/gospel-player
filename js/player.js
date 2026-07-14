@@ -30,29 +30,42 @@ let modoRepeat = false;
 
 // Garante o carregamento da playlist dinâmica do app.js
 function carregarPlaylist(lista) { 
-    playlist = [...lista]; 
+    if (Array.isArray(lista)) {
+        playlist = [...lista]; 
+    }
     atualizarBotoesModo();
 }
 
+// Inicialização segura
 if (window.playlist && window.playlist.length > 0) {
     playlist = [...window.playlist];
+} else if (typeof musicas !== 'undefined' && musicas.length > 0) {
+    playlist = [...musicas];
 }
 
 // Toca uma música com base no índice
 function tocar(indice) {
-    if (!playlist || playlist.length === 0) return;
+    if (!playlist || playlist.length === 0) {
+        // Tenta buscar do escopo global do app.js caso a playlist local esteja vazia
+        if (typeof musicas !== 'undefined' && musicas.length > 0) {
+            playlist = [...musicas];
+        } else {
+            console.warn("Nenhuma playlist carregada para reprodução.");
+            return;
+        }
+    }
+    
     if (indice < 0 || indice >= playlist.length) return;
     
     musicaAtual = indice;
     const musica = playlist[indice];
 
     // --- REGRA DE SEGURANÇA (30 SEGUNDOS) ---
-    // Reseta o temporizador anterior caso o usuário pule de música antes dos 30s
     if (tempoPlayTimer) {
         clearTimeout(tempoPlayTimer);
     }
 
-    // Registra imediatamente no histórico local (Continue Ouvindo)
+    // Registra imediatamente no histórico local (Últimas Ouvidas)
     salvarNoHistorico(musica);
 
     // Inicia um novo cronômetro de 30 segundos para disparar para o banco de dados
@@ -65,13 +78,12 @@ function tocar(indice) {
         .then(res => res.json())
         .then(data => {
             console.log("Play gravado com sucesso no Cloudflare KV. Total acumulado:", data.plays);
-            // Atualiza o ranking dinamicamente na tela inicial
             if (typeof renderizarMaisOuvidas === "function") {
                 renderizarMaisOuvidas();
             }
         })
         .catch(err => console.warn("Erro ao computar play global:", err));
-    }, 30000); // 30 segundos em milissegundos
+    }, 30000); 
     
     // Configura o áudio
     audioPlayer.src = musica.audio;
@@ -89,7 +101,8 @@ function tocar(indice) {
             atualizarMiniPlayer(); 
         })
         .catch(erro => {
-            console.warn("A reprodução foi impedida pelo navegador:", erro);
+            console.warn("A reprodução foi impedida pelo navegador, tentando novamente...", erro);
+            // Tenta forçar o play caso o navegador bloqueie por falta de interação prévia
             tocando = false;
             atualizarMiniPlayer();
         });
@@ -97,13 +110,12 @@ function tocar(indice) {
 
 // Controla o Play e o Pause com segurança
 function playPause() {
-    if (!audioPlayer.src) return;
+    if (!audioPlayer || !audioPlayer.src) return;
     
     if (tocando) {
         audioPlayer.pause();
         tocando = false;
         atualizarMiniPlayer();
-        // Se pausar o som, cancela a gravação da audição temporariamente
         if (tempoPlayTimer) {
             clearTimeout(tempoPlayTimer);
         }
@@ -124,6 +136,8 @@ function playPause() {
 // Atualiza o estado visual do player
 function atualizarMiniPlayer() {
     if (!miniPlayer) return;
+    
+    // Garante que o player seja exibido caso haja uma música selecionada
     miniPlayer.style.display = "flex";
     
     if (!playlist || !playlist[musicaAtual]) return;
@@ -210,9 +224,6 @@ function alternarRepeat() {
 
 // Atualiza o visual dos botões de Shuffle e Repeat
 function atualizarBotoesModo() {
-    const btnShuffle = document.getElementById("btnShuffle");
-    const btnRepeat = document.getElementById("btnRepeat");
-
     if (btnShuffle) {
         let img = btnShuffle.querySelector("img");
         if (img) {
@@ -295,8 +306,8 @@ function atualizarBotaoFavorito() {
     const imgFavorito = document.getElementById("imgFavorito");
     if (!imgFavorito) return;
     
+    if (!playlist || !playlist[musicaAtual]) return;
     const musica = playlist[musicaAtual];
-    if (!musica) return;
     
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
@@ -305,7 +316,7 @@ function atualizarBotaoFavorito() {
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
 }
 
-// GESTÃO DE HISTÓRICO (Para o Continue Ouvindo)
+// GESTÃO DE HISTÓRICO (Para o Últimas Ouvidas)
 function salvarNoHistorico(musica) {
     let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
 
