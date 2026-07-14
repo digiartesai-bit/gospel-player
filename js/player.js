@@ -17,7 +17,6 @@ const durationTime = document.getElementById("durationTime");
 
 // Estado
 let playlist = [];
-let playlistOriginal = []; // Guarda a ordem original para quando desativar o Shuffle
 let musicaAtual = 0;
 let tocando = false;
 
@@ -25,15 +24,13 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
-// Garante o carregamento da playlist e inicializa a cópia original
+// Garante o carregamento da playlist
 function carregarPlaylist(lista) { 
     playlist = [...lista]; 
-    playlistOriginal = [...lista];
 }
 
 if (window.playlist && window.playlist.length > 0) {
     playlist = [...window.playlist];
-    playlistOriginal = [...window.playlist];
 }
 
 // Toca uma música com base no índice
@@ -119,51 +116,58 @@ function atualizarMiniPlayer() {
     atualizarBotaoFavorito();
 }
 
+// Pula para a próxima música (Lógica de Shuffle integrada)
 function proxima() { 
     if (playlist.length === 0) return;
-    musicaAtual = (musicaAtual + 1) % playlist.length; 
+
+    if (modoShuffle) {
+        // Escolhe um índice aleatório diferente do atual (para não repetir a mesma música)
+        if (playlist.length > 1) {
+            let novoIndice;
+            do {
+                novoIndice = Math.floor(Math.random() * playlist.length);
+            } while (novoIndice === musicaAtual);
+            musicaAtual = novoIndice;
+        } else {
+            musicaAtual = 0;
+        }
+    } else {
+        // Segue a ordem normal da lista
+        musicaAtual = (musicaAtual + 1) % playlist.length; 
+    }
+    
     tocar(musicaAtual); 
 }
 
+// Volta para a música anterior (Lógica de Shuffle integrada)
 function anterior() { 
     if (playlist.length === 0) return;
-    musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
+
+    if (modoShuffle) {
+        // No modo aleatório, voltar também escolhe uma música aleatória
+        if (playlist.length > 1) {
+            let novoIndice;
+            do {
+                novoIndice = Math.floor(Math.random() * playlist.length);
+            } while (novoIndice === musicaAtual);
+            musicaAtual = novoIndice;
+        } else {
+            musicaAtual = 0;
+        }
+    } else {
+        // Segue a ordem normal voltando
+        musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
+    }
+    
     tocar(musicaAtual); 
 }
 
 // FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
-    if (playlistOriginal.length === 0) return;
-    
     modoShuffle = !modoShuffle;
+    console.log(modoShuffle ? "Modo Aleatório Ativado 🔀" : "Modo Aleatório Desativado ➡️");
     
-    if (modoShuffle) {
-        // Guarda a música que está tocando agora para não perdê-la de vista
-        const musicaTocandoAgora = playlist[musicaAtual];
-        
-        // Embaralha a playlist (Algoritmo de Fisher-Yates)
-        let playlistEmbaralhada = [...playlistOriginal];
-        for (let i = playlistEmbaralhada.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [playlistEmbaralhada[i], playlistEmbaralhada[j]] = [playlistEmbaralhada[j], playlistEmbaralhada[i]];
-        }
-        
-        // Garante que a música atual seja colocada no início da nova lista embaralhada
-        playlistEmbaralhada = playlistEmbaralhada.filter(m => m.titulo !== musicaTocandoAgora.titulo);
-        playlistEmbaralhada.unshift(musicaTocandoAgora);
-        
-        playlist = playlistEmbaralhada;
-        musicaAtual = 0;
-        console.log("Modo Aleatório Ativado 🔀");
-    } else {
-        // Restaura a ordem original do musicas.json
-        const musicaTocandoAgora = playlist[musicaAtual];
-        playlist = [...playlistOriginal];
-        musicaAtual = playlist.findIndex(m => m.titulo === musicaTocandoAgora.titulo);
-        if (musicaAtual === -1) musicaAtual = 0;
-        console.log("Modo Aleatório Desativado ➡️");
-    }
-    
+    // Apenas atualiza o visual do botão (a mágica de pular aleatório acontece no proxima() / anterior())
     atualizarBotoesModo();
 }
 
@@ -197,7 +201,6 @@ function atualizarBotoesModo() {
         }
     }
 }
-
 
 function formatarTempo(segundos) {
     if (isNaN(segundos)) return "0:00";
