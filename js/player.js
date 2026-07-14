@@ -163,6 +163,7 @@ function anterior() {
 }
 
 // FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
+// FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
     modoShuffle = !modoShuffle;
     
@@ -172,8 +173,26 @@ function alternarShuffle() {
     }
     
     console.log(modoShuffle ? "Modo Aleatório Ativado 🔀" : "Modo Aleatório Desativado ➡️");
+    
+    // Força a atualização visual imediata de ambos os botões!
     atualizarBotoesModo();
 }
+
+// FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
+function alternarRepeat() {
+    modoRepeat = !modoRepeat;
+    
+    // Se ativou o Repeat, desativa o Shuffle imediatamente!
+    if (modoRepeat) {
+        modoShuffle = false;
+    }
+    
+    console.log(modoRepeat ? "Repetição Ativada 🔁" : "Repetição Desativada ➡️");
+    
+    // Força a atualização visual imediata de ambos os botões!
+    atualizarBotoesModo();
+}
+
 
 // FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
 function alternarRepeat() {
