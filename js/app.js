@@ -16,6 +16,7 @@ fetch("musicas.json")
 .then(data => {
     musicas = data;
     
+    // Envia de forma segura a playlist para o player.js
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
     } else {
@@ -24,11 +25,12 @@ fetch("musicas.json")
     
     carregarTela();
 })
-.catch(err => console.error("Erro ao carregar músicas:", err));
+.catch(err => console.error("Erro ao carregar músicas do JSON:", err));
 
 
 // Renderiza os dados iniciais na tela
 function carregarTela() {
+    // Garante que as seções fiquem visíveis ao carregar
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
 
     const titulo = document.getElementById("tituloListaMusicas");
@@ -43,18 +45,20 @@ function carregarTela() {
     // 2. Renderiza os Favoritos horizontais
     renderizarFavoritosHorizontais();
 
-    // 3. Renderiza o histórico de 3 músicas "Continue Ouvindo"
+    // 3. Renderiza o histórico de 3 músicas "Últimas ouvidas"
     renderizarContinueOuvindo();
 
     // 4. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas músicas do JSON)
-    const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
-    
-    ultimasAdicionadas.forEach((musica) => {
-        const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
-        if (listaMusicas) {
-            renderizarItemMusica(musica, indexOriginal, listaMusicas);
-        }
-    });
+    if (musicas && musicas.length > 0) {
+        const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
+        
+        ultimasAdicionadas.forEach((musica) => {
+            const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
+            if (listaMusicas) {
+                renderizarItemMusica(musica, indexOriginal, listaMusicas);
+            }
+        });
+    }
 
     // 5. Renderiza os Álbuns baseados em todas as músicas
     const albunsAdicionados = new Set();
@@ -97,13 +101,10 @@ function renderizarMaisOuvidas() {
                 const musicaOriginal = musicas.find(m => m.audio === itemDoRanking.audio);
                 if (musicaOriginal) {
                     const indexOriginal = musicas.findIndex(m => m.audio === musicaOriginal.audio);
-                    
-                    // Prioriza capa_musica (capa individual), cai de volta para capa (álbum)
                     const imagemCapa = musicaOriginal.capa_musica || musicaOriginal.capa || 'assets/icons/album.svg';
 
                     maisOuvidas.innerHTML += `
                     <div class="card" onclick="tocar(${indexOriginal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top; position: relative;">
-                        <!-- Selo de play dourado moderno com contagem total de execuções -->
                         <span style="position: absolute; top: 5px; right: 5px; background: rgba(8, 24, 38, 0.95); color: #d4af37; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 1px solid #d4af37; box-shadow: 0px 2px 4px rgba(0,0,0,0.5); z-index: 10;">
                             ${itemDoRanking.quantidade} ▶
                         </span>
@@ -116,14 +117,14 @@ function renderizarMaisOuvidas() {
             });
         })
         .catch(err => {
-            console.error("Erro ao puxar o ranking global:", err);
+            console.warn("Erro ao puxar o ranking global:", err);
             if (secaoMaisOuvidas) secaoMaisOuvidas.style.display = "none";
         });
 }
 
-// Renderiza a lista de 3 itens no "Continue Ouvindo"
+// Renderiza a lista de 3 itens no "Últimas ouvidas"
 function renderizarContinueOuvindo() {
-    const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
+    const secaoContinue = document.getElementById("secaoContinue");
     if (!continueOuvindo) return;
 
     const historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
@@ -152,6 +153,7 @@ function renderizarContinueOuvindo() {
 
 // Renderiza o item de música da lista vertical de adicionados recentemente
 function renderizarItemMusica(musica, index, container) {
+    if (!container) return;
     const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
     container.innerHTML += `
     <div class="musica">
