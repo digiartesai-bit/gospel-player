@@ -4,75 +4,53 @@ const continueOuvindo = document.getElementById("continueOuvindo");
 const albuns = document.getElementById("albuns");
 const listaMusicas = document.getElementById("listaMusicas");
 
-// Configuração da API do Cloudflare
-const API_URL = "https://aged-pine-6b20.digiartesai.workers.dev";
-
 let musicas = [];
 let filtroAtivo = null;
 
-// Garante que o aplicativo carregue apenas quando o navegador estiver totalmente pronto
-document.addEventListener("DOMContentLoaded", () => {
-    carregarDadosMusicas();
-});
-
-// Busca as músicas de forma segura
-function carregarDadosMusicas() {
-    fetch("musicas.json")
-        .then(response => {
-            if (!response.ok) throw new Error("Falha ao abrir musicas.json");
-            return response.json();
-        })
-        .then(data => {
-            musicas = data;
-            inicializarApp();
-        })
-        .catch(err => {
-            console.warn("Aviso: Falha ao puxar JSON. Iniciando em modo de segurança vazio:", err);
-            musicas = [];
-            inicializarApp();
-        });
-}
-
-function inicializarApp() {
-    // Sincroniza a playlist com o player.js carregado na memória do celular
+// Carrega as músicas do JSON
+fetch("musicas.json")
+.then(response => response.json())
+.then(data => {
+    musicas = data;
+    
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
     } else {
         window.playlist = musicas;
     }
+    
     carregarTela();
-}
+})
+.catch(err => console.error("Erro ao carregar músicas:", err));
 
-// Renderiza as seções visuais da tela
+
+// Renderiza a tela principal
 function carregarTela() {
+    document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
+
     const titulo = document.getElementById("tituloListaMusicas");
     if (titulo) titulo.textContent = "Adicionados recentemente";
 
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // 1. Carrega Ranking Global
-    renderizarMaisOuvidas();
-
-    // 2. Carrega Seção Horizontal de Favoritos
+    // 1. Renderiza os Favoritos horizontais
     renderizarFavoritosHorizontais();
 
-    // 3. Carrega Histórico de Últimas Ouvidas
+    // 2. Renderiza o histórico real de 3 músicas no "Continue Ouvindo"
     renderizarContinueOuvindo();
 
-    // 4. Carrega as últimas 3 músicas adicionadas na lista vertical
-    if (musicas && musicas.length > 0) {
-        const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
-        
-        ultimasAdicionadas.forEach((musica) => {
-            const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
-            if (listaMusicas) {
-                renderizarItemMusica(musica, indexOriginal, listaMusicas);
-            }
-        });
-    }
+    // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
+    const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
+    
+    ultimasAdicionadas.forEach((musica) => {
+        const indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
+        if (listaMusicas) {
+            renderizarItemMusica(musica, indexOriginal, listaMusicas);
+        }
+    });
 
-    // 5. Carrega os Álbuns Dinamicamente
+    // 4. Renderiza a Navegação por Álbum (Mostra a capa padrão do Álbum)
     const albunsAdicionados = new Set();
     musicas.forEach((musica) => {
         if (musica.album && !albunsAdicionados.has(musica.album)) {
@@ -89,53 +67,9 @@ function carregarTela() {
     });
 }
 
-// Puxa as mais ouvida da API do Cloudflare KV
-function renderizarMaisOuvidas() {
-    const secaoMaisOuvidas = document.getElementById("secaoMaisOuvidas");
-    const maisOuvidas = document.getElementById("maisOuvidas");
-    if (!maisOuvidas) return;
-
-    fetch(`${API_URL}/ranking`)
-        .then(res => res.json())
-        .then(rankingGlobal => {
-            if (!rankingGlobal || rankingGlobal.length === 0) {
-                if (secaoMaisOuvidas) secaoMaisOuvidas.style.display = "none";
-                return;
-            }
-
-            if (secaoMaisOuvidas) secaoMaisOuvidas.style.display = "block";
-            maisOuvidas.innerHTML = "";
-
-            const top3 = rankingGlobal.slice(0, 3);
-
-            top3.forEach((itemDoRanking) => {
-                const musicaOriginal = musicas.find(m => m.audio === itemDoRanking.audio);
-                if (musicaOriginal) {
-                    const indexOriginal = musicas.findIndex(m => m.audio === musicaOriginal.audio);
-                    const imagemCapa = musicaOriginal.capa_musica || musicaOriginal.capa || 'assets/icons/album.svg';
-
-                    maisOuvidas.innerHTML += `
-                    <div class="card" onclick="tocar(${indexOriginal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top; position: relative;">
-                        <span style="position: absolute; top: 5px; right: 5px; background: rgba(8, 24, 38, 0.95); color: #d4af37; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 1px solid #d4af37; box-shadow: 0px 2px 4px rgba(0,0,0,0.5); z-index: 10;">
-                            ${itemDoRanking.quantidade} ▶
-                        </span>
-                        <div style="width: 100px; height: 100px; border-radius: 8px; overflow: hidden; position: relative;">
-                            <img src="${imagemCapa}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; display: block;">
-                        </div>
-                        <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musicaOriginal.titulo}</p>
-                    </div>`;
-                }
-            });
-        })
-        .catch(err => {
-            console.warn("Erro ao puxar o ranking global:", err);
-            if (secaoMaisOuvidas) secaoMaisOuvidas.style.display = "none";
-        });
-}
-
-// Renderiza a lista de 3 itens no "Últimas ouvidas"
+// Renderiza a seção de "Continue Ouvindo" (com a capa da música!)
 function renderizarContinueOuvindo() {
-    const secaoContinue = document.getElementById("secaoContinue");
+    const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
     if (!continueOuvindo) return;
 
     const historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
@@ -150,26 +84,28 @@ function renderizarContinueOuvindo() {
 
     historico.forEach((musica) => {
         let indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexOriginal === -1) return;
+        if (indexOriginal === -1) indexOriginal = 0;
 
-        const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
+        // Gera o caminho da capa individual da música de forma dinâmica
+        const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
         continueOuvindo.innerHTML += `
         <div class="card" onclick="tocar(${indexOriginal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
-            <img src="${imagemCapa}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
+            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
             <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
         </div>`;
     });
 }
 
-// Desenha o item individual na lista
+// Renderiza o item de música da lista vertical de adicionados recentemente (com a capa da música!)
 function renderizarItemMusica(musica, index, container) {
-    if (!container) return;
-    const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
+    // Gera o caminho da capa individual de forma dinâmica
+    const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
+
     container.innerHTML += `
     <div class="musica">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="${imagemCapa}" onerror="this.src='assets/icons/album.svg'" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
             <div>
                 <strong>${musica.titulo}</strong><br>
                 <small>${musica.artista}</small>
@@ -181,7 +117,7 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Renderiza os Favoritos horizontais
+// Renderiza os Favoritos horizontais (com a capa da música!)
 function renderizarFavoritosHorizontais() {
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
@@ -197,19 +133,19 @@ function renderizarFavoritosHorizontais() {
 
     favoritos.forEach((musica) => {
         let indexReal = musicas.findIndex(m => m.audio === musica.audio);
-        if (indexReal === -1) return;
+        if (indexReal === -1) indexReal = 0;
 
-        const imagemCapa = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
+        const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
         favoritosHorizontal.innerHTML += `
         <div class="card" onclick="tocar(${indexReal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
-            <img src="${imagemCapa}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
+            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
             <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
         </div>`;
     });
 }
 
-// Filtra por álbum ao clicar
+// Filtra por álbum ao clicar na seção de álbuns
 function filtrarPorAlbum(nomeAlbum) {
     const titulo = document.getElementById("tituloListaMusicas");
     if (!listaMusicas) return;
