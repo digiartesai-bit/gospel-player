@@ -80,15 +80,30 @@ progressBar.addEventListener("input", () => {
 });
 
 // LOGICA DE FAVORITOS
-function toggleFavorito(musica) {
-    if (!musica) return;
+function toggleFavorito() {
+    const musica = playlist[musicaAtual];
+    if (!musica) {
+        console.log("Nenhuma música tocando para favoritar.");
+        return;
+    }
+    
+    console.log("Favoritando/Desfavoritando:", musica.titulo);
+    
     let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const index = favoritos.findIndex(f => f.titulo === musica.titulo);
-    if (index > -1) favoritos.splice(index, 1);
-    else favoritos.push(musica);
+    
+    if (index > -1) {
+        favoritos.splice(index, 1);
+        console.log("Removido dos favoritos.");
+    } else {
+        favoritos.push(musica);
+        console.log("Adicionado aos favoritos.");
+    }
+    
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarBotaoFavorito();
 }
+
 
 function atualizarBotaoFavorito() {
     const imgFavorito = document.getElementById("imgFavorito");
