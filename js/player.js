@@ -10,7 +10,7 @@ const miniPlayer = document.getElementById("miniPlayer");
 const miniCapa = document.getElementById("miniCapa");
 const miniTitulo = document.getElementById("miniTitulo");
 const miniArtista = document.getElementById("miniArtista");
-const btnPlayImg = document.querySelector("#btnPlay img");
+const btnPlay = document.getElementById("btnPlay"); // Botão play/pause
 const imgFavorito = document.getElementById("imgFavorito");
 const progressBar = document.getElementById("progressBar");
 const currentTimeLabel = document.getElementById("currentTime");
@@ -105,10 +105,13 @@ function atualizarInterfacePlayer() {
         miniCapa.src = musica.capa_musica || musica.capa || 'assets/icons/album.svg';
     }
 
-    // Atualiza o botão de Play/Pause
-    if (btnPlayImg) {
-        btnPlayImg.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
-        btnPlayImg.alt = tocando ? "Pausar" : "Reproduzir";
+    // Atualiza a imagem de Play/Pause dentro do botão
+    if (btnPlay) {
+        const imgPlay = btnPlay.querySelector("img");
+        if (imgPlay) {
+            imgPlay.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
+            imgPlay.alt = tocando ? "Pausar" : "Reproduzir";
+        }
     }
 
     atualizarIconeFavorito();
@@ -118,9 +121,12 @@ function atualizarInterfacePlayer() {
 if (audio) {
     audio.addEventListener("timeupdate", () => {
         if (!audio.duration) return;
+        
+        // Calcula o percentual para a barra de progresso
         const progresso = (audio.currentTime / audio.duration) * 100;
         if (progressBar) progressBar.value = progresso;
 
+        // Atualiza os textos do contador na tela
         if (currentTimeLabel) currentTimeLabel.textContent = formatarTempo(audio.currentTime);
         if (durationTimeLabel) durationTimeLabel.textContent = formatarTempo(audio.duration);
     });
@@ -147,38 +153,49 @@ if (progressBar) {
     });
 }
 
-// ATIVAR / DESATIVAR SHUFFLE
+// ATIVAR / DESATIVAR SHUFFLE (Com feedback visual)
 function alternarShuffle() {
     shuffleAtivo = !shuffleAtivo;
     const btnShuffle = document.getElementById("btnShuffle");
     if (btnShuffle) {
-        btnShuffle.style.opacity = shuffleAtivo ? "1" : "0.5";
+        const imgShuffle = btnShuffle.querySelector("img");
+        if (imgShuffle) {
+            imgShuffle.style.opacity = shuffleAtivo ? "1" : "0.35";
+            imgShuffle.style.filter = shuffleAtivo ? "drop-shadow(0px 0px 4px #d4af37)" : "none";
+        }
     }
 }
 
-// ATIVAR / DESATIVAR REPEAT
+// ATIVAR / DESATIVAR REPEAT (Com feedback visual)
 function alternarRepeat() {
     repeatAtivo = !repeatAtivo;
     const btnRepeat = document.getElementById("btnRepeat");
     if (btnRepeat) {
-        btnRepeat.style.opacity = repeatAtivo ? "1" : "0.5";
+        const imgRepeat = btnRepeat.querySelector("img");
+        if (imgRepeat) {
+            imgRepeat.style.opacity = repeatAtivo ? "1" : "0.35";
+            imgRepeat.style.filter = repeatAtivo ? "drop-shadow(0px 0px 4px #d4af37)" : "none";
+        }
     }
 }
 
 // GERENCIAMENTO DE FAVORITOS
 function atualizarIconeFavorito() {
-    if (!imgFavorito || playlist.length === 0) return;
+    const imgFav = document.getElementById("imgFavorito");
+    if (!imgFav || playlist.length === 0) return;
     
     const musica = playlist[indexMusicaAtual];
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const isFavorito = favoritos.some(f => f.audio === musica.audio);
 
     if (isFavorito) {
-        imgFavorito.src = "assets/icons/heart-filled.svg"; // Ícone coração preenchido
-        imgFavorito.style.transform = "scale(1.15)";
+        imgFav.src = "assets/icons/heart-filled.svg"; // Ícone coração preenchido
+        imgFav.style.transform = "scale(1.15)";
+        imgFav.style.filter = "none";
     } else {
-        imgFavorito.src = "assets/icons/heart.svg"; // Ícone normal
-        imgFavorito.style.transform = "scale(1)";
+        imgFav.src = "assets/icons/heart.svg"; // Ícone normal (vazio)
+        imgFav.style.transform = "scale(1)";
+        imgFav.style.filter = "none";
     }
 }
 
@@ -198,30 +215,29 @@ function toggleFavorito() {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarIconeFavorito();
 
-    // Atualiza a tela do app.js se a função de renderizar existir
+    // Atualiza as seções horizontais do app de forma imediata
     if (typeof renderizarFavoritosHorizontais === "function") {
         renderizarFavoritosHorizontais();
     }
 }
 
-// HISTÓRICO DE REPRODUÇÕES (Últimas Ouvidas - Limite de 3)
+// HISTÓRICO DE REPRODUÇÕES (Últimas Ouvidas)
 function salvarNoHistorico(musica) {
     let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
 
-    // Remove para não ter repetições duplicadas próximas
+    // Remove duplicados anteriores
     historico = historico.filter(m => m.audio !== musica.audio);
     
-    // Adiciona na primeira posição (topo)
+    // Adiciona na frente (recente)
     historico.unshift(musica);
 
-    // Mantém apenas os 3 últimos itens
+    // Limita a 3 músicas no histórico
     if (historico.length > 3) {
         historico.pop();
     }
 
     localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
 
-    // Atualiza a tela dinamicamente se a função do app.js existir
     if (typeof renderizarContinueOuvindo === "function") {
         renderizarContinueOuvindo();
     }
@@ -234,5 +250,3 @@ function formatarTempo(segundos) {
     const seg = Math.floor(segundos % 60);
     return `${min}:${seg < 10 ? '0' : ''}${seg}`;
 }
-
-
