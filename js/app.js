@@ -39,7 +39,6 @@ function carregarTela() {
 
     // 2. Renderiza o histórico real de 3 músicas no "Continue Ouvindo"
     renderizarContinueOuvindo();
-
     // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
     const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
     
