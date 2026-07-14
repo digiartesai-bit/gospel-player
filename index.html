@@ -71,7 +71,8 @@
     <div id="listaMusicas"></div>
 </section>
 
-    <div class="mini-player" id="miniPlayer">
+<!-- MINI PLAYER UNIFICADO E CORRIGIDO -->
+<div class="mini-player" id="miniPlayer">
 
     <!-- Se a música não tiver capa, você pode usar assets/icons/album.svg como fallback no seu JS -->
     <img id="miniCapa" src="https://placehold.co/60x60" alt="Capa">
@@ -96,41 +97,6 @@
 
     <div class="mini-botoes">
         <!-- Botão Shuffle (Opcional) -->
-        <button id="btnShuffle" onclick="alternarShuffle()">
-            <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="20" height="20">
-        </button>
-
-        <!-- Botão Anterior -->
-        <button onclick="anterior()">
-            <img src="assets/icons/previous.svg" alt="Anterior" width="22" height="22">
-        </button>
-
-        <!-- Botão Play/Pause dinâmico -->
-        <button id="btnPlay" onclick="playPause()">
-            <img src="assets/icons/play.svg" alt="Reproduzir" width="24" height="24">
-        </button>
-
-        <!-- Botão Próxima -->
-        <button onclick="proxima()">
-            <img src="assets/icons/next.svg" alt="Próxima" width="22" height="22">
-        </button>
-
-        <!-- Botão Repeat (Opcional) -->
-        <button id="btnRepeat" onclick="alternarRepeat()">
-            <img src="assets/icons/repeat.svg" alt="Repetir" width="20" height="20">
-        </button>
-    </div>
-
-</div>
-
-
-    <div class="mini-info">
-        <strong id="miniTitulo">Nenhuma música</strong>
-        <small id="miniArtista">Selecione uma música</small>
-    </div>
-
-    <div class="mini-botoes">
-        <!-- Botão Shuffle (Opcional - útil para o player completo ou mini-player avançado) -->
         <button id="btnShuffle" onclick="alternarShuffle()">
             <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="20" height="20">
         </button>
@@ -184,8 +150,9 @@
 
 <audio id="audioPlayer"></audio>
 
-<script src="js/player.js"></script>
+<!-- Scripts com a ordem de carregamento ideal -->
 <script src="js/app.js"></script>
+<script src="js/player.js"></script>
 
 </body>
 </html>
