@@ -27,7 +27,6 @@ let modoRepeat = false; // false = sem repetição, true = repete a música atua
 // Garante o carregamento da playlist dinâmica do app.js
 function carregarPlaylist(lista) { 
     playlist = [...lista]; 
-    // Se o shuffle já estiver ativo ao carregar uma nova lista, garante a consistência do estado
     atualizarBotoesModo();
 }
 
@@ -45,7 +44,7 @@ function tocar(indice) {
     musicaAtual = indice;
     const musica = playlist[indice];
     
-    // [NOVO] Salva a música tocada no histórico do "Continue Ouvindo"
+    // [LOGICA] Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
     
     // Define o áudio
@@ -126,7 +125,6 @@ function proxima() {
     if (playlist.length === 0) return;
 
     if (modoShuffle) {
-        // Escolhe um índice aleatório dentro da playlist ativa na tela
         if (playlist.length > 1) {
             let novoIndice;
             do {
@@ -137,7 +135,6 @@ function proxima() {
             musicaAtual = 0;
         }
     } else {
-        // Segue a ordem normal da lista ativa na tela
         musicaAtual = (musicaAtual + 1) % playlist.length; 
     }
     
@@ -168,28 +165,18 @@ function anterior() {
 // FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
     modoShuffle = !modoShuffle;
-    
-    // Se ativou o Shuffle, desativa o Repeat imediatamente para evitar conflito!
     if (modoShuffle) {
         modoRepeat = false;
     }
-    
-    console.log(modoShuffle ? "Modo Aleatório Ativado 🔀" : "Modo Aleatório Desativado ➡️");
-    
-    // Força a atualização visual imediata de ambos os botões!
     atualizarBotoesModo();
 }
 
 // FUNÇÃO: Ativa / Desativa a Repetição (Repeat de 1 música)
 function alternarRepeat() {
     modoRepeat = !modoRepeat;
-    
-    // Se ativou o Repeat, desativa o Shuffle imediatamente!
     if (modoRepeat) {
         modoShuffle = false;
     }
-    
-    console.log(modoRepeat ? "Repetição Ativada 🔁" : "Repetição Desativada ➡️");
     atualizarBotoesModo();
 }
 
@@ -236,7 +223,6 @@ if (audioPlayer) {
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
     });
 
-    // Ao acabar a música atual...
     audioPlayer.addEventListener("ended", () => {
         if (modoRepeat) {
             audioPlayer.currentTime = 0;
@@ -255,22 +241,18 @@ if (progressBar) {
     });
 }
 
-// LÓGICA DE FAVORITOS (Comunicação bidirecional com o app.js)
+// LÓGICA DE FAVORITOS
 function toggleFavorito() {
     if (!playlist || !playlist[musicaAtual]) return;
     const musica = playlist[musicaAtual];
-
-    console.log("Favoritando/Desfavoritando:", musica.titulo);
     
     let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const index = favoritos.findIndex(f => f.titulo.trim() === musica.titulo.trim());
     
     if (index > -1) {
         favoritos.splice(index, 1);
-        console.log("Removido dos favoritos.");
     } else {
         favoritos.push(musica);
-        console.log("Adicionado aos favoritos.");
     }
     
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
@@ -295,82 +277,28 @@ function atualizarBotaoFavorito() {
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
 }
 
-
-// ==========================================
-// [NOVO] LÓGICA DO "CONTINUE OUVINDO" (History)
-// ==========================================
+// ==================================================
+// 💾 GESTÃO DE HISTÓRICO (Para o Continue Ouvindo)
+// ==================================================
 
 function salvarNoHistorico(musica) {
     let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
 
-    // Remove para não ter duplicado e garantir que fique no topo da lista
+    // Remove duplicados para mover a música tocada para o topo
     historico = historico.filter(m => m.audio !== musica.audio);
 
-    // Adiciona ao topo
+    // Insere no início
     historico.unshift(musica);
 
-    // Exibe no máximo as últimas 4 músicas tocadas
-    if (historico.length > 4) {
+    // Limita estritamente às 3 últimas músicas ouvidas
+    if (historico.length > 3) {
         historico.pop();
     }
 
     localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
-    renderizarContinueOuvindo();
-}
-
-function renderizarContinueOuvindo() {
-    // Procura por classe ou por id para garantir a compatibilidade com seu HTML
-    const container = document.querySelector('.continue-ouvindo-container') || document.getElementById('continue-ouvindo-container');
-    const secaoContinue = document.querySelector('.continue-ouvindo') || document.getElementById('secao-continue');
-
-    const historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
-
-    // Se o histórico estiver vazio, esconde a seção para deixar a tela limpa
-    if (historico.length === 0) {
-        if (secaoContinue) secaoContinue.style.display = 'none';
-        return;
-    } else {
-        if (secaoContinue) secaoContinue.style.display = 'block';
-    }
-
-    if (!container) return;
-    container.innerHTML = '';
     
-    historico.forEach(musica => {
-        const card = document.createElement('div');
-        card.className = 'card-musica-recente';
-        card.style.cursor = 'pointer';
-        
-        // Clique para tocar a música diretamente do histórico
-        card.onclick = () => {
-            tocarMusicaDoHistorico(musica);
-        };
-
-        card.innerHTML = `
-            <img src="${musica.capa_musica || musica.capa || 'assets/icons/album.svg'}" alt="${musica.titulo}">
-            <div class="info">
-                <h4>${musica.titulo}</h4>
-                <p>${musica.artista}</p>
-            </div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-// Auxiliar para tocar a música do histórico de forma segura
-function tocarMusicaDoHistorico(musica) {
-    // Verifica se ela já existe na playlist ativa para tocar pelo índice correto
-    const index = playlist.findIndex(m => m.audio === musica.audio);
-    if (index > -1) {
-        tocar(index);
-    } else {
-        // Se ela não estiver na playlist atual (mudou de aba), adiciona e toca
-        playlist.push(musica);
-        tocar(playlist.length - 1);
+    // Atualiza a interface do app.js de forma sincronizada se ela existir
+    if (typeof renderizarContinueOuvindo === "function") {
+        renderizarContinueOuvindo();
     }
 }
-
-// Garante a renderização correta assim que o app carregar na tela
-document.addEventListener("DOMContentLoaded", () => {
-    renderizarContinueOuvindo();
-});
