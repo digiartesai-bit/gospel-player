@@ -16,48 +16,107 @@ let playlist = [];
 let musicaAtual = 0;
 let tocando = false;
 
-function carregarPlaylist(lista) { playlist = lista; }
+// Garante o carregamento da playlist e verifica se há alguma pendência global do app.js
+function carregarPlaylist(lista) { 
+    playlist = lista; 
+}
 
+if (window.playlist && window.playlist.length > 0) {
+    playlist = window.playlist;
+}
+
+// Toca uma música com base no índice
 function tocar(indice) {
     if (!playlist || playlist.length === 0) return;
+    
+    // Proteção contra índices inválidos
+    if (indice < 0 || indice >= playlist.length) return;
+    
     musicaAtual = indice;
     const musica = playlist[indice];
-    audioPlayer.src = musica.audio;
-    miniPlayer.style.display = "flex";
-    audioPlayer.play().then(() => {
-        tocando = true;
-        atualizarMiniPlayer();
-    });
-}
-
-function playPause() {
-    if (!audioPlayer.src) return;
-    if (tocando) { audioPlayer.pause(); tocando = false; }
-    else { audioPlayer.play(); tocando = true; }
-    atualizarMiniPlayer();
-}
-
-function atualizarMiniPlayer() {
-    miniPlayer.style.display = "flex";
-    if (!playlist || !playlist[musicaAtual]) return;
-    const musica = playlist[musicaAtual];
-    miniTitulo.textContent = musica.titulo;
-    miniArtista.textContent = musica.artista;
-    miniCapa.src = musica.capa || "assets/icons/album.svg";
     
-    // Atualiza ícone Play/Pause
-    const btnPlay = document.getElementById("btnPlay");
-    if (btnPlay) {
-        let img = btnPlay.querySelector("img");
-        if (img) img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
+    // Define o áudio
+    audioPlayer.src = musica.audio;
+    
+    // Exibe o mini-player IMEDIATAMENTE (não espera o áudio carregar/tocar)
+    if (miniPlayer) {
+        miniPlayer.style.display = "flex";
     }
     
-    // ATUALIZA O CORAÇÃO SEMPRE QUE MUDAR A MÚSICA
+    // Atualiza as informações na tela na mesma hora
+    atualizarMiniPlayer();
+    
+    // Inicia a reprodução tratando possíveis bloqueios do navegador
+    audioPlayer.play()
+        .then(() => {
+            tocando = true;
+            atualizarMiniPlayer(); // Atualiza novamente para garantir o ícone de Pause
+        })
+        .catch(erro => {
+            console.warn("A reprodução foi impedida pelo navegador ou o áudio falhou:", erro);
+            // Mantém o player aberto, mas visualmente "pausado" para o usuário clicar manualmente
+            tocando = false;
+            atualizarMiniPlayer();
+        });
+}
+
+// Controla o Play e o Pause com segurança
+function playPause() {
+    if (!audioPlayer.src) return;
+    
+    if (tocando) {
+        audioPlayer.pause();
+        tocando = false;
+        atualizarMiniPlayer();
+    } else {
+        audioPlayer.play()
+            .then(() => {
+                tocando = true;
+                atualizarMiniPlayer();
+            })
+            .catch(erro => {
+                console.error("Erro ao tentar reproduzir:", erro);
+                tocando = false;
+                atualizarMiniPlayer();
+            });
+    }
+}
+
+// Atualiza o estado visual do player
+function atualizarMiniPlayer() {
+    if (!miniPlayer) return;
+    miniPlayer.style.display = "flex";
+    
+    if (!playlist || !playlist[musicaAtual]) return;
+    const musica = playlist[musicaAtual];
+    
+    if (miniTitulo) miniTitulo.textContent = musica.titulo;
+    if (miniArtista) miniArtista.textContent = musica.artista;
+    if (miniCapa) miniCapa.src = musica.capa || "assets/icons/album.svg";
+    
+    // Atualiza o ícone do botão de Play/Pause dinamicamente
+    if (btnPlay) {
+        let img = btnPlay.querySelector("img");
+        if (img) {
+            img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
+        }
+    }
+    
+    // Atualiza o estado visual do coração do favorito
     atualizarBotaoFavorito();
 }
 
-function proxima() { musicaAtual = (musicaAtual + 1) % playlist.length; tocar(musicaAtual); }
-function anterior() { musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; tocar(musicaAtual); }
+function proxima() { 
+    if (playlist.length === 0) return;
+    musicaAtual = (musicaAtual + 1) % playlist.length; 
+    tocar(musicaAtual); 
+}
+
+function anterior() { 
+    if (playlist.length === 0) return;
+    musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
+    tocar(musicaAtual); 
+}
 
 function formatarTempo(segundos) {
     if (isNaN(segundos)) return "0:00";
@@ -66,20 +125,33 @@ function formatarTempo(segundos) {
     return `${min}:${seg < 10 ? '0' : ''}${seg}`;
 }
 
-// Eventos de Progresso
-audioPlayer.addEventListener("timeupdate", () => {
-    const current = audioPlayer.currentTime;
-    const duration = audioPlayer.duration;
-    progressBar.value = duration ? (current / duration) * 100 : 0;
-    currentTime.textContent = formatarTempo(current);
-    durationTime.textContent = formatarTempo(duration || 0);
-});
+// Eventos de Progresso do Áudio
+if (audioPlayer) {
+    audioPlayer.addEventListener("timeupdate", () => {
+        const current = audioPlayer.currentTime;
+        const duration = audioPlayer.duration;
+        if (progressBar) {
+            progressBar.value = duration ? (current / duration) * 100 : 0;
+        }
+        if (currentTime) currentTime.textContent = formatarTempo(current);
+        if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
+    });
 
-progressBar.addEventListener("input", () => {
-    if (audioPlayer.duration) audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-});
+    // Ao acabar a música atual, pula automaticamente para a próxima
+    audioPlayer.addEventListener("ended", () => {
+        proxima();
+    });
+}
 
-// LOGICA DE FAVORITOS CORRIGIDA
+if (progressBar) {
+    progressBar.addEventListener("input", () => {
+        if (audioPlayer && audioPlayer.duration) {
+            audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+        }
+    });
+}
+
+// LÓGICA DE FAVORITOS (Comunicação bidirecional com o app.js)
 function toggleFavorito() {
     if (!playlist || !playlist[musicaAtual]) return;
     const musica = playlist[musicaAtual];
@@ -100,7 +172,7 @@ function toggleFavorito() {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarBotaoFavorito();
 
-    // Isso garante que o carrossel do topo atualize em tempo real!
+    // Atualiza o carrossel na tela inicial instantaneamente
     if (typeof renderizarFavoritosHorizontais === "function") {
         renderizarFavoritosHorizontais();
     }
@@ -109,11 +181,14 @@ function toggleFavorito() {
 function atualizarBotaoFavorito() {
     const imgFavorito = document.getElementById("imgFavorito");
     if (!imgFavorito) return;
+    
     const musica = playlist[musicaAtual];
     if (!musica) return;
+    
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
     
+    // Efeito visual sofisticado no coração de favorito
     imgFavorito.style.filter = ehFavorito ? "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
 }
