@@ -81,12 +81,15 @@ progressBar.addEventListener("input", () => {
 
 // LOGICA DE FAVORITOS
 function toggleFavorito() {
-    const musica = playlist[musicaAtual];
-    if (!musica) {
-        console.log("Nenhuma música tocando para favoritar.");
-        return;
-    }
+    // ... (sua lógica atual para salvar/remover do localStorage e trocar o ícone do coração) ...
     
+    // LINHA PARA ADICIONAR NO FINAL DA FUNÇÃO:
+    // Isso garante que o carrossel do topo atualize em tempo real!
+    if (typeof renderizarFavoritosHorizontais === "function") {
+        renderizarFavoritosHorizontais();
+    }
+}
+
     console.log("Favoritando/Desfavoritando:", musica.titulo);
     
     let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
