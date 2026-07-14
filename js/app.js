@@ -16,12 +16,12 @@ fetch("musicas.json")
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
-// Renderiza a tela inicial padrão com suporte às novas capas dos álbuns
+
+// Renderiza a tela inicial padronizada e com tamanhos corrigidos
 function carregarTela() {
     // Garante que todas as seções voltem a aparecer
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
     
-    // Altera o título da lista se o elemento existir
     const titulo = document.getElementById("tituloListaMusicas") || document.querySelector(".secao h3:last-of-type");
     if (titulo) titulo.textContent = "Adicionados recentemente";
 
@@ -32,22 +32,21 @@ function carregarTela() {
     const albunsAdicionados = new Set();
 
     musicas.forEach((musica, index) => {
-        // Continue Ouvindo (Card Individual da Música com sua respectiva capa)
+        // Continue Ouvindo (Mantendo o seu padrão que já funciona)
         continueOuvindo.innerHTML += `
         <div class="card" onclick="tocar(${index})" style="cursor: pointer;">
-            <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
-            <p>${musica.titulo}</p>
+            <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px;">
+            <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${musica.titulo}</p>
         </div>`;
 
-        // Seção de Álbuns (Gera o card do Álbum com a capa da música que o representa)
+        // Seção de Álbuns (Forçando tamanho idêntico e encaixe perfeito da imagem!)
         if (musica.album && !albunsAdicionados.has(musica.album)) {
             albunsAdicionados.add(musica.album);
             
-            // Usamos a mesma capa definida na música para ilustrar o Álbum de forma automática!
             albuns.innerHTML += `
-            <div class="card" onclick="filtrarPorAlbum('${musica.album}')" style="cursor: pointer;">
-                <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'">
-                <p>${musica.album}</p>
+            <div class="card" onclick="filtrarPorAlbum('${musica.album}')" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
+                <img src="${musica.capa || 'assets/icons/album.svg'}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; display: block;">
+                <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.album}</p>
             </div>`;
         }
 
