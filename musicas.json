@@ -52,5 +52,14 @@
     "capa": "assets/capas/sertanejo.png",
     "capa_musica": "assets/capamusica/apalavradedeus.png",
     "categoria": "Sertanejo"
+    },
+    {
+    "titulo": "A estrela de Belém ",
+    "artista": "AdoraPlay",
+    "album": "Infaltil",
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/infantil/A_estrela_de_Belem.mp3",
+    "capa": "assets/capas/Infantil.png",
+    "capa_musica": "assets/capamusica/estrelabelem.jpg",
+    "categoria": "Louvor"
     }
 ]
