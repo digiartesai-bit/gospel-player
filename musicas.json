@@ -43,5 +43,14 @@
     "capa": "assets/capas/Louvor.png",
     "capa_musica": "assets/capamusica/reis93.jpg",
     "categoria": "Louvor"
-  }
+  },
+    {
+    "titulo": "A palavra de Deus",
+    "artista": "AdoraPlay",
+    "album": "Serteneja",
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/sertaneja/A%20Palavra_de_Deus_eo_caminho.mp3",
+    "capa": "assets/capas/Sertaneja.png",
+    "capa_musica": "assets/capamusica/palavradedeus.jpg",
+    "categoria": "Sertaneja"
+    }
 ]
