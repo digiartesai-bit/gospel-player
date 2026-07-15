@@ -68,5 +68,15 @@
     "capa": "assets/capas/Infantil.png",
     "capa_musica": "assets/capamusica/estrelabelem.jpg",
     "categoria": "Infantil"
-    }
+    },
+  {
+    "id": 8,
+    "titulo": "A fidelidade de Deus",
+    "artista": "AdoraPlay",
+    "album": "Adoração",
+    "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/adoracao/A_Fidelidade_de_Deus.mp3",
+    "capa": "assets/capas/adoracao.jpg",
+    "capa_musica": "assets/capamusica/fidelidadedeus.jpg",
+    "categoria": "Adoracao"
+  }
 ]
