@@ -48,6 +48,11 @@ if (window.playlist && window.playlist.length > 0) {
     playlist = [...window.playlist];
 }
 
+function reiniciarControleStream() {
+    streamRegistrado = false;
+    tempoRealOuvido = 0;
+    ultimoTempo = 0;
+}
 // Toca uma música com base no índice
 function tocar(indice) {
     if (!playlist || playlist.length === 0) return;
