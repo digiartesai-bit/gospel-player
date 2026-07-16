@@ -91,10 +91,35 @@ function tocar(indice) {
         });
 }
 
-// Controla o Play e o Pause com segurança
+// Controla o Play e o Pause com segurança inteligente
 function playPause() {
-    if (!audioPlayer.src) return;
-    
+    // 1. SE NÃO HOUVER MÚSICA CARREGADA (Player está vazio/com texto padrão no início)
+    if (!audioPlayer.src || audioPlayer.src === "" || audioPlayer.src === window.location.href) {
+        if (typeof musicas !== "undefined" && musicas.length > 0) {
+            
+            // Carrega toda a lista de músicas disponível para que a navegação funcione
+            carregarPlaylist(musicas);
+            
+            let indiceParaTocar = 0; // Início padrão (primeira música) caso não ache o ranking
+
+            // Busca dinamicamente qual é a música TOP 1 do ranking
+            if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
+                const top1 = maisOuvidas[0]; 
+                
+                // Localiza o índice da Top 1 na lista principal de músicas
+                const idxTop1 = musicas.findIndex(m => m.id === top1.id);
+                if (idxTop1 >= 0) {
+                    indiceParaTocar = idxTop1;
+                }
+            }
+
+            // Inicia a reprodução da Top 1
+            tocar(indiceParaTocar);
+            return; // Interrompe para evitar conflito com a lógica padrão abaixo
+        }
+    }
+
+    // 2. LÓGICA PADRÃO (Para quando uma música já está carregada/em andamento)
     if (tocando) {
         audioPlayer.pause();
         tocando = false;
@@ -206,12 +231,11 @@ function alternarRepeat() {
     atualizarBotoesModo();
 }
 
-// Atualiza o visual dos botões de Shuffle e Repeat
+// Visual dos botões de Shuffle e Repeat com brilho dourado inteligente
 function atualizarBotoesModo() {
     const btnShuffle = document.getElementById("btnShuffle");
     const btnRepeat = document.getElementById("btnRepeat");
 
-    // Filtros de cor e brilho para botões ligados (Dourado Intenso) vs desligados (Dourado Translúcido)
     const filtroAtivo = "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))";
     const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
 
@@ -383,6 +407,6 @@ async function registrarReproducao(id) {
             body: JSON.stringify({ id })
         });
     } catch (erro) {
-        alert(erro.message);
+        console.warn("Falha ao computar reprodução:", erro.message);
     }
 }
