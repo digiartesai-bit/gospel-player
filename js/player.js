@@ -475,7 +475,7 @@ if (audioPlayer) {
 
 
 
-    audioPlayer.addEventListener("ended", () => {
+  /*  audioPlayer.addEventListener("ended", () => {
 
 
         // Segurança caso o navegador não dispare o último timeupdate
@@ -506,9 +506,40 @@ if (audioPlayer) {
 
         }
 
-    });
+    });*/
 
+audioPlayer.addEventListener("ended", () => {
 
+    // Finalizou uma execução normal
+    if (
+        !streamRegistrado &&
+        playlist[musicaAtual] &&
+        audioPlayer.duration > 0 &&
+        (tempoRealOuvido / audioPlayer.duration) >= 0.90
+    ) {
+        registrarReproducao(playlist[musicaAtual].id);
+        streamRegistrado = true;
+    }
+
+    if (modoRepeat) {
+
+        // Reinicia o controle para uma nova audição
+        streamRegistrado = false;
+        tempoRealOuvido = 0;
+        ultimoTempo = 0;
+
+        audioPlayer.currentTime = 0;
+
+        audioPlayer.play()
+            .catch(err => console.log(err));
+
+    } else {
+
+        proxima();
+
+    }
+
+});
 
     audioPlayer.addEventListener("error", () => {
 
