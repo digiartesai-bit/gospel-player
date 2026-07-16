@@ -119,10 +119,30 @@ function voltarParaHome() {
 
 function tocarEstaMusica(musica) {
     if (!musica) return;
-    if (typeof carregarPlaylist === "function") carregarPlaylist(musicas);
+    
+    // 1. Carrega a playlist no player para o usuário poder passar de faixa
+    if (typeof carregarPlaylist === "function") {
+        carregarPlaylist(musicas);
+    }
+    
+    // 2. Descobre a posição da música na lista geral
     const idx = musicas.findIndex(m => m.id === musica.id);
-    if (typeof tocar === "function") tocar(idx >= 0 ? idx : 0);
+    
+    // 3. Toca a música usando o player
+    if (typeof tocar === "function") {
+        tocar(idx >= 0 ? idx : 0);
+    }
+
+    // 4. BLINDAGEM: Como o player acabou de rodar e forçou a atualização das seções,
+    // nós "escondemos" elas novamente logo em seguida, mantendo a tela de lançamentos limpa!
+    const telaLancamentos = document.getElementById("telaLancamentos");
+    if (telaLancamentos && telaLancamentos.style.display === "block") {
+        document.querySelectorAll(".secao").forEach(secao => {
+            secao.style.display = "none";
+        });
+    }
 }
+
 
 // ==========================================
 // MONITOR DE CLIQUES GLOBAL (BOTAO INÍCIO / MENUS)
