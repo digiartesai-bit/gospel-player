@@ -332,6 +332,8 @@ function salvarNoHistorico(musica) {
 
 // Envia o id da música para a API de estatísticas
 async function registrarReproducao(id) {
+    console.log("Registrando reprodução:", id);
+
     try {
         await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
             method: "POST",
