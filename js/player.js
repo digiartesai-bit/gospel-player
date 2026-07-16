@@ -26,8 +26,8 @@ let modoRepeat = false; // false = sem repetição, true = repete a música atua
 
 // Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
 let streamRegistrado = false;
-let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
-let relogioStream = null;       // Identificador do setInterval do relógio
+// let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
+// let relogioStream = null;       // Identificador do setInterval do relógio
 
 // Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
@@ -267,7 +267,7 @@ function formatarTempo(segundos) {
 if (audioPlayer) {
     
     // Função para iniciar a contagem física dos segundos
-    function iniciarCronometroStream() {
+   /* function iniciarCronometroStream() {
         if (relogioStream) clearInterval(relogioStream);
         
         relogioStream = setInterval(() => {
@@ -281,7 +281,7 @@ if (audioPlayer) {
                 }
             }
         }, 1000);
-    }
+    } */
 
     // Função para parar o cronômetro
     function pararCronometroStream() {
@@ -292,7 +292,7 @@ if (audioPlayer) {
     }
 
     // Inicia contagem ao dar play
-    audioPlayer.addEventListener("play", () => {
+   /* audioPlayer.addEventListener("play", () => {
         if (!streamRegistrado) {
             iniciarCronometroStream();
         }
@@ -301,7 +301,7 @@ if (audioPlayer) {
     // Pausa contagem ao pausar
     audioPlayer.addEventListener("pause", () => {
         pararCronometroStream();
-    });
+    }); */
 
     // Mantemos o timeupdate para atualizar o visual da barra de progresso
     audioPlayer.addEventListener("timeupdate", () => {
@@ -317,7 +317,7 @@ if (audioPlayer) {
     });
 
     // Quando a música acaba
-    audioPlayer.addEventListener("ended", () => {
+   /* audioPlayer.addEventListener("ended", () => {
         pararCronometroStream();
         if (modoRepeat) {
             audioPlayer.currentTime = 0;
@@ -325,7 +325,28 @@ if (audioPlayer) {
         } else {
             proxima();
         }
-    });
+    });*/
+  audioPlayer.addEventListener("ended", () => {
+
+    // Se por alguma pequena imprecisão ainda não registrou,
+    // registra ao terminar naturalmente a música.
+    if (
+        !streamRegistrado &&
+        playlist[musicaAtual] &&
+        audioPlayer.duration > 0 &&
+        (tempoRealOuvido / audioPlayer.duration) >= 0.90
+    ) {
+        registrarReproducao(playlist[musicaAtual].id);
+        streamRegistrado = true;
+    }
+
+    if (modoRepeat) {
+        tocar(musicaAtual);
+    } else {
+        proxima();
+    }
+
+});
 }
 
 if (progressBar) {
