@@ -1,338 +1,393 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+/* RESET E FONTES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; /* Fonte mais moderna */
+    -webkit-tap-highlight-color: transparent; /* Remove aquele quadrado azul ao clicar no celular */
 }
 
-body{
-    background:#081826;
-    color:#ffffff;
-    padding-bottom:180px;
+/* OCULTAR SCROLLBAR NATIVA PARA CARROSSEIS MAIS LIMPOS */
+::-webkit-scrollbar {
+    display: none;
 }
 
-.topo{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px;
+body {
+    background: linear-gradient(180deg, #0d233a 0%, #050e16 100%);
+    background-attachment: fixed;
+    color: #ffffff;
+    padding-bottom: 200px; /* Espaço pro player e menu */
+    min-height: 100vh;
 }
 
-.logo h1{
-    color:#D4AF37;
-    font-size:28px;
+/* CABEÇALHO */
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 20px 10px 20px;
 }
 
-.logo p{
-    color:#cfcfcf;
-    font-size:14px;
-    margin-top:4px;
+.logo h1 {
+    color: #D4AF37;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-/* Ajustado para centralizar o SVG do perfil */
-.perfil{
-    width:45px;
-    height:45px;
-    border:none;
-    border-radius:50%;
-    background:#12304a;
+.logo p {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-top: -2px;
+}
+
+.perfil {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    backdrop-filter: blur(5px);
 }
 
-.pesquisa{
-    padding:0 20px 20px;
+/* BANNER DE DESTAQUE */
+.banner {
+    margin: 15px 20px;
+    padding: 25px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1f4f77 0%, #12304a 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.pesquisa input{
-    width:100%;
-    padding:14px;
-    border:none;
-    border-radius:14px;
-    background:#10263b;
-    color:white;
-    font-size:16px;
+.banner small {
+    display: inline-block;
+    background: rgba(212, 175, 55, 0.2);
+    color: #D4AF37;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
 }
 
-.banner{
-    margin:0 20px;
-    padding:25px;
-    border-radius:20px;
-    background:linear-gradient(135deg,#12304a,#1f4f77);
+.banner h2 {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
 }
 
-.banner h2{
-    color:#D4AF37;
-    margin-bottom:10px;
+.banner p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-bottom: 18px;
+    line-height: 1.4;
+    max-width: 80%;
 }
 
-.banner p{
-    margin-bottom:20px;
-    line-height:1.5;
-}
-
-/* Alinhamento perfeito do botão de Play do banner principal */
 .banner button {
     background: #D4AF37;
     color: #081826;
     border: none;
-    padding: 12px 22px;
-    border-radius: 12px;
-    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    transition: transform 0.2s;
 }
 
-/* Inverte a cor do play no banner para contraste (preto/azul escuro) */
 .banner button img {
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 }
 
-.secao{
-    margin:30px 20px;
+.banner button:active {
+    transform: scale(0.95);
 }
 
-.secao h3{
-    color:#D4AF37;
-    margin-bottom:15px;
+/* SEÇÕES GERAIS */
+.secao {
+    margin: 30px 0;
 }
 
-#continueOuvindo,
-#albuns{
-    display:flex;
-    gap:15px;
-    overflow-x:auto;
+.secao-header {
+    padding: 0 20px;
+    margin-bottom: 15px;
 }
 
-.card{
-    min-width:120px;
-    background:#10263b;
-    border-radius:16px;
-    padding:10px;
+.secao h3 {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
 }
 
-.card img{
-    width:100%;
-    border-radius:12px;
+/* CARROSSEL HORIZONTAL */
+.carrossel {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 0 20px 15px 20px;
+    scroll-behavior: smooth;
 }
 
-.card p{
-    margin-top:10px;
-    text-align:center;
-    font-size:14px;
+/* CARDS */
+.card {
+    min-width: 130px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 12px;
+    transition: background 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.categorias{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
+.card:active {
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.categorias button{
-    border:none;
-    background:#12304a;
-    color:#D4AF37;
-    padding:10px 16px;
-    border-radius:25px;
+.card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-#listaMusicas{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
+.card p {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.musica{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:#10263b;
-    padding:15px;
-    border-radius:14px;
+/* LISTA DE MÚSICAS (VERTICAL) */
+#listaMusicas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px;
 }
 
-/* Botões circulares na lista de músicas */
-.musica button{
-    border:none;
-    background:#D4AF37;
-    width:42px;
-    height:42px;
-    border-radius:50%;
+.musica {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    padding: 10px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.musica:active {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.musica button {
+    border: none;
+    background: rgba(212, 175, 55, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    padding: 0;
 }
 
-/* Deixa o ícone de Play escuro para contrastar sobre o fundo dourado do botão circular */
 .musica button img {
     width: 14px;
     height: 14px;
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Dourado */
 }
 
-/* CONSOLIDAÇÃO DO MINI-PLAYER */
+/* PLAYER COM EFEITO VIDRO (GLASSMORPHISM) */
 .mini-player {
     position: fixed;
-    bottom: 75px; 
-    left: 10px;
-    right: 10px;
-    background: #12304a;
-    border-radius: 16px;
-    padding: 10px 12px; /* Reduzido o padding interno */
-    display: none; 
-    align-items: center;
-    gap: 10px; /* Reduzido o espaço para caber tudo em telas menores */
-    box-shadow: 0 5px 15px rgba(0,0,0,.4);
+    bottom: 80px;
+    left: 15px;
+    right: 15px;
+    background: rgba(18, 48, 74, 0.75); /* Fundo semi-transparente */
+    backdrop-filter: blur(15px); /* Desfoque do fundo */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 12px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     z-index: 100;
 }
 
-.mini-player img {
-    width: 45px; /* Reduzido de 55px para 45px */
-    height: 45px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.mini-info {
-    flex: 1;
-    min-width: 0; /* Impede que o texto empurre os botões para fora */
-}
-
-.mini-info strong {
-    display: block;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Corta o texto com "..." se o título for muito longo */
-}
-
-.mini-info small {
-    color: #d0d0d0;
-    font-size: 12px;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Container de botões de controle de áudio */
-.mini-botoes {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Espaço reduzido para caber perfeitamente no celular */
-}
-
-/* Limita o tamanho de TODOS os SVGs normais de controle */
-.mini-botoes button {
-    width: 24px !important;
-    height: 24px !important;
-    background: none !important;
-    border: none !important;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform .2s ease;
-}
-
-/* Controla o tamanho exato dos ícones internos (como shuffle, previous, next, repeat) */
-.mini-botoes button img {
-    width: 18px !important;
-    height: 18px !important;
-}
-
-.mini-botoes button:hover {
-    transform: scale(1.15);
-}
-
-/* Estilo específico do botão de Play/Pause Central */
-#btnPlay {
-    background: #D4AF37 !important;
-    width: 36px !important; /* Tamanho do círculo perfeito */
-    height: 36px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Garante o tamanho exato do ícone interno do Play/Pause */
-#btnPlay img {
-    width: 14px !important;
-    height: 14px !important;
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
-}
-
-/* MENU DE NAVEGAÇÃO INFERIOR */
-.menu{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    background:#06121d;
-    display:flex;
-    justify-content:space-around;
-    padding:8px 0;
-    border-top:1px solid #12304a;
-    z-index: 101;
-}
-
-/* Centraliza os SVGs e os textos perfeitamente empilhados */
-.menu button{
-    background:none;
-    border:none;
-    color:#ffffff;
-    font-size:11px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    flex: 1;
-}
-
-.menu button span {
-    color: #cfcfcf;
-}
-
-.secao:last-of-type{
-    margin-bottom:120px;
-}
+/* Barra de Progresso Refinada */
 .progress-container {
     width: 100%;
-    margin-top: 5px;
+    position: relative;
 }
 
 #progressBar {
     width: 100%;
     height: 4px;
-    background: #4a6fa5;
+    background: rgba(255,255,255,0.2);
     border-radius: 5px;
-    cursor: pointer;
-    appearance: none; /* Remove o visual padrão do navegador */
+    appearance: none;
 }
 
-/* O "bolinha" do slider */
 #progressBar::-webkit-slider-thumb {
     appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     background: #D4AF37;
     border-radius: 50%;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.8);
 }
 
 .progress-times {
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    color: #a0a0a0;
-    margin-top: 2px;
+    color: #94a3b8;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* Layout interno do player */
+.player-controls-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+#miniCapa {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.mini-info strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-info small {
+    color: #94a3b8;
+    font-size: 11px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Controles do Player */
+.btn-icon {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.8;
+}
+
+.mini-botoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#btnPlay {
+    background: #D4AF37;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+}
+
+#btnPlay img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
+    margin-left: 2px; /* Ajuste visual do triângulo do play */
+}
+
+/* MENU INFERIOR */
+.menu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(6, 18, 29, 0.85); /* Efeito vidro no menu também */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 20px 0; /* Padding inferior maior para iPhones (Safe Area) */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 101;
+}
+
+.menu button {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    flex: 1;
+    transition: color 0.3s;
+}
+
+.menu button img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.5;
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+/* Estado Ativo no Menu */
+.menu button.active {
+    color: #D4AF37;
+}
+
+.menu button.active img {
+    opacity: 1;
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Fica dourado */
 }
