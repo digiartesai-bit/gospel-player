@@ -341,8 +341,6 @@ async function registrarReproducao(id) {
             body: JSON.stringify({ id })
         });
 
-        alert("API: " + resposta.status);
-
     } catch (erro) {
     alert(erro.message);
     }
