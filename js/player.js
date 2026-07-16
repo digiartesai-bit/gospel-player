@@ -315,3 +315,17 @@ function salvarNoHistorico(musica) {
         renderizarUltimasOuvidas();
     }
 }
+// chamada worker 
+async function registrarReproducao(id) {
+    try {
+        await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id })
+        });
+    } catch (erro) {
+        console.error("Erro ao registrar reprodução:", erro);
+    }
+}
