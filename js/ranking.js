@@ -1,0 +1,75 @@
+// ==========================================
+// RANKING MUNDIAL - ADORAPLAY
+// ==========================================
+
+async function carregarRanking() {
+
+    const secao = document.getElementById("secaoMaisOuvidas");
+    const container = document.getElementById("maisOuvidas");
+
+    if (!secao || !container) return;
+
+    try {
+
+        const resposta = await fetch("https://adoraplay-api.digiartesai.workers.dev/");
+
+        if (!resposta.ok) {
+            secao.style.display = "none";
+            return;
+        }
+
+        const ranking = await resposta.json();
+
+        if (!ranking || ranking.length === 0) {
+            secao.style.display = "none";
+            return;
+        }
+
+        container.innerHTML = "";
+        secao.style.display = "block";
+
+        const medalhas = ["🥇", "🥈", "🥉"];
+
+        ranking.forEach((item, posicao) => {
+
+            const musica = musicas.find(m => Number(m.id) === Number(item.id));
+
+            if (!musica) return;
+
+            const indice = musicas.findIndex(m => Number(m.id) === Number(item.id));
+
+            container.innerHTML += `
+                <div class="card"
+                     onclick="tocar(${indice})"
+                     style="cursor:pointer;width:100px;display:inline-block;margin-right:15px;vertical-align:top;">
+
+                    <img
+                        src="${musica.capa_musica || musica.capa}"
+                        onerror="this.src='assets/icons/album.svg'"
+                        style="width:100px;height:100px;object-fit:cover;border-radius:10px;display:block;">
+
+                    <p style="margin-top:6px;font-size:13px;text-align:center;color:#fff;">
+                        ${medalhas[posicao]}
+                    </p>
+
+                    <p style="font-size:13px;text-align:center;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${musica.titulo}
+                    </p>
+
+                    <small style="display:block;text-align:center;color:#999;">
+                        ${item.reproducoes} plays
+                    </small>
+
+                </div>
+            `;
+
+        });
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar ranking:", erro);
+        secao.style.display = "none";
+
+    }
+
+}
