@@ -93,29 +93,29 @@ function tocar(indice) {
 
 // Controla o Play e o Pause com segurança inteligente
 function playPause() {
-    // 1. SE NÃO HOUVER MÚSICA CARREGADA (Player está vazio/com texto padrão no início)
+    // 1. SE NÃO HOUVER MÚSICA CARREGADA (Player está vazio/com endereço local no início)
     if (!audioPlayer.src || audioPlayer.src === "" || audioPlayer.src === window.location.href) {
         if (typeof musicas !== "undefined" && musicas.length > 0) {
             
-            // Carrega toda a lista de músicas disponível para que a navegação funcione
+            // Abastece a playlist para que a navegação funcione perfeitamente
             carregarPlaylist(musicas);
             
-            let indiceParaTocar = 0; // Início padrão (primeira música) caso não ache o ranking
+            let indiceParaTocar = 0; // Início padrão: primeiro item do JSON
 
-            // Busca dinamicamente qual é a música TOP 1 do ranking
+            // Busca dinamicamente qual é a música TOP 1 do ranking de mais ouvidas
             if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
                 const top1 = maisOuvidas[0]; 
                 
-                // Localiza o índice da Top 1 na lista principal de músicas
+                // Localiza o índice correspondente no array geral de músicas
                 const idxTop1 = musicas.findIndex(m => m.id === top1.id);
                 if (idxTop1 >= 0) {
                     indiceParaTocar = idxTop1;
                 }
             }
 
-            // Inicia a reprodução da Top 1
+            // Inicia a reprodução
             tocar(indiceParaTocar);
-            return; // Interrompe para evitar conflito com a lógica padrão abaixo
+            return; // Interrompe para evitar conflito com o bloco padrão abaixo
         }
     }
 
@@ -410,16 +410,20 @@ async function registrarReproducao(id) {
         console.warn("Falha ao computar reprodução:", erro.message);
     }
 }
+
 // ==========================================
-// INICIALIZAÇÃO DA TOP 1 (CHAMADA APÓS CARREGAR OS DADOS)
+// INICIALIZAÇÃO DA TOP 1 (CHAMADA LOGO APÓS O FETCH DO APP.JS)
 // ==========================================
-window.inicializarPlayerComTop1 = function() {
+function inicializarPlayerComTop1() {
+    // 1. Garante que a lista de músicas global existe e tem itens
     if (typeof musicas !== "undefined" && musicas.length > 0) {
         
+        // 2. Abastece a playlist do player
         carregarPlaylist(musicas);
         
-        let indiceTop1 = 0;
+        let indiceTop1 = 0; // Padrão: primeira música da lista
 
+        // 3. Tenta localizar a música Top 1 do seu ranking
         if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
             const top1 = maisOuvidas[0];
             const idxTop1 = musicas.findIndex(m => m.id === top1.id);
@@ -428,14 +432,16 @@ window.inicializarPlayerComTop1 = function() {
             }
         }
 
+        // 4. Define o índice atual sem iniciar o áudio
         musicaAtual = indiceTop1;
         const musica = playlist[musicaAtual];
 
-        if (audioPlayer) {
+        // 5. Carrega o caminho do arquivo de áudio silenciosamente
+        if (audioPlayer && musica) {
             audioPlayer.src = musica.audio;
         }
 
-        // Atualiza os textos e capa na tela
+        // 6. Atualiza o visual (Capa, Título, Artista) mantendo o estado de pausa
         atualizarMiniPlayer();
     }
 }
