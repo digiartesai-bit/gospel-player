@@ -453,7 +453,7 @@ if (audioPlayer) {
         // =====================================
         // REGISTRO REAL - 90% DA MÚSICA OUVIDA
         // =====================================
-        if (
+      /* if (
             !streamRegistrado &&
             total > 0 &&
             atual / total >= 0.90 &&
@@ -467,7 +467,35 @@ if (audioPlayer) {
             streamRegistrado = true;
         }
 
-    });
+    });*/
+
+        // =====================================
+// REGISTRO REAL - 90% DE TEMPO OUVIDO
+// IGNORA AVANÇO MANUAL DA BARRA
+// =====================================
+
+if (
+    audioPlayer &&
+    !audioPlayer.paused &&
+    !streamRegistrado &&
+    total > 0
+) {
+
+    tempoOuvidoAcumulado += 1;
+
+    const percentualOuvido = tempoOuvidoAcumulado / total;
+
+    if (percentualOuvido >= 0.90) {
+
+        registrarReproducao(
+            playlist[musicaAtual].id
+        );
+
+        streamRegistrado = true;
+
+        console.log("Reprodução registrada");
+    }
+}
 
     // =====================================
     // QUANDO A MÚSICA TERMINA
