@@ -27,18 +27,14 @@ let modoRepeat = false; // false = sem repetição, true = repete a música atua
 // Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
 let streamRegistrado = false;
 let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
-let ultimoTempoVerificado = 0;  // Guarda a última posição do player para calcular o intervalo (delta)
+let relogioStream = null;       // Identificador do setInterval do relógio
 
-// [CORRIGIDO] Simplificado para ler diretamente "capa_musica" do seu JSON
+// Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
     if (!musica) return "assets/icons/album.svg";
-    
-    // Se você definiu o caminho da capa da música no JSON, usa ele diretamente!
     if (musica.capa_musica) {
         return musica.capa_musica;
     }
-    
-    // Caso não exista a propriedade "capa_musica", usa a capa do álbum ou o ícone padrão
     return musica.capa || "assets/icons/album.svg";
 }
 
@@ -55,17 +51,18 @@ if (window.playlist && window.playlist.length > 0) {
 // Toca uma música com base no índice
 function tocar(indice) {
     if (!playlist || playlist.length === 0) return;
-    
-    // Proteção contra índices inválidos
     if (indice < 0 || indice >= playlist.length) return;
     
     musicaAtual = indice;
     const musica = playlist[indice];
     
-    // Lógica para registrar reprodução de forma segura (Zera contadores de tempo real)
+    // Lógica para registrar reprodução de forma segura (Zera contadores)
     streamRegistrado = false;
     tempoOuvidoAcumulado = 0;
-    ultimoTempoVerificado = 0;
+    if (relogioStream) {
+        clearInterval(relogioStream);
+        relogioStream = null;
+    }
     
     // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
@@ -127,7 +124,6 @@ function atualizarMiniPlayer() {
     if (miniTitulo) miniTitulo.textContent = musica.titulo;
     if (miniArtista) miniArtista.textContent = musica.artista;
     
-    // Usa a capa individual da música no miniplayer (com fallback para a capa do álbum)
     if (miniCapa) {
         const capaIndividual = obterCapaMusica(musica);
         miniCapa.src = capaIndividual;
@@ -136,11 +132,13 @@ function atualizarMiniPlayer() {
         };
     }
     
-    // Atualiza o ícone do botão de Play/Pause dinamicamente
+    // Atualiza o ícone interno do botão Play/Pause central (sempre em contraste escuro)
     if (btnPlay) {
         let img = btnPlay.querySelector("img");
         if (img) {
             img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
+            // Ajusta o alinhamento visual perfeito dependendo do ícone ativo
+            img.style.marginLeft = tocando ? "0px" : "2px";
         }
     }
     
@@ -213,21 +211,23 @@ function atualizarBotoesModo() {
     const btnShuffle = document.getElementById("btnShuffle");
     const btnRepeat = document.getElementById("btnRepeat");
 
+    // Filtros de cor e brilho para botões ligados (Dourado Intenso) vs desligados (Dourado Translúcido)
+    const filtroAtivo = "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))";
+    const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
+
     if (btnShuffle) {
         let img = btnShuffle.querySelector("img");
         if (img) {
-            img.style.transition = "all 0.2s ease";
-            img.style.filter = modoShuffle ? "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))" : "grayscale(100%)";
-            img.style.opacity = modoShuffle ? "1" : "0.4";
+            img.style.filter = modoShuffle ? filtroAtivo : filtroInativo;
+            img.style.opacity = modoShuffle ? "1" : "0.5";
         }
     }
     
     if (btnRepeat) {
         let img = btnRepeat.querySelector("img");
         if (img) {
-            img.style.transition = "all 0.2s ease";
-            img.style.filter = modoRepeat ? "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))" : "grayscale(100%)";
-            img.style.opacity = modoRepeat ? "1" : "0.4";
+            img.style.filter = modoRepeat ? filtroAtivo : filtroInativo;
+            img.style.opacity = modoRepeat ? "1" : "0.5";
         }
     }
 }
@@ -241,6 +241,45 @@ function formatarTempo(segundos) {
 
 // Eventos de Progresso do Áudio
 if (audioPlayer) {
+    
+    // Função para iniciar a contagem física dos segundos
+    function iniciarCronometroStream() {
+        if (relogioStream) clearInterval(relogioStream);
+        
+        relogioStream = setInterval(() => {
+            if (audioPlayer && !audioPlayer.paused && !streamRegistrado) {
+                tempoOuvidoAcumulado += 1;
+                
+                if (tempoOuvidoAcumulado >= 30) {
+                    registrarReproducao(playlist[musicaAtual].id);
+                    streamRegistrado = true;
+                    pararCronometroStream();
+                }
+            }
+        }, 1000);
+    }
+
+    // Função para parar o cronômetro
+    function pararCronometroStream() {
+        if (relogioStream) {
+            clearInterval(relogioStream);
+            relogioStream = null;
+        }
+    }
+
+    // Inicia contagem ao dar play
+    audioPlayer.addEventListener("play", () => {
+        if (!streamRegistrado) {
+            iniciarCronometroStream();
+        }
+    });
+
+    // Pausa contagem ao pausar
+    audioPlayer.addEventListener("pause", () => {
+        pararCronometroStream();
+    });
+
+    // Mantemos o timeupdate para atualizar o visual da barra de progresso
     audioPlayer.addEventListener("timeupdate", () => {
         const current = audioPlayer.currentTime;
         const duration = audioPlayer.duration;
@@ -251,35 +290,11 @@ if (audioPlayer) {
 
         if (currentTime) currentTime.textContent = formatarTempo(current);
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
-
-        // LÓGICA DE DETECÇÃO DE TEMPO OUVIDO REAL
-        if (!streamRegistrado) {
-            const diferenca = current - ultimoTempoVerificado;
-
-            // Se o tempo avançou naturalmente (menos que 2 segundos entre updates)
-            if (diferenca > 0 && diferenca < 2) {
-                tempoOuvidoAcumulado += diferenca;
-            }
-
-            // Atualiza o marco de referência para o próximo cálculo
-            ultimoTempoVerificado = current;
-
-            // Dispara apenas quando o usuário passou pelo menos 30s fisicamente ouvindo
-            if (tempoOuvidoAcumulado >= 30) {
-                registrarReproducao(playlist[musicaAtual].id);
-                streamRegistrado = true;
-            }
-        }
     });
 
-    // Detecta quando o usuário arrasta manualmente a barra de progresso (Seeking)
-    audioPlayer.addEventListener("seeking", () => {
-        // Redefine a marca de referência para o novo tempo que o player saltou.
-        // Isso evita que a distância do pulo seja somada como tempo ouvido.
-        ultimoTempoVerificado = audioPlayer.currentTime;
-    });
-
+    // Quando a música acaba
     audioPlayer.addEventListener("ended", () => {
+        pararCronometroStream();
         if (modoRepeat) {
             audioPlayer.currentTime = 0;
             audioPlayer.play().catch(err => console.log(err));
@@ -329,8 +344,12 @@ function atualizarBotaoFavorito() {
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
     
-    imgFavorito.style.filter = ehFavorito ? "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))" : "grayscale(100%)";
-    imgFavorito.style.opacity = ehFavorito ? "1" : "0.4";
+    // Favorito Ativo (Vermelho/Dourado Brilhante) vs Inativo (Dourado Translúcido)
+    const filtroAtivo = "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))";
+    const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
+
+    imgFavorito.style.filter = ehFavorito ? filtroAtivo : filtroInativo;
+    imgFavorito.style.opacity = ehFavorito ? "1" : "0.5";
 }
 
 // ==========================================
@@ -348,7 +367,6 @@ function salvarNoHistorico(musica) {
 
     localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
     
-    // [CORRIGIDO] Nome da função atualizado para refletir o novo padrão "Últimas Ouvidas"
     if (typeof renderizarUltimasOuvidas === "function") {
         renderizarUltimasOuvidas();
     }
@@ -364,7 +382,6 @@ async function registrarReproducao(id) {
             },
             body: JSON.stringify({ id })
         });
-
     } catch (erro) {
         alert(erro.message);
     }
