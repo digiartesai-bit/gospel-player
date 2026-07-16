@@ -428,35 +428,31 @@ function formatarTempo(segundos) {
     return `${min}:${seg < 10 ? "0" : ""}${seg}`;
 }
 
-
-
 // EVENTOS DO ÁUDIO
-
+// Eventos de Progresso do Áudio
 if (audioPlayer) {
-
 
     audioPlayer.addEventListener("timeupdate", () => {
 
         const atual = audioPlayer.currentTime;
         const total = audioPlayer.duration;
 
-
+        // Atualiza barra visual
         if (progressBar) {
-            progressBar.value =
-            total ? (atual / total) * 100 : 0;
+            progressBar.value = total ? (atual / total) * 100 : 0;
         }
 
-
-        if (currentTime)
+        if (currentTime) {
             currentTime.textContent = formatarTempo(atual);
+        }
 
-
-        if (durationTime)
+        if (durationTime) {
             durationTime.textContent = formatarTempo(total || 0);
+        }
 
-
-
-        // Registro real: 90% ouvido
+        // =====================================
+        // REGISTRO REAL - 90% DA MÚSICA OUVIDA
+        // =====================================
         if (
             !streamRegistrado &&
             total > 0 &&
@@ -473,12 +469,13 @@ if (audioPlayer) {
 
     });
 
+    // =====================================
+    // QUANDO A MÚSICA TERMINA
+    // =====================================
+    audioPlayer.addEventListener("ended", () => {
 
 
-  /*  audioPlayer.addEventListener("ended", () => {
-
-
-        // Segurança caso o navegador não dispare o último timeupdate
+        // Segurança caso o último timeupdate não aconteça
         if (
             !streamRegistrado &&
             audioPlayer.duration > 0 &&
@@ -493,12 +490,18 @@ if (audioPlayer) {
             streamRegistrado = true;
         }
 
-
+        // =====================================
+        // REPEAT
+        // Nova reprodução = novo streaming possível
+        // =====================================
         if (modoRepeat) {
+
+            streamRegistrado = false;
 
             audioPlayer.currentTime = 0;
 
-            audioPlayer.play();
+            audioPlayer.play()
+                .catch(err => console.log(err));
 
         } else {
 
@@ -506,40 +509,7 @@ if (audioPlayer) {
 
         }
 
-    });*/
-
-audioPlayer.addEventListener("ended", () => {
-
-    // Finalizou uma execução normal
-    if (
-        !streamRegistrado &&
-        playlist[musicaAtual] &&
-        audioPlayer.duration > 0 &&
-        (tempoRealOuvido / audioPlayer.duration) >= 0.90
-    ) {
-        registrarReproducao(playlist[musicaAtual].id);
-        streamRegistrado = true;
-    }
-
-    if (modoRepeat) {
-
-        // Reinicia o controle para uma nova audição
-        streamRegistrado = false;
-        tempoRealOuvido = 0;
-        ultimoTempo = 0;
-
-        audioPlayer.currentTime = 0;
-
-        audioPlayer.play()
-            .catch(err => console.log(err));
-
-    } else {
-
-        proxima();
-
-    }
-
-});
+    });
 
     audioPlayer.addEventListener("error", () => {
 
@@ -552,8 +522,6 @@ audioPlayer.addEventListener("ended", () => {
     });
 
 }
-
-
 
 // Barra manual
 
@@ -573,10 +541,7 @@ if (progressBar) {
 
 }
 
-
-
 // FAVORITOS
-
 
 function toggleFavorito() {
 
