@@ -414,3 +414,37 @@ body {
     opacity: 1;
     filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Fica dourado */
 }
+/* Limita e organiza a área de informações da música no mini-player */
+.info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;          /* Faz ocupar o espaço disponível antes dos botões */
+    min-width: 0;     /* Regra de ouro para permitir que os textos internos encolham */
+}
+
+.mini-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;     /* Essencial para que o efeito dos 3 pontinhos (...) funcione */
+    flex: 1;
+}
+
+/* Aplica os 3 pontinhos se o título da música for muito longo */
+#miniTitulo {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;  /* Garante que respeite o limite da caixinha */
+}
+
+/* Aplica os 3 pontinhos se o nome do artista/álbum for muito longo */
+#miniArtista {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
