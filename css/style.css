@@ -181,10 +181,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: transparent;
-    padding: 10px;
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 15px;
+    border-radius: 14px;
     transition: background 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .musica:active {
@@ -193,20 +194,21 @@ body {
 
 .musica button {
     border: none;
-    background: rgba(212, 175, 55, 0.1);
-    width: 40px;
-    height: 40px;
+    background: #D4AF37;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.2);
 }
 
 .musica button img {
-    width: 14px;
-    height: 14px;
-    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Dourado */
+    width: 12px;
+    height: 12px;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
 }
 
 /* PLAYER COM EFEITO VIDRO (GLASSMORPHISM) */
@@ -218,7 +220,7 @@ body {
     background: rgba(18, 48, 74, 0.75); /* Fundo semi-transparente */
     backdrop-filter: blur(15px); /* Desfoque do fundo */
     -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     padding: 12px 15px;
     display: flex;
@@ -291,6 +293,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #ffffff;
 }
 
 .mini-info small {
@@ -302,46 +305,66 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Controles do Player */
+/* Controles Gerais dos Botões do Player */
 .btn-icon {
-    background: none;
-    border: none;
+    background: none !important;
+    border: none !important;
     padding: 5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
+    transition: transform 0.2s;
 }
 
+/* Filtro padrão levemente dourado e nítido para os botões normais */
 .btn-icon img {
-    width: 18px;
-    height: 18px;
-    opacity: 0.8;
+    width: 18px !important;
+    height: 18px !important;
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%); 
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover img {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 .mini-botoes {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
 }
 
+/* BOTÃO DE PLAY/PAUSE CENTRAL DO PLAYER (CORRIGIDO) */
 #btnPlay {
-    background: #D4AF37;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+    background: #D4AF37 !important; /* Dourado brilhante de fundo */
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4) !important;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
+#btnPlay:active {
+    transform: scale(0.92);
+}
+
+/* Ícone dentro do botão de play: Sempre escuro para contraste visível */
 #btnPlay img {
-    width: 16px;
-    height: 16px;
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
-    margin-left: 2px; /* Ajuste visual do triângulo do play */
+    width: 14px !important;
+    height: 14px !important;
+    opacity: 1 !important;
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
+    margin-left: 2px; /* Correção óptica de centralização do triângulo */
 }
 
 /* MENU INFERIOR */
@@ -350,7 +373,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(6, 18, 29, 0.85); /* Efeito vidro no menu também */
+    background: rgba(6, 18, 29, 0.85); /* Efeito vidro no menu */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
