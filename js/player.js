@@ -24,9 +24,10 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
-// Variáveis de controle para contar apenas uma vez por reprodução
+// Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
 let streamRegistrado = false;
-let timerStream = null;
+let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
+let ultimoTempoVerificado = 0;  // Guarda a última posição do player para calcular o intervalo (delta)
 
 // [CORRIGIDO] Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
@@ -61,8 +62,10 @@ function tocar(indice) {
     musicaAtual = indice;
     const musica = playlist[indice];
     
-    // Lógica para registrar reprodução de forma segura (zera o estado de registro da música atual)
+    // Lógica para registrar reprodução de forma segura (Zera contadores de tempo real)
     streamRegistrado = false;
+    tempoOuvidoAcumulado = 0;
+    ultimoTempoVerificado = 0;
     
     // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
@@ -249,10 +252,31 @@ if (audioPlayer) {
         if (currentTime) currentTime.textContent = formatarTempo(current);
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
 
-        if (!streamRegistrado && current >= 30) {
-            registrarReproducao(playlist[musicaAtual].id);
-            streamRegistrado = true;
+        // LÓGICA DE DETECÇÃO DE TEMPO OUVIDO REAL
+        if (!streamRegistrado) {
+            const diferenca = current - ultimoTempoVerificado;
+
+            // Se o tempo avançou naturalmente (menos que 2 segundos entre updates)
+            if (diferenca > 0 && diferenca < 2) {
+                tempoOuvidoAcumulado += diferenca;
+            }
+
+            // Atualiza o marco de referência para o próximo cálculo
+            ultimoTempoVerificado = current;
+
+            // Dispara apenas quando o usuário passou pelo menos 30s fisicamente ouvindo
+            if (tempoOuvidoAcumulado >= 30) {
+                registrarReproducao(playlist[musicaAtual].id);
+                streamRegistrado = true;
+            }
         }
+    });
+
+    // Detecta quando o usuário arrasta manualmente a barra de progresso (Seeking)
+    audioPlayer.addEventListener("seeking", () => {
+        // Redefine a marca de referência para o novo tempo que o player saltou.
+        // Isso evita que a distância do pulo seja somada como tempo ouvido.
+        ultimoTempoVerificado = audioPlayer.currentTime;
     });
 
     audioPlayer.addEventListener("ended", () => {
@@ -342,6 +366,6 @@ async function registrarReproducao(id) {
         });
 
     } catch (erro) {
-    alert(erro.message);
+        alert(erro.message);
     }
 }
