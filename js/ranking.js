@@ -41,34 +41,37 @@ async function carregarRanking() {
             container.innerHTML += `
                 <div class="card"
                      onclick="tocar(${indice})"
-                     style="cursor:pointer;width:100px;display:inline-block;margin-right:15px;vertical-align:top;">
+                     style="cursor:pointer; width:100px; display:inline-block; margin-right:15px; vertical-align:top;">
 
                     <img
                         src="${musica.capa_musica || musica.capa}"
                         onerror="this.src='assets/icons/album.svg'"
-                        style="width:100px;height:100px;object-fit:cover;border-radius:10px;display:block;">
+                        style="width:100px; height:100px; object-fit:cover; border-radius:10px; display:block;">
 
-                    <p style="margin-top:6px;font-size:13px;text-align:center;color:#fff;">
+                    <p style="margin-top:6px; font-size:13px; text-align:center; color:#fff;">
                         ${medalhas[posicao]}
                     </p>
 
- <p style="
-    font-size:13px;
-    text-align:center;
-    color:#fff;
-    margin:4px 0;
-    line-height:1.3;
-    white-space:normal;
-    word-break:break-word;
-">
-    ${musica.titulo}
-</p>
+                    <!-- CONTAINER DO TÍTULO COM ALTURA MÍNIMA FIXA PARA EVITAR DESALINHAMENTO -->
+                    <div style="min-height: 36px; display: flex; align-items: center; justify-content: center; margin: 4px 0;">
+                        <p style="
+                            font-size:13px;
+                            text-align:center;
+                            color:#fff;
+                            margin:0;
+                            line-height:1.3;
+                            white-space:normal;
+                            word-break:break-word;
+                        ">
+                            ${musica.titulo}
+                        </p>
+                    </div>
 
-                    <small style="display:block;text-align:center;color:#999;">
-    ${item.reproducoes} reproduções
-</small>
+                    <small style="display:block; text-align:center; color:#999;">
+                        ${item.reproducoes} reproduções
+                    </small>
 
-         </div>
+                </div>
             `;
 
         });
