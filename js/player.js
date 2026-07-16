@@ -410,3 +410,45 @@ async function registrarReproducao(id) {
         console.warn("Falha ao computar reprodução:", erro.message);
     }
 }
+// ==========================================
+// INICIALIZAÇÃO AUTOMÁTICA DA TOP 1
+// ==========================================
+function inicializarPlayerComTop1() {
+    // 1. Verifica se a lista geral de músicas existe e está carregada
+    if (typeof musicas !== "undefined" && musicas.length > 0) {
+        
+        // 2. Garante que a lista de reprodução interna está abastecida
+        carregarPlaylist(musicas);
+        
+        let indiceTop1 = 0; // Padrão: primeira música da lista
+
+        // 3. Tenta localizar a música Top 1 do seu ranking
+        if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
+            const top1 = maisOuvidas[0];
+            const idxTop1 = musicas.findIndex(m => m.id === top1.id);
+            if (idxTop1 >= 0) {
+                indiceTop1 = idxTop1;
+            }
+        }
+
+        // 4. Define o índice atual sem dar play automático
+        musicaAtual = indiceTop1;
+        const musica = playlist[musicaAtual];
+
+        // 5. Carrega o caminho do áudio silenciosamente no player
+        if (audioPlayer) {
+            audioPlayer.src = musica.audio;
+        }
+
+        // 6. Atualiza o visual (Capa, Título, Artista) sem iniciar a reprodução
+        atualizarMiniPlayer();
+    }
+}
+
+// Executa assim que o script carregar ou quando o HTML estiver pronto
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", inicializarPlayerComTop1);
+} else {
+    inicializarPlayerComTop1();
+}
+
