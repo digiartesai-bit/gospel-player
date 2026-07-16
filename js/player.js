@@ -24,6 +24,10 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
+// Variáveis de controle para contar apenas uma vez por reprodução
+let streamRegistrado = false;
+let timerStream = null;
+
 // [CORRIGIDO] Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
     if (!musica) return "assets/icons/album.svg";
@@ -56,6 +60,9 @@ function tocar(indice) {
     
     musicaAtual = indice;
     const musica = playlist[indice];
+    
+    // Lógica para registrar reprodução de forma segura (zera o estado de registro da música atual)
+    streamRegistrado = false;
     
     // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
@@ -234,11 +241,18 @@ if (audioPlayer) {
     audioPlayer.addEventListener("timeupdate", () => {
         const current = audioPlayer.currentTime;
         const duration = audioPlayer.duration;
+
         if (progressBar) {
             progressBar.value = duration ? (current / duration) * 100 : 0;
         }
+
         if (currentTime) currentTime.textContent = formatarTempo(current);
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
+
+        if (!streamRegistrado && current >= 30) {
+            registrarReproducao(playlist[musicaAtual].id);
+            streamRegistrado = true;
+        }
     });
 
     audioPlayer.addEventListener("ended", () => {
@@ -315,7 +329,8 @@ function salvarNoHistorico(musica) {
         renderizarUltimasOuvidas();
     }
 }
-// chamada worker 
+
+// Envia o id da música para a API de estatísticas
 async function registrarReproducao(id) {
     try {
         await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
