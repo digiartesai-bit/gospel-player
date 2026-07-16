@@ -21,6 +21,11 @@ fetch("musicas.json")
     
     carregarTela();
     carregarRanking();
+
+    // INICIALIZAÇÃO DO PLAYER: Chama a função assim que os dados estão prontos!
+    if (typeof inicializarPlayerComTop1 === "function") {
+        inicializarPlayerComTop1();
+    }
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
@@ -38,7 +43,7 @@ function carregarTela() {
     // 1. Renderiza os Favoritos horizontais
     renderizarFavoritosHorizontais();
 
-    // 2. [CORRIGIDO] Renderiza o histórico real de 3 músicas usando o novo nome da função
+    // 2. Renderiza o histórico real de 3 músicas
     renderizarUltimasOuvidas();
     
     // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
@@ -68,7 +73,7 @@ function carregarTela() {
     });
 }
 
-// [CORRIGIDO] Alterado o nome para bater com o player.js e atualizado o comportamento
+// Renderiza o histórico de reprodução
 function renderizarUltimasOuvidas() {
     const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
     if (!continueOuvindo) return;
