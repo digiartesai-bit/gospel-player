@@ -19,7 +19,8 @@ let modoShuffle = false;
 let modoRepeat = false;
 
 let streamRegistrado = false;
-
+let tempoOuvidoAcumulado = 0;
+let UltimoSegundo = 0;
 
 // Capa da música
 function obterCapaMusica(musica) {
@@ -50,6 +51,8 @@ function tocar(indice) {
 
     musicaAtual = indice;
     streamRegistrado = false;
+    tempoOuvidoAcumulado = 0;
+    ultimoSegundo = 0;
 
     const musica = playlist[musicaAtual];
 
@@ -474,7 +477,7 @@ if (audioPlayer) {
 // IGNORA AVANÇO MANUAL DA BARRA
 // =====================================
 
-if (
+/*if (
     audioPlayer &&
     !audioPlayer.paused &&
     !streamRegistrado &&
@@ -494,6 +497,40 @@ if (
         streamRegistrado = true;
 
         console.log("Reprodução registrada");
+    }
+}*/
+        // =====================================
+// CONTAGEM REAL DE TEMPO OUVIDO
+// IGNORA AVANÇO DA BARRA
+// =====================================
+
+if (
+    !audioPlayer.paused &&
+    !streamRegistrado &&
+    total > 0
+) {
+
+    const segundoAtual = Math.floor(atual);
+
+    if (segundoAtual > ultimoSegundo) {
+
+        tempoOuvidoAcumulado += 
+            segundoAtual - ultimoSegundo;
+
+        ultimoSegundo = segundoAtual;
+    }
+
+    if (
+        tempoOuvidoAcumulado >= total * 0.90
+    ) {
+
+        registrarReproducao(
+            playlist[musicaAtual].id
+        );
+
+        streamRegistrado = true;
+
+        console.log("Streaming real registrado");
     }
 }
 
