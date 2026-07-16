@@ -5,149 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#081826">
     
-    <!-- Definições básicas do site (Essenciais para o WhatsApp/Facebook como "plano B") -->
     <title>AdoraPlay</title>
-    <meta name="description" content="Sua música. Sua adoração. Em qualquer lugar. Ouça seus louvores favoritos e sinta a presença de Deus." />
+    <meta name="description" content="Sua música. Sua adoração. Em qualquer lugar." />
 
-    <!-- Protocolo Open Graph (Facebook, WhatsApp, Telegram) -->
+    <!-- Protocolo Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://digiartesai-bit.github.io/adora-play/" />
     <meta property="og:title" content="AdoraPlay — Conectando Corações na Adoração" />
-    <meta property="og:description" content="Sua música. Sua adoração. Em qualquer lugar. Ouça seus louvores favoritos e sinta a presença de Deus." />
-    
-    <!-- Configurações de Imagem (Com URL Segura) -->
+    <meta property="og:description" content="Sua música. Sua adoração. Em qualquer lugar." />
     <meta property="og:image" content="https://digiartesai-bit.github.io/adora-play/socialpreview.jpg" />
-    <meta property="og:image:secure_url" content="https://digiartesai-bit.github.io/adora-play/socialpreview.jpg" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="1200" />
-
+    
+    <!-- Fonte Google: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<header class="topo" style="justify-content: center; text-align: center;">
+<!-- CABEÇALHO -->
+<header class="topo">
     <div class="logo">
         <h1>AdoraPlay</h1>
         <p>Sua música. Sua adoração.</p>
     </div>
+    <!-- Ícone de perfil moderno -->
+    <button class="perfil">
+        <img src="assets/icons/profile.svg" width="24" height="24" alt="Perfil" style="filter: invert(1);">
+    </button>
 </header>
 
-<!-- SEÇÃO: MAIS OUVIDAS (Ranking Global do Cloudflare KV) -->
+<!-- BANNER DE DESTAQUE (Deixa o app mais chamativo) -->
+<div class="banner">
+    <div class="banner-conteudo">
+        <small>Novidade</small>
+        <h2>Lançamentos da Semana</h2>
+        <p>Descubra os novos louvores para abençoar o seu dia.</p>
+        <button>
+            <img src="assets/icons/play.svg" width="16" height="16" alt="Play">
+            Ouvir Agora
+        </button>
+    </div>
+</div>
+
+<!-- SEÇÃO: MAIS OUVIDAS -->
 <section class="secao" id="secaoMaisOuvidas" style="display: none;">
-    <h3>Mais Ouvidas no Mundo</h3>
-    <div id="maisOuvidas" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
+    <div class="secao-header">
+        <h3>Mais Ouvidas no Mundo</h3>
+    </div>
+    <div id="maisOuvidas" class="carrossel"></div>
 </section>
 
 <!-- SEÇÃO: SEUS FAVORITOS -->
 <section class="secao" id="secaoFavoritos" style="display: none;">
-    <h3>Seus Favoritos</h3>
-    <div id="favoritosHorizontal" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
+    <div class="secao-header">
+        <h3>Seus Favoritos</h3>
+    </div>
+    <div id="favoritosHorizontal" class="carrossel"></div>
 </section>
 
-<!-- SEÇÃO: ÚLTIMAS OUVIDAS (Antigo Continue Ouvindo) -->
+<!-- SEÇÃO: ÚLTIMAS OUVIDAS -->
 <section class="secao" id="secaoContinue" style="display: none;">
-    <h3>Últimas ouvidas</h3>
-    <div id="continueOuvindo" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
+    <div class="secao-header">
+        <h3>Últimas ouvidas</h3>
+    </div>
+    <div id="continueOuvindo" class="carrossel"></div>
 </section>
 
-<!-- SEÇÃO DE ÁLBUNS E CATEGORIAS UNIFICADA -->
+<!-- SEÇÃO DE ÁLBUNS -->
 <section class="secao">
-    <h3>Navegar por Álbuns</h3>
-    <div id="albuns" style="white-space: nowrap; overflow-x: auto; padding-bottom: 10px;"></div>
+    <div class="secao-header">
+        <h3>Navegar por Álbuns</h3>
+    </div>
+    <div id="albuns" class="carrossel"></div>
 </section>
 
-<!-- LISTA PRINCIPAL (FILTRÁVEL) -->
+<!-- LISTA PRINCIPAL (VERTICAL) -->
 <section class="secao">
-    <h3 id="tituloListaMusicas">Adicionados recentemente</h3>
+    <div class="secao-header">
+        <h3 id="tituloListaMusicas">Adicionados recentemente</h3>
+    </div>
     <div id="listaMusicas"></div>
 </section>
 
- <!-- MINI PLAYER UNIFICADO E PROTEGIDO CONTRA SOBREPOSIÇÃO -->
-<div class="mini-player" id="miniPlayer" style="display: none; flex-direction: column; align-items: center; padding: 10px; gap: 8px;">
-
-    <!-- Linha 1: Progresso -->
-    <div class="progress-container" style="width: 100%; margin-bottom: 5px; position: relative; z-index: 10;">
-        <input type="range" id="progressBar" value="0" min="0" max="100" style="width: 100%; cursor: pointer;">
-        <div class="progress-times" style="display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-top: 2px;">
+<!-- MINI PLAYER UNIFICADO COM GLASSMORPHISM -->
+<div class="mini-player" id="miniPlayer" style="display: none;">
+    <!-- Barra de Progresso Superior -->
+    <div class="progress-container">
+        <input type="range" id="progressBar" value="0" min="0" max="100">
+        <div class="progress-times">
             <span id="currentTime">0:00</span>
             <span id="durationTime">0:00</span>
         </div>
     </div>
 
-    <!-- Linha 2: Informações da Música, Favorito e Controles -->
-    <div class="player-controls-row" style="display: flex; width: 100%; align-items: center; justify-content: space-between; position: relative; z-index: 5;">
-        
+    <!-- Controles Principais -->
+    <div class="player-controls-row">
         <!-- Esquerda: Capa e Info -->
-        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
-            <img id="miniCapa" src="assets/icons/album.svg" onerror="this.src='assets/icons/album.svg'" alt="Capa" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;">
-            <div class="mini-info" style="display: flex; flex-direction: column; min-width: 0;">
-                <strong id="miniTitulo" style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">Nenhuma música</strong>
-                <small id="miniArtista" style="font-size: 12px; color: #aaa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Selecione uma música</small>
+        <div class="info-wrapper">
+            <img id="miniCapa" src="assets/icons/album.svg" onerror="this.src='assets/icons/album.svg'" alt="Capa">
+            <div class="mini-info">
+                <strong id="miniTitulo">Nenhuma música</strong>
+                <small id="miniArtista">Selecione uma música</small>
             </div>
         </div>
 
-        <!-- Centro: Botão de Favorito -->
-        <button id="btnFavorito" onclick="toggleFavorito()" style="background: none; border: none; padding: 0; margin: 0 15px; cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; flex-shrink: 0;">
-            <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar" width="24" height="24" style="pointer-events: none; transition: transform 0.1s ease;">
+        <!-- Centro: Favorito -->
+        <button id="btnFavorito" class="btn-icon" onclick="toggleFavorito()">
+            <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar">
         </button>
 
-        <!-- Direita: Controles de Mídia -->
-        <div class="mini-botoes" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-            
-            <!-- Botão Shuffle -->
-            <button id="btnShuffle" onclick="alternarShuffle()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-                <img src="assets/icons/shuffle.svg" alt="Modo Aleatório" width="18" height="18" style="pointer-events: none;">
+        <!-- Direita: Controles -->
+        <div class="mini-botoes">
+            <button id="btnShuffle" class="btn-icon" onclick="alternarShuffle()">
+                <img src="assets/icons/shuffle.svg" alt="Aleatório">
             </button>
-
-            <!-- Botão Anterior -->
-            <button onclick="anterior()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-                <img src="assets/icons/previous.svg" alt="Anterior" width="20" height="20" style="pointer-events: none;">
+            <button class="btn-icon" onclick="anterior()">
+                <img src="assets/icons/previous.svg" alt="Anterior">
             </button>
-
-            <!-- Botão Play/Pause -->
-            <button id="btnPlay" onclick="playPause()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-                <img src="assets/icons/play.svg" alt="Reproduzir" width="24" height="24" style="pointer-events: none;">
+            <button id="btnPlay" onclick="playPause()">
+                <img src="assets/icons/play.svg" alt="Reproduzir">
             </button>
-
-            <!-- Botão Próxima -->
-            <button onclick="proxima()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-                <img src="assets/icons/next.svg" alt="Próxima" width="20" height="20" style="pointer-events: none;">
+            <button class="btn-icon" onclick="proxima()">
+                <img src="assets/icons/next.svg" alt="Próxima">
             </button>
-
-            <!-- Botão Repeat -->
-            <button id="btnRepeat" onclick="alternarRepeat()" style="background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;">
-                <img src="assets/icons/repeat.svg" alt="Repetir" width="18" height="18" style="pointer-events: none;">
+            <button id="btnRepeat" class="btn-icon" onclick="alternarRepeat()">
+                <img src="assets/icons/repeat.svg" alt="Repetir">
             </button>
-            
         </div>
-        
     </div>
-
 </div>
 
 <!-- MENU DE NAVEGAÇÃO INFERIOR -->
 <nav class="menu">
-    <button onclick="carregarTela()">
-        <img src="assets/icons/home.svg" alt="Início" width="24" height="24"><br>
+    <button class="active" onclick="carregarTela()">
+        <img src="assets/icons/home.svg" alt="Início">
         <span>Início</span>
     </button>
-    <button style="opacity: 0.35; cursor: default;" onclick="event.preventDefault();" tabindex="-1">
-        <img src="assets/icons/library.svg" alt="Biblioteca" width="24" height="24"><br>
+    <button onclick="event.preventDefault();">
+        <img src="assets/icons/library.svg" alt="Biblioteca">
         <span>Biblioteca</span>
     </button>
-    <button style="opacity: 0.35; cursor: default;" onclick="event.preventDefault();" tabindex="-1">
-        <img src="assets/icons/profile.svg" alt="Perfil" width="24" height="24"><br>
+    <button onclick="event.preventDefault();">
+        <img src="assets/icons/profile.svg" alt="Perfil">
         <span>Perfil</span>
     </button>
 </nav>
 
 <audio id="audioPlayer"></audio>
-    <script src="js/player.js"></script>
-    <script src="js/ranking.js"></script>
-    <script src="js/app.js"></script>
+<script src="js/player.js"></script>
+<script src="js/ranking.js"></script>
+<script src="js/app.js"></script>
     
 </body>
 </html>
