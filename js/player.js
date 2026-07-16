@@ -332,17 +332,18 @@ function salvarNoHistorico(musica) {
 
 // Envia o id da música para a API de estatísticas
 async function registrarReproducao(id) {
-    console.log("Registrando reprodução:", id);
-
     try {
-        await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
+        const resposta = await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ id })
         });
+
+        alert("API: " + resposta.status);
+
     } catch (erro) {
-        console.error("Erro ao registrar reprodução:", erro);
+        alert("Erro ao enviar reprodução");
     }
 }
