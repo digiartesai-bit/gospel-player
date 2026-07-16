@@ -52,15 +52,23 @@ async function carregarRanking() {
                         ${medalhas[posicao]}
                     </p>
 
-                    <p style="font-size:13px;text-align:center;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                        ${musica.titulo}
-                    </p>
+ <p style="
+    font-size:13px;
+    text-align:center;
+    color:#fff;
+    margin:4px 0;
+    line-height:1.3;
+    white-space:normal;
+    word-break:break-word;
+">
+    ${musica.titulo}
+</p>
 
                     <small style="display:block;text-align:center;color:#999;">
-                        ${item.reproducoes} plays
-                    </small>
+    ${item.reproducoes} reproduções
+</small>
 
-                </div>
+         </div>
             `;
 
         });
