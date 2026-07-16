@@ -344,6 +344,6 @@ async function registrarReproducao(id) {
         alert("API: " + resposta.status);
 
     } catch (erro) {
-        alert("Erro ao enviar reprodução");
+    alert(erro.message);
     }
 }
