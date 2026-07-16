@@ -20,6 +20,7 @@ fetch("musicas.json")
     }
     
     carregarTela();
+    carregarRanking();
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
