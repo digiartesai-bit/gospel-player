@@ -1,4 +1,4 @@
-// Elementos Globais
+// Elementos
 const audioPlayer = document.getElementById("audioPlayer");
 const miniPlayer = document.getElementById("miniPlayer");
 const miniCapa = document.getElementById("miniCapa");
@@ -6,11 +6,6 @@ const miniTitulo = document.getElementById("miniTitulo");
 const miniArtista = document.getElementById("miniArtista");
 const btnPlay = document.getElementById("btnPlay");
 
-// Novos Elementos Globais para Shuffle e Repeat
-const btnShuffle = document.getElementById("btnShuffle");
-const btnRepeat = document.getElementById("btnRepeat");
-
-// Elementos da Barra de Progresso
 const progressBar = document.getElementById("progressBar");
 const currentTime = document.getElementById("currentTime");
 const durationTime = document.getElementById("durationTime");
@@ -20,449 +15,740 @@ let playlist = [];
 let musicaAtual = 0;
 let tocando = false;
 
-// Estados das novas funções
 let modoShuffle = false;
-let modoRepeat = false; // false = sem repetição, true = repete a música atual
+let modoRepeat = false;
 
-// Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
 let streamRegistrado = false;
-// let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
-// let relogioStream = null;       // Identificador do setInterval do relógio
 
-// Simplificado para ler diretamente "capa_musica" do seu JSON
+
+// Capa da música
 function obterCapaMusica(musica) {
     if (!musica) return "assets/icons/album.svg";
-    if (musica.capa_musica) {
-        return musica.capa_musica;
-    }
-    return musica.capa || "assets/icons/album.svg";
+
+    return musica.capa_musica ||
+           musica.capa ||
+           "assets/icons/album.svg";
 }
 
-// Garante o carregamento da playlist dinâmica do app.js
-function carregarPlaylist(lista) { 
-    playlist = [...lista]; 
+
+// Playlist
+function carregarPlaylist(lista) {
+    playlist = [...lista];
     atualizarBotoesModo();
 }
 
-if (window.playlist && window.playlist.length > 0) {
+if (window.playlist && window.playlist.length) {
     playlist = [...window.playlist];
 }
 
-// Toca uma música com base no índice
+
+// Tocar música
 function tocar(indice) {
-    if (!playlist || playlist.length === 0) return;
+
+    if (!playlist.length) return;
     if (indice < 0 || indice >= playlist.length) return;
-    
+
     musicaAtual = indice;
-    const musica = playlist[indice];
-    
-    // Lógica para registrar reprodução de forma segura (Zera contadores)
     streamRegistrado = false;
-    tempoOuvidoAcumulado = 0;
-    if (relogioStream) {
-        clearInterval(relogioStream);
-        relogioStream = null;
-    }
-    
-    // Salva no histórico local do navegador ao dar play
+
+    const musica = playlist[musicaAtual];
+
     salvarNoHistorico(musica);
-    
-    // Define o áudio
+
     audioPlayer.src = musica.audio;
-    
-    // Exibe o mini-player IMEDIATAMENTE
+
     if (miniPlayer) {
         miniPlayer.style.display = "flex";
     }
-    
-    // Atualiza as informações na tela na mesma hora
+
     atualizarMiniPlayer();
-    
-    // Inicia a reprodução tratando possíveis bloqueios do navegador
+
     audioPlayer.play()
         .then(() => {
             tocando = true;
-            atualizarMiniPlayer(); 
+            atualizarMiniPlayer();
         })
-        .catch(erro => {
-            console.warn("A reprodução foi impedida pelo navegador ou o áudio falhou:", erro);
+        .catch(() => {
             tocando = false;
             atualizarMiniPlayer();
         });
 }
 
-// Controla o Play e o Pause com segurança inteligente
+
+// Play / Pause
 function playPause() {
-    // 1. SE NÃO HOUVER MÚSICA CARREGADA (Player está vazio/com endereço local no início)
-    if (!audioPlayer.src || audioPlayer.src === "" || audioPlayer.src === window.location.href) {
-        if (typeof musicas !== "undefined" && musicas.length > 0) {
-            
-            // Abastece a playlist para que a navegação funcione perfeitamente
-            carregarPlaylist(musicas);
-            
-            let indiceParaTocar = 0; // Início padrão: primeiro item do JSON
 
-            // Busca dinamicamente qual é a música TOP 1 do ranking de mais ouvidas
-            if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
-                const top1 = maisOuvidas[0]; 
-                
-                // Localiza o índice correspondente no array geral de músicas
-                const idxTop1 = musicas.findIndex(m => m.id === top1.id);
-                if (idxTop1 >= 0) {
-                    indiceParaTocar = idxTop1;
-                }
+    if (!audioPlayer.src && typeof musicas !== "undefined") {
+
+        carregarPlaylist(musicas);
+
+        let indice = 0;
+
+        if (
+            typeof maisOuvidas !== "undefined" &&
+            maisOuvidas.length
+        ) {
+
+            const top = maisOuvidas[0];
+
+            const encontrado = musicas.findIndex(
+                m => Number(m.id) === Number(top.id)
+            );
+
+            if (encontrado >= 0) {
+                indice = encontrado;
             }
-
-            // Inicia a reprodução
-            tocar(indiceParaTocar);
-            return; // Interrompe para evitar conflito com o bloco padrão abaixo
         }
+
+        tocar(indice);
+        return;
     }
 
-    // 2. LÓGICA PADRÃO (Para quando uma música já está carregada/em andamento)
+
     if (tocando) {
+
         audioPlayer.pause();
         tocando = false;
-        atualizarMiniPlayer();
+
     } else {
+
         audioPlayer.play()
             .then(() => {
                 tocando = true;
-                atualizarMiniPlayer();
             })
-            .catch(erro => {
-                console.error("Erro ao tentar reproduzir:", erro);
+            .catch(() => {
                 tocando = false;
-                atualizarMiniPlayer();
             });
     }
+
+    atualizarMiniPlayer();
 }
 
-// Atualiza o estado visual do player
+
+// Atualiza mini player
 function atualizarMiniPlayer() {
+
     if (!miniPlayer) return;
+
     miniPlayer.style.display = "flex";
-    
-    if (!playlist || !playlist[musicaAtual]) return;
+
+
     const musica = playlist[musicaAtual];
-    
-    if (miniTitulo) miniTitulo.textContent = musica.titulo;
-    if (miniArtista) miniArtista.textContent = musica.artista;
-    
+
+    if (!musica) return;
+
+
+    if (miniTitulo) {
+        miniTitulo.textContent = musica.titulo;
+    }
+
+    if (miniArtista) {
+        miniArtista.textContent = musica.artista;
+    }
+
+
     if (miniCapa) {
-        const capaIndividual = obterCapaMusica(musica);
-        miniCapa.src = capaIndividual;
+
+        miniCapa.src = obterCapaMusica(musica);
+
         miniCapa.onerror = () => {
-            miniCapa.src = musica.capa || "assets/icons/album.svg";
+            miniCapa.src =
+                musica.capa ||
+                "assets/icons/album.svg";
         };
     }
-    
-    // Atualiza o ícone interno do botão Play/Pause central (sempre em contraste escuro)
+
+
     if (btnPlay) {
-        let img = btnPlay.querySelector("img");
+
+        const img = btnPlay.querySelector("img");
+
         if (img) {
-            img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
-            // Ajusta o alinhamento visual perfeito dependendo do ícone ativo
-            img.style.marginLeft = tocando ? "0px" : "2px";
+
+            img.src = tocando
+                ? "assets/icons/pause.svg"
+                : "assets/icons/play.svg";
+
+            img.style.marginLeft =
+                tocando ? "0px" : "2px";
         }
     }
-    
+
+
     atualizarBotoesModo();
     atualizarBotaoFavorito();
 }
 
-// Pula para a próxima música
-function proxima() { 
-    if (playlist.length === 0) return;
+
+// Próxima música
+function proxima() {
+
+    if (!playlist.length) return;
+
 
     if (modoShuffle) {
-        if (playlist.length > 1) {
-            let novoIndice;
-            do {
-                novoIndice = Math.floor(Math.random() * playlist.length);
-            } while (novoIndice === musicaAtual);
-            musicaAtual = novoIndice;
-        } else {
-            musicaAtual = 0;
-        }
+
+        let novo;
+
+        do {
+
+            novo = Math.floor(
+                Math.random() * playlist.length
+            );
+
+        } while (
+            novo === musicaAtual &&
+            playlist.length > 1
+        );
+
+        musicaAtual = novo;
+
     } else {
-        musicaAtual = (musicaAtual + 1) % playlist.length; 
+
+        musicaAtual =
+            (musicaAtual + 1) %
+            playlist.length;
     }
-    
-    tocar(musicaAtual); 
+
+
+    tocar(musicaAtual);
 }
 
-// Volta para a música anterior
-function anterior() { 
-    if (playlist.length === 0) return;
+
+// Música anterior
+function anterior() {
+
+    if (!playlist.length) return;
+
 
     if (modoShuffle) {
-        if (playlist.length > 1) {
-            let novoIndice;
-            do {
-                novoIndice = Math.floor(Math.random() * playlist.length);
-            } while (novoIndice === musicaAtual);
-            musicaAtual = novoIndice;
-        } else {
-            musicaAtual = 0;
-        }
+
+        let novo;
+
+        do {
+
+            novo = Math.floor(
+                Math.random() * playlist.length
+            );
+
+        } while (
+            novo === musicaAtual &&
+            playlist.length > 1
+        );
+
+        musicaAtual = novo;
+
     } else {
-        musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length; 
+
+        musicaAtual =
+            (musicaAtual - 1 + playlist.length) %
+            playlist.length;
     }
-    
-    tocar(musicaAtual); 
+
+
+    tocar(musicaAtual);
 }
 
-// FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
+
+// Shuffle
 function alternarShuffle() {
+
     modoShuffle = !modoShuffle;
+
     if (modoShuffle) {
         modoRepeat = false;
     }
+
     atualizarBotoesModo();
 }
 
-// FUNÇÃO: Ativa / Desativa a Repetição
+
+// Repeat
 function alternarRepeat() {
+
     modoRepeat = !modoRepeat;
+
     if (modoRepeat) {
         modoShuffle = false;
     }
+
     atualizarBotoesModo();
 }
 
-// Visual dos botões de Shuffle e Repeat com brilho dourado inteligente
-function atualizarBotoesModo() {
-    const btnShuffle = document.getElementById("btnShuffle");
-    const btnRepeat = document.getElementById("btnRepeat");
 
-    const filtroAtivo = "brightness(1.5) saturate(10) drop-shadow(0px 0px 5px rgba(212, 175, 55, 0.9))";
-    const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
+// Visual dos modos
+function atualizarBotoesModo() {
+
+    const shuffle =
+        document.getElementById("btnShuffle");
+
+    const repeat =
+        document.getElementById("btnRepeat");
+
+
+    const ativo =
+        "brightness(1.5) saturate(10) drop-shadow(0 0 5px rgba(212,175,55,.9))";
+
+
+    const inativo =
+        "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
+
+
+    if (shuffle) {
+
+        const img = shuffle.querySelector("img");
+
+        if (img) {
+
+            img.style.filter =
+                modoShuffle ? ativo : inativo;
+
+            img.style.opacity =
+                modoShuffle ? "1" : "0.5";
+        }
+    }
+
+
+    if (repeat) {
+
+        const img = repeat.querySelector("img");
+
+        if (img) {
+
+            img.style.filter =
+                modoRepeat ? ativo : inativo;
+
+            img.style.opacity =
+                modoRepeat ? "1" : "0.5";
+        }
+    }
+            }
+// Próxima música
+function proxima() {
+    if (!playlist.length) return;
+
+    if (modoShuffle) {
+        let novo;
+        do {
+            novo = Math.floor(Math.random() * playlist.length);
+        } while (novo === musicaAtual && playlist.length > 1);
+
+        musicaAtual = novo;
+    } else {
+        musicaAtual = (musicaAtual + 1) % playlist.length;
+    }
+
+    tocar(musicaAtual);
+}
+
+
+// Música anterior
+function anterior() {
+    if (!playlist.length) return;
+
+    if (modoShuffle) {
+        let novo;
+        do {
+            novo = Math.floor(Math.random() * playlist.length);
+        } while (novo === musicaAtual && playlist.length > 1);
+
+        musicaAtual = novo;
+    } else {
+        musicaAtual = (musicaAtual - 1 + playlist.length) % playlist.length;
+    }
+
+    tocar(musicaAtual);
+}
+
+
+// Shuffle
+function alternarShuffle() {
+    modoShuffle = !modoShuffle;
+
+    if (modoShuffle) {
+        modoRepeat = false;
+    }
+
+    atualizarBotoesModo();
+}
+
+
+// Repeat
+function alternarRepeat() {
+    modoRepeat = !modoRepeat;
+
+    if (modoRepeat) {
+        modoShuffle = false;
+    }
+
+    atualizarBotoesModo();
+}
+
+
+// Atualiza visual dos botões
+function atualizarBotoesModo() {
+
+    const ativo =
+    "brightness(1.5) saturate(10) drop-shadow(0 0 5px rgba(212,175,55,.9))";
+
+    const inativo =
+    "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
+
 
     if (btnShuffle) {
-        let img = btnShuffle.querySelector("img");
+
+        const img = btnShuffle.querySelector("img");
+
         if (img) {
-            img.style.filter = modoShuffle ? filtroAtivo : filtroInativo;
+            img.style.filter = modoShuffle ? ativo : inativo;
             img.style.opacity = modoShuffle ? "1" : "0.5";
         }
     }
-    
+
+
     if (btnRepeat) {
-        let img = btnRepeat.querySelector("img");
+
+        const img = btnRepeat.querySelector("img");
+
         if (img) {
-            img.style.filter = modoRepeat ? filtroAtivo : filtroInativo;
+            img.style.filter = modoRepeat ? ativo : inativo;
             img.style.opacity = modoRepeat ? "1" : "0.5";
         }
     }
 }
 
+
 function formatarTempo(segundos) {
+
     if (isNaN(segundos)) return "0:00";
+
     const min = Math.floor(segundos / 60);
     const seg = Math.floor(segundos % 60);
-    return `${min}:${seg < 10 ? '0' : ''}${seg}`;
+
+    return `${min}:${seg < 10 ? "0" : ""}${seg}`;
 }
 
-// Eventos de Progresso do Áudio
+
+
+// EVENTOS DO ÁUDIO
+
 if (audioPlayer) {
-    
-    // Função para iniciar a contagem física dos segundos
-   /* function iniciarCronometroStream() {
-        if (relogioStream) clearInterval(relogioStream);
-        
-        relogioStream = setInterval(() => {
-            if (audioPlayer && !audioPlayer.paused && !streamRegistrado) {
-                tempoOuvidoAcumulado += 1;
-                
-                if (tempoOuvidoAcumulado >= 30) {
-                    registrarReproducao(playlist[musicaAtual].id);
-                    streamRegistrado = true;
-                    pararCronometroStream();
-                }
-            }
-        }, 1000);
-    } */
 
-    // Função para parar o cronômetro
-    function pararCronometroStream() {
-        if (relogioStream) {
-            clearInterval(relogioStream);
-            relogioStream = null;
-        }
-    }
 
-    // Inicia contagem ao dar play
-   /* audioPlayer.addEventListener("play", () => {
-        if (!streamRegistrado) {
-            iniciarCronometroStream();
-        }
-    });
-
-    // Pausa contagem ao pausar
-    audioPlayer.addEventListener("pause", () => {
-        pararCronometroStream();
-    }); */
-
-    // Mantemos o timeupdate para atualizar o visual da barra de progresso
     audioPlayer.addEventListener("timeupdate", () => {
-        const current = audioPlayer.currentTime;
-        const duration = audioPlayer.duration;
+
+        const atual = audioPlayer.currentTime;
+        const total = audioPlayer.duration;
+
 
         if (progressBar) {
-            progressBar.value = duration ? (current / duration) * 100 : 0;
+            progressBar.value =
+            total ? (atual / total) * 100 : 0;
         }
 
-        if (currentTime) currentTime.textContent = formatarTempo(current);
-        if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
+
+        if (currentTime)
+            currentTime.textContent = formatarTempo(atual);
+
+
+        if (durationTime)
+            durationTime.textContent = formatarTempo(total || 0);
+
+
+
+        // Registro real: 90% ouvido
+        if (
+            !streamRegistrado &&
+            total > 0 &&
+            atual / total >= 0.90 &&
+            playlist[musicaAtual]
+        ) {
+
+            registrarReproducao(
+                playlist[musicaAtual].id
+            );
+
+            streamRegistrado = true;
+        }
+
     });
 
-    // Quando a música acaba
-   /* audioPlayer.addEventListener("ended", () => {
-        pararCronometroStream();
-        if (modoRepeat) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play().catch(err => console.log(err));
-        } else {
-            proxima();
+
+
+    audioPlayer.addEventListener("ended", () => {
+
+
+        // Segurança caso o navegador não dispare o último timeupdate
+        if (
+            !streamRegistrado &&
+            audioPlayer.duration > 0 &&
+            playlist[musicaAtual] &&
+            audioPlayer.currentTime / audioPlayer.duration >= 0.90
+        ) {
+
+            registrarReproducao(
+                playlist[musicaAtual].id
+            );
+
+            streamRegistrado = true;
         }
-    });*/
-  audioPlayer.addEventListener("ended", () => {
 
-    // Se por alguma pequena imprecisão ainda não registrou,
-    // registra ao terminar naturalmente a música.
-    if (
-        !streamRegistrado &&
-        playlist[musicaAtual] &&
-        audioPlayer.duration > 0 &&
-        (tempoRealOuvido / audioPlayer.duration) >= 0.90
-    ) {
-        registrarReproducao(playlist[musicaAtual].id);
-        streamRegistrado = true;
-    }
 
-    if (modoRepeat) {
-        tocar(musicaAtual);
-    } else {
-        proxima();
-    }
+        if (modoRepeat) {
 
-});
+            audioPlayer.currentTime = 0;
+
+            audioPlayer.play();
+
+        } else {
+
+            proxima();
+
+        }
+
+    });
+
+
+
+    audioPlayer.addEventListener("error", () => {
+
+        console.warn("Erro ao carregar áudio");
+
+        tocando = false;
+
+        atualizarMiniPlayer();
+
+    });
+
 }
+
+
+
+// Barra manual
 
 if (progressBar) {
+
     progressBar.addEventListener("input", () => {
-        if (audioPlayer && audioPlayer.duration) {
-            audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
+
+        if (audioPlayer.duration) {
+
+            audioPlayer.currentTime =
+            (progressBar.value / 100) *
+            audioPlayer.duration;
+
         }
+
     });
+
 }
 
-// LÓGICA DE FAVORITOS
+
+
+// FAVORITOS
+
+
 function toggleFavorito() {
-    if (!playlist || !playlist[musicaAtual]) return;
+
     const musica = playlist[musicaAtual];
-    
-    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const index = favoritos.findIndex(f => f.titulo.trim() === musica.titulo.trim());
-    
-    if (index > -1) {
-        favoritos.splice(index, 1);
+
+    if (!musica) return;
+
+
+    let favoritos =
+    JSON.parse(localStorage.getItem("favoritos")) || [];
+
+
+    const existe =
+    favoritos.findIndex(
+        f => f.id === musica.id
+    );
+
+
+    if (existe >= 0) {
+
+        favoritos.splice(existe,1);
+
     } else {
+
         favoritos.push(musica);
+
     }
-    
-    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+
+
+    localStorage.setItem(
+        "favoritos",
+        JSON.stringify(favoritos)
+    );
+
+
     atualizarBotaoFavorito();
 
+
     if (typeof renderizarFavoritosHorizontais === "function") {
+
         renderizarFavoritosHorizontais();
+
     }
+
 }
+
+
 
 function atualizarBotaoFavorito() {
-    const imgFavorito = document.getElementById("imgFavorito");
-    if (!imgFavorito) return;
-    
-    const musica = playlist[musicaAtual];
-    if (!musica) return;
-    
-    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-    const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
-    
-    // Favorito Ativo (Vermelho/Dourado Brilhante) vs Inativo (Dourado Translúcido)
-    const filtroAtivo = "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))";
-    const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
 
-    imgFavorito.style.filter = ehFavorito ? filtroAtivo : filtroInativo;
-    imgFavorito.style.opacity = ehFavorito ? "1" : "0.5";
+
+    const img =
+    document.getElementById("imgFavorito");
+
+
+    if (!img || !playlist[musicaAtual])
+        return;
+
+
+    const favoritos =
+    JSON.parse(localStorage.getItem("favoritos")) || [];
+
+
+    const ativo =
+    favoritos.some(
+        f => f.id === playlist[musicaAtual].id
+    );
+
+
+    img.style.opacity =
+    ativo ? "1" : "0.5";
+
+
+    img.style.filter =
+    ativo
+    ?
+    "brightness(1.2) saturate(10) drop-shadow(0 0 4px rgba(212,175,55,.8))"
+    :
+    "brightness(0) saturate(100%) invert(84%) sepia(23%)";
+
 }
 
-// ==========================================
-// GESTÃO DE HISTÓRICO
-// ==========================================
-function salvarNoHistorico(musica) {
-    let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
 
-    historico = historico.filter(m => m.audio !== musica.audio);
+
+// HISTÓRICO
+
+
+function salvarNoHistorico(musica) {
+
+
+    let historico =
+    JSON.parse(localStorage.getItem("historico_adoraplay")) || [];
+
+
+    historico =
+    historico.filter(
+        m => m.id !== musica.id
+    );
+
+
     historico.unshift(musica);
 
-    if (historico.length > 3) {
+
+    if (historico.length > 3)
         historico.pop();
-    }
 
-    localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
-    
+
+
+    localStorage.setItem(
+        "historico_adoraplay",
+        JSON.stringify(historico)
+    );
+
+
     if (typeof renderizarUltimasOuvidas === "function") {
+
         renderizarUltimasOuvidas();
+
     }
+
 }
 
-// Envia o id da música para a API de estatísticas
+
+
+// API
+
 async function registrarReproducao(id) {
+
     try {
-        const resposta = await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
+
+        await fetch(
+        "https://adoraplay-api.digiartesai.workers.dev/",
+        {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
             },
-            body: JSON.stringify({ id })
+            body:JSON.stringify({id})
         });
-    } catch (erro) {
-        console.warn("Falha ao computar reprodução:", erro.message);
+
+
+    } catch(e) {
+
+        console.warn(
+        "Erro ao registrar reprodução",
+        e
+        );
+
     }
+
 }
 
-// ==========================================
-// INICIALIZAÇÃO DA TOP 1 (CHAMADA LOGO APÓS O FETCH DO APP.JS)
-// ==========================================
+// Inicialização
+
 function inicializarPlayerComTop1() {
-    // 1. Garante que a lista de músicas global existe e tem itens
-    if (typeof musicas !== "undefined" && musicas.length > 0) {
-        
-        // 2. Abastece a playlist do player
-        carregarPlaylist(musicas);
-        
-        let indiceTop1 = 0; // Padrão: primeira música da lista
 
-        // 3. Tenta localizar a música Top 1 do seu ranking
-        if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
-            const top1 = maisOuvidas[0];
-            const idxTop1 = musicas.findIndex(m => m.id === top1.id);
-            if (idxTop1 >= 0) {
-                indiceTop1 = idxTop1;
-            }
-        }
 
-        // 4. Define o índice atual sem iniciar o áudio
-        musicaAtual = indiceTop1;
-        const musica = playlist[musicaAtual];
+    if (
+        typeof musicas === "undefined" ||
+        !musicas.length
+    )
+    return;
 
-        // 5. Carrega o caminho do arquivo de áudio silenciosamente
-        if (audioPlayer && musica) {
-            audioPlayer.src = musica.audio;
-        }
 
-        // 6. Atualiza o visual (Capa, Título, Artista) mantendo o estado de pausa
-        atualizarMiniPlayer();
+    carregarPlaylist(musicas);
+
+
+    musicaAtual = 0;
+
+
+    if (typeof maisOuvidas !== "undefined"
+        && maisOuvidas.length) {
+
+
+        const id =
+        maisOuvidas[0].id;
+
+
+        const index =
+        musicas.findIndex(
+            m => m.id === id
+        );
+
+
+        if (index >= 0)
+            musicaAtual = index;
+
     }
+
+
+
+    const musica =
+    playlist[musicaAtual];
+
+
+    if (audioPlayer && musica) {
+
+        audioPlayer.src =
+        musica.audio;
+
+    }
+
+
+    atualizarMiniPlayer();
+
 }
