@@ -1,86 +1,51 @@
-// Arquivo isolado para controle de efeitos visuais baseados no áudio
+// Arquivo isolado para controle de efeitos visuais sem risco de bloquear o áudio
 (function() {
     const audioElement = document.getElementById("audioPlayer");
     const targetButton = document.getElementById("btnPlay");
 
-    let audioContext = null;
-    let analyzer = null;
-    let source = null;
     let animacaoId = null;
+    let angulo = 0;
 
-    // Configura o analisador de áudio tratando o bloqueio de segurança (CORS)
-    function inicializarAudioContext() {
-        if (audioContext) return; 
-
-        try {
-            // 1. Libera o áudio para o JavaScript ler as frequências sem bloquear o som
-            if (audioElement && !audioElement.crossOrigin) {
-                audioElement.crossOrigin = "anonymous";
-            }
-
-            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-            audioContext = new AudioContextClass();
-            
-            analyzer = audioContext.createAnalyser();
-            analyzer.fftSize = 64; 
-            
-            source = audioContext.createMediaElementSource(audioElement);
-            source.connect(analyzer);
-            analyzer.connect(audioContext.destination);
-        } catch (e) {
-            console.warn("Erro ao iniciar contexto ou bloqueio de CORS:", e);
+    // Função que faz o botão crescer e diminuir simulando uma batida suave
+    function simularPulsação() {
+        if (!targetButton || !audioElement || audioElement.paused) {
+            if (targetButton) targetButton.style.transform = "scale(1)";
+            return;
         }
-    }
 
-    // Loop de animação em tempo real
-    function renderizarPulso() {
-        if (!analyzer || !targetButton) return;
-
-        const bufferLength = analyzer.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+        // Cria uma onda matemática suave (seno) que varia entre 0 e 1 de forma cíclica
+        // Aumente ou diminua o '0.15' para acelerar ou desacelerar o ritmo do pulso
+        angulo += 0.15; 
         
-        analyzer.getByteFrequencyData(dataArray);
+        // Transforma a oscilação em uma escala CSS sutil (entre 1.0 e 1.10)
+        const variacao = (Math.sin(angulo) + 1) / 2; // Normaliza entre 0 e 1
+        const escala = 1 + (variacao * 0.10); 
 
-        let somaGraves = 0;
-        const nosConsiderados = Math.min(bufferLength, 8); 
-        
-        for (let i = 0; i < nosConsiderados; i++) {
-            somaGraves += dataArray[i];
-        }
-        
-        const mediaVolume = somaGraves / nosConsiderados;
-
-        // Amortece e calcula a escala do botão baseada no som real
-        const escala = 1 + (mediaVolume / 255) * 0.15;
-
-        // Aplica o efeito visual no botão
+        // Aplica o efeito no botão
         targetButton.style.transform = `scale(${escala})`;
         targetButton.style.transition = "transform 0.05s ease-out";
 
-        animacaoId = requestAnimationFrame(renderizarPulso);
+        // Continua o loop de animação
+        animacaoId = requestAnimationFrame(simularPulsação);
     }
 
     if (audioElement && targetButton) {
         
+        // Quando a música começa a tocar, inicia o pulso visual
         audioElement.addEventListener("play", () => {
-            inicializarAudioContext();
-            
-            if (audioContext && audioContext.state === "suspended") {
-                audioContext.resume();
-            }
-
             if (animacaoId) cancelAnimationFrame(animacaoId);
-            renderizarPulso();
+            simularPulsação();
         });
 
-        const pararAnimacao = () => {
+        // Quando pausa, termina ou muda de faixa, para o pulso e reseta o tamanho
+        const pararPulso = () => {
             if (animacaoId) cancelAnimationFrame(animacaoId);
             if (targetButton) {
                 targetButton.style.transform = "scale(1)";
             }
         };
 
-        audioElement.addEventListener("pause", pararAnimacao);
-        audioElement.addEventListener("ended", pararAnimacao);
+        audioElement.addEventListener("pause", pararPulso);
+        audioElement.addEventListener("ended", pararPulso);
     }
 })();
