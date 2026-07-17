@@ -368,16 +368,16 @@ if (audioPlayer) {
         const current = audioPlayer.currentTime;
         const duration = audioPlayer.duration;
         // Atualiza barra
-       /* 
+       
        if (progressBar) {
             progressBar.value = duration ? (current / duration) * 100 : 0;
         }
-        */
-        if (progressBar) {
+        
+        /*if (progressBar) {
     progressBar.addEventListener("input", () => {
         if (audioPlayer && audioPlayer.duration) {
             audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-        }
+        }*/
     });
 }
         if (currentTime) currentTime.textContent = formatarTempo(current);
