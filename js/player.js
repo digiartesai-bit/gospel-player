@@ -259,6 +259,14 @@ function formatarTempo(segundos) {
 // Eventos de Progresso do Áudio
 if (audioPlayer) {
     
+    // GARANTIA DE REPEAT: Reseta a trava no momento exato em que o áudio ganha o Play (nova música ou repetição)
+    audioPlayer.addEventListener("play", () => {
+        // Se a música está no primeiro segundo (iniciando do zero ou via repeat), libera nova contagem
+        if (audioPlayer.currentTime < 1) {
+            streamRegistrado = false;
+        }
+    });
+
     // Dispara continuamente enquanto a música toca
     audioPlayer.addEventListener("timeupdate", () => {
         const current = audioPlayer.currentTime;
@@ -278,24 +286,14 @@ if (audioPlayer) {
             
             if (porcentagemOuvida >= 90) {
                 registrarReproducao(playlist[musicaAtual].id);
-                streamRegistrado = true; // Trava para não computar de novo na mesma música
+                streamRegistrado = true; // Trava para não computar em loops dentro da mesma rodada
             }
         }
     });
 
     // Quando a música acaba
-    /*audioPlayer.addEventListener("ended", () => {
-        if (modoRepeat) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play().catch(err => console.log(err));
-        } else {
-            proxima();
-        }
-    });*/
-        // Quando a música acaba
     audioPlayer.addEventListener("ended", () => {
         if (modoRepeat) {
-            streamRegistrado = false; // <--- LIBERA PARA CONTAR O STREAM DE NOVO!
             audioPlayer.currentTime = 0;
             audioPlayer.play().catch(err => console.log(err));
         } else {
@@ -317,7 +315,7 @@ function toggleFavorito() {
     if (!playlist || !playlist[musicaAtual]) return;
     const musica = playlist[musicaAtual];
     
-    let favoritos = JSON.parse(localStorage.getItem('favorites')) || [];
+    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const index = favoritos.findIndex(f => f.titulo.trim() === musica.titulo.trim());
     
     if (index > -1) {
