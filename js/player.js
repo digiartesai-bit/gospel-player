@@ -264,6 +264,7 @@ function formatarTempo(segundos) {
 }
 
 // Eventos de Progresso do Áudio
+/*
 if (audioPlayer) {
     
     // Função para iniciar a contagem física dos segundos
@@ -281,8 +282,49 @@ if (audioPlayer) {
                 }
             }
         }, 1000);
-    }
+    } */
+// Eventos de Progresso do Áudio
+if (audioPlayer) {
+    
+    // Dispara continuamente enquanto a música toca
+    audioPlayer.addEventListener("timeupdate", () => {
+        const current = audioPlayer.currentTime;
+        const duration = audioPlayer.duration;
 
+        // 1. Atualiza a barra de progresso visual
+        if (progressBar) {
+            progressBar.value = duration ? (current / duration) * 100 : 0;
+        }
+
+        if (currentTime) currentTime.textContent = formatarTempo(current);
+        if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
+
+        // 2. REGISTRO DINÂMICO DE STREAM (90% Ouvido)
+        if (duration && !streamRegistrado) {
+            const porcentagemOuvida = (current / duration) * 100;
+            
+            if (porcentagemOuvida >= 90) {
+                registrarReproducao(playlist[musicaAtual].id);
+                streamRegistrado = true; // Trava para não registrar de novo na mesma execução
+            }
+        }
+    });
+
+    // Quando o usuário clica em outra música, o player roda o "play" e reinicia o estado
+    audioPlayer.addEventListener("play", () => {
+        // Se a música mudou, o "tocar()" já zerou o streamRegistrado, então aqui fica pronto para nova contagem
+    });
+
+    // Quando a música acaba
+    audioPlayer.addEventListener("ended", () => {
+        if (modoRepeat) {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play().catch(err => console.log(err));
+        } else {
+            proxima();
+        }
+    });
+}
     // Função para parar o cronômetro
     function pararCronometroStream() {
         if (relogioStream) {
