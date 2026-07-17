@@ -25,19 +25,9 @@ let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
 // Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
-/*
 let streamRegistrado = false;
 let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
 let relogioStream = null;       // Identificador do setInterval do relógio
-*/
-// ==========================================
-// CONTROLE DE REPRODUÇÃO (90% DA MÚSICA)
-// ==========================================
-let streamRegistrado = false;
-// Guarda a maior posição alcançada naturalmente durante a reprodução
-let maiorTempoOuvido = 0;
-// Detecta quando o usuário arrastou a barra
-let houveSeek = false;
 
 // Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
@@ -47,20 +37,17 @@ function obterCapaMusica(musica) {
     }
     return musica.capa || "assets/icons/album.svg";
 }
+
 // Garante o carregamento da playlist dinâmica do app.js
 function carregarPlaylist(lista) { 
     playlist = [...lista]; 
     atualizarBotoesModo();
 }
+
 if (window.playlist && window.playlist.length > 0) {
     playlist = [...window.playlist];
 }
 
-function reiniciarControleStream() {
-    streamRegistrado = false;
-    tempoRealOuvido = 0;
-    ultimoTempo = 0;
-}
 // Toca uma música com base no índice
 function tocar(indice) {
     if (!playlist || playlist.length === 0) return;
@@ -70,18 +57,12 @@ function tocar(indice) {
     const musica = playlist[indice];
     
     // Lógica para registrar reprodução de forma segura (Zera contadores)
-    /*
     streamRegistrado = false;
     tempoOuvidoAcumulado = 0;
     if (relogioStream) {
         clearInterval(relogioStream);
         relogioStream = null;
     }
-    */
-    // Reinicia o controle de reprodução
-    streamRegistrado = false;
-    maiorTempoOuvido = 0;
-    houveSeek = false;
     
     // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
@@ -283,7 +264,6 @@ function formatarTempo(segundos) {
 }
 
 // Eventos de Progresso do Áudio
-/*
 if (audioPlayer) {
     
     // Função para iniciar a contagem física dos segundos
@@ -352,62 +332,6 @@ if (progressBar) {
     progressBar.addEventListener("input", () => {
         if (audioPlayer && audioPlayer.duration) {
             audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-        }
-    });
-}
-*/
-// ==========================================
-// EVENTOS DO PLAYER
-// ==========================================
-if (audioPlayer) {
-    // Detecta quando o usuário arrasta a barra
-    audioPlayer.addEventListener("seeking", () => {
-        houveSeek = true;
-    });
-    audioPlayer.addEventListener("timeupdate", () => {
-        const current = audioPlayer.currentTime;
-        const duration = audioPlayer.duration;
-        // Atualiza barra
-       
-       if (progressBar) {
-            progressBar.value = duration ? (current / duration) * 100 : 0;
-        }
-        
-        /*if (progressBar) {
-    progressBar.addEventListener("input", () => {
-        if (audioPlayer && audioPlayer.duration) {
-            audioPlayer.currentTime = (progressBar.value / 100) * audioPlayer.duration;
-        }*/
-    });
-}
-        if (currentTime) currentTime.textContent = formatarTempo(current);
-        if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
-        // Guarda o maior tempo realmente alcançado
-        if (current > maiorTempoOuvido) {
-            maiorTempoOuvido = current;
-        }
-        // Conta apenas quando atingir 90% da música
-        if (
-            !streamRegistrado &&
-            duration &&
-            !houveSeek &&
-            (maiorTempoOuvido / duration) >= 0.90
-        ) {
-            registrarReproducao(playlist[musicaAtual].id);
-            streamRegistrado = true;
-        }
-    });
-    audioPlayer.addEventListener("ended", () => {
-        // Se estiver em Repeat, começa uma NOVA reprodução
-        if (modoRepeat) {
-            streamRegistrado = false;
-            maiorTempoOuvido = 0;
-            houveSeek = false;
-
-            audioPlayer.currentTime = 0;
-            audioPlayer.play().catch(err => console.log(err));
-        } else {
-            proxima();
         }
     });
 }
