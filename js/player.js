@@ -284,8 +284,18 @@ if (audioPlayer) {
     });
 
     // Quando a música acaba
+    /*audioPlayer.addEventListener("ended", () => {
+        if (modoRepeat) {
+            audioPlayer.currentTime = 0;
+            audioPlayer.play().catch(err => console.log(err));
+        } else {
+            proxima();
+        }
+    });*/
+        // Quando a música acaba
     audioPlayer.addEventListener("ended", () => {
         if (modoRepeat) {
+            streamRegistrado = false; // <--- LIBERA PARA CONTAR O STREAM DE NOVO!
             audioPlayer.currentTime = 0;
             audioPlayer.play().catch(err => console.log(err));
         } else {
