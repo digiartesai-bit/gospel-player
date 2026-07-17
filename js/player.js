@@ -24,10 +24,8 @@ let tocando = false;
 let modoShuffle = false;
 let modoRepeat = false; // false = sem repetição, true = repete a música atual
 
-// Variáveis de controle para contar apenas uma vez por reprodução (Tempo real ouvido)
+// Variável de controle para contar apenas uma vez por reprodução
 let streamRegistrado = false;
-let tempoOuvidoAcumulado = 0;   // Guarda os segundos reais escutados
-let relogioStream = null;       // Identificador do setInterval do relógio
 
 // Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
@@ -56,13 +54,8 @@ function tocar(indice) {
     musicaAtual = indice;
     const musica = playlist[indice];
     
-    // Lógica para registrar reprodução de forma segura (Zera contadores)
+    // Reseta a trava do stream para a nova música que vai começar
     streamRegistrado = false;
-    tempoOuvidoAcumulado = 0;
-    if (relogioStream) {
-        clearInterval(relogioStream);
-        relogioStream = null;
-    }
     
     // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
@@ -264,26 +257,6 @@ function formatarTempo(segundos) {
 }
 
 // Eventos de Progresso do Áudio
-/*
-if (audioPlayer) {
-    
-    // Função para iniciar a contagem física dos segundos
-    function iniciarCronometroStream() {
-        if (relogioStream) clearInterval(relogioStream);
-        
-        relogioStream = setInterval(() => {
-            if (audioPlayer && !audioPlayer.paused && !streamRegistrado) {
-                tempoOuvidoAcumulado += 1;
-                
-                if (tempoOuvidoAcumulado >= 30) {
-                    registrarReproducao(playlist[musicaAtual].id);
-                    streamRegistrado = true;
-                    pararCronometroStream();
-                }
-            }
-        }, 1000);
-    } */
-// Eventos de Progresso do Áudio
 if (audioPlayer) {
     
     // Dispara continuamente enquanto a música toca
@@ -305,62 +278,13 @@ if (audioPlayer) {
             
             if (porcentagemOuvida >= 90) {
                 registrarReproducao(playlist[musicaAtual].id);
-                streamRegistrado = true; // Trava para não registrar de novo na mesma execução
+                streamRegistrado = true; // Trava para não computar de novo na mesma música
             }
         }
     });
 
-    // Quando o usuário clica em outra música, o player roda o "play" e reinicia o estado
-    audioPlayer.addEventListener("play", () => {
-        // Se a música mudou, o "tocar()" já zerou o streamRegistrado, então aqui fica pronto para nova contagem
-    });
-
     // Quando a música acaba
     audioPlayer.addEventListener("ended", () => {
-        if (modoRepeat) {
-            audioPlayer.currentTime = 0;
-            audioPlayer.play().catch(err => console.log(err));
-        } else {
-            proxima();
-        }
-    });
-}
-    // Função para parar o cronômetro
-    function pararCronometroStream() {
-        if (relogioStream) {
-            clearInterval(relogioStream);
-            relogioStream = null;
-        }
-    }
-
-    // Inicia contagem ao dar play
-    audioPlayer.addEventListener("play", () => {
-        if (!streamRegistrado) {
-            iniciarCronometroStream();
-        }
-    });
-
-    // Pausa contagem ao pausar
-    audioPlayer.addEventListener("pause", () => {
-        pararCronometroStream();
-    });
-
-    // Mantemos o timeupdate para atualizar o visual da barra de progresso
-    audioPlayer.addEventListener("timeupdate", () => {
-        const current = audioPlayer.currentTime;
-        const duration = audioPlayer.duration;
-
-        if (progressBar) {
-            progressBar.value = duration ? (current / duration) * 100 : 0;
-        }
-
-        if (currentTime) currentTime.textContent = formatarTempo(current);
-        if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
-    });
-
-    // Quando a música acaba
-    audioPlayer.addEventListener("ended", () => {
-        pararCronometroStream();
         if (modoRepeat) {
             audioPlayer.currentTime = 0;
             audioPlayer.play().catch(err => console.log(err));
@@ -383,7 +307,7 @@ function toggleFavorito() {
     if (!playlist || !playlist[musicaAtual]) return;
     const musica = playlist[musicaAtual];
     
-    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    let favoritos = JSON.parse(localStorage.getItem('favorites')) || [];
     const index = favoritos.findIndex(f => f.titulo.trim() === musica.titulo.trim());
     
     if (index > -1) {
