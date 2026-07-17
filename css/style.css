@@ -20,94 +20,92 @@ body {
     min-height: 100vh;
 }
 
-/* CABEÇALHO */
-.topo {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 20px 10px 20px;
+/* NOVO TOPO COM IMAGEM ÚNICA E PERFIL EM CIMA */
+.topo-imagem-unica {
+    position: relative; /* Permite posicionar o botão de perfil em relação ao topo */
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Mantém a proporção perfeita da imagem no celular */
+    background-image: url('../assets/topo.png'); /* Caminho da sua foto nova */
+    background-position: center;
+    background-size: contain; /* Garante que NADA da imagem seja cortado */
+    background-repeat: no-repeat;
+    background-color: #081826; /* Fundo idêntico para encaixe perfeito */
+    box-sizing: border-box;
 }
 
-.logo h1 {
-    color: #D4AF37;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.logo p {
-    color: #94a3b8;
-    font-size: 13px;
-    margin-top: -2px;
-}
-
-.perfil {
+/* Ícone de perfil fixado no canto superior direito por cima da foto */
+.topo-imagem-unica .perfil {
+    position: absolute;
+    top: 15px;
+    right: 15px;
     width: 42px;
     height: 42px;
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3); /* Fundinho escuro sutil para dar contraste */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     backdrop-filter: blur(5px);
+    z-index: 10; /* Garante que fique acima da imagem */
 }
 
-/* BANNER DE DESTAQUE */
+/* BANNER DE DESTAQUE (REDUZIDO E COMPACTO) */
 .banner {
-    margin: 15px 20px;
-    padding: 25px;
-    border-radius: 20px;
+    margin: 10px 20px;
+    padding: 14px 18px; /* Reduzido o espaçamento interno */
+    border-radius: 16px; /* Bordas um pouco mais delicadas */
     background: linear-gradient(135deg, #1f4f77 0%, #12304a 100%);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .banner small {
     display: inline-block;
     background: rgba(212, 175, 55, 0.2);
     color: #D4AF37;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 11px;
+    padding: 3px 8px; /* Reduzido */
+    border-radius: 10px;
+    font-size: 10px; /* Reduzido */
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 6px; /* Reduzido */
     text-transform: uppercase;
 }
 
 .banner h2 {
     color: #ffffff;
-    font-size: 22px;
+    font-size: 17px; /* Diminuído o título principal */
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
 
 .banner p {
     color: #cbd5e1;
-    font-size: 13px;
-    margin-bottom: 18px;
-    line-height: 1.4;
-    max-width: 80%;
+    font-size: 12px; /* Diminuída a descrição */
+    margin-bottom: 12px; /* Reduzido */
+    line-height: 1.3;
+    max-width: 85%;
 }
 
 .banner button {
     background: #D4AF37;
     color: #081826;
     border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 8px 16px; /* Botão mais compacto */
+    font-size: 12px; /* Texto interno menor */
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     transition: transform 0.2s;
 }
 
 .banner button img {
+    width: 12px; /* Ícone interno menor */
+    height: 12px;
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 }
 
@@ -262,49 +260,6 @@ body {
     font-weight: 500;
 }
 
-/* Layout interno do player */
-.player-controls-row {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.info-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
-}
-
-#miniCapa {
-    width: 42px;
-    height: 42px;
-    border-radius: 8px;
-    object-fit: cover;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-.mini-info strong {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #ffffff;
-}
-
-.mini-info small {
-    color: #94a3b8;
-    font-size: 11px;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* Controles Gerais dos Botões do Player */
 .btn-icon {
     background: none !important;
@@ -339,9 +294,9 @@ body {
     gap: 4px;
 }
 
-/* BOTÃO DE PLAY/PAUSE CENTRAL DO PLAYER (CORRIGIDO) */
+/* BOTÃO DE PLAY/PAUSE CENTRAL DO PLAYER */
 #btnPlay {
-    background: #D4AF37 !important; /* Dourado brilhante de fundo */
+    background: #D4AF37 !important;
     width: 38px !important;
     height: 38px !important;
     border-radius: 50% !important;
@@ -358,13 +313,12 @@ body {
     transform: scale(0.92);
 }
 
-/* Ícone dentro do botão de play: Sempre escuro para contraste visível */
 #btnPlay img {
     width: 14px !important;
     height: 14px !important;
     opacity: 1 !important;
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
-    margin-left: 2px; /* Correção óptica de centralização do triângulo */
+    margin-left: 2px;
 }
 
 /* MENU INFERIOR */
@@ -373,12 +327,12 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(6, 18, 29, 0.85); /* Efeito vidro no menu */
+    background: rgba(6, 18, 29, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-around;
-    padding: 12px 0 20px 0; /* Padding inferior maior para iPhones (Safe Area) */
+    padding: 12px 0 20px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     z-index: 101;
 }
@@ -412,39 +366,42 @@ body {
 
 .menu button.active img {
     opacity: 1;
-    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Fica dourado */
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%);
 }
+
 /* Limita e organiza a área de informações da música no mini-player */
 .info-wrapper {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex: 1;          /* Faz ocupar o espaço disponível antes dos botões */
-    min-width: 0;     /* Regra de ouro para permitir que os textos internos encolham */
+    flex: 1;
+    min-width: 0;
 }
 
 .mini-info {
     display: flex;
     flex-direction: column;
-    min-width: 0;     /* Essencial para que o efeito dos 3 pontinhos (...) funcione */
+    min-width: 0;
     flex: 1;
 }
 
-/* Aplica os 3 pontinhos se o título da música for muito longo */
 #miniTitulo {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
-    max-width: 100%;  /* Garante que respeite o limite da caixinha */
+    max-width: 100%;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-/* Aplica os 3 pontinhos se o nome do artista/álbum for muito longo */
 #miniArtista {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
     max-width: 100%;
+    color: #94a3b8;
+    font-size: 11px;
 }
-
