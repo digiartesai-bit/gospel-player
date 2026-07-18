@@ -674,12 +674,15 @@ body {
     max-width: 100%;
 }
 
+/* ===================================================
+   AJUSTE PARA DESKTOP (Telas maiores que 768px)
+   =================================================== */
 @media (min-width: 768px) {
     .topo {
-        height: 350px; 
+        height: 350px;
         max-height: 350px;
-        background-size: contain; /* Força a imagem inteira a aparecer na largura */
-        background-position: center botton;
-        background-color: #0d233a; /* Cor de fundo idêntica às bordas da imagem para disfarçar as laterais */
+        background-size: cover;
+        background-position: center center; /* Garante o enquadramento perfeito no meio */
+        background-color: #0d233a;
     }
-}
+} /* CORRIGIDO: Chave adicionada para fechar a media query */
