@@ -179,9 +179,74 @@ function filtrarPorAlbum(nomeAlbum) {
     });
 }
 // ==========================================================================
-// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA COM CLASSE CSS)
+// CONTROLE DE INSTALAÇÃO DO PWA
 // ==========================================================================
 let instaladorPrompt;
+const btnInstalar = document.querySelector('.btn-instalar-topo');
+
+function jaInstalado() {
+    return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true ||             // iOS
+        localStorage.getItem('pwaInstalado') === '1'        // fallback pós-instalação
+    );
+}
+
+function mostrarBotao() {
+    if (btnInstalar && !jaInstalado()) {
+        btnInstalar.classList.add('mostrar-btn');
+    }
+}
+
+function esconderBotao() {
+    if (btnInstalar) btnInstalar.classList.remove('mostrar-btn');
+}
+
+// 1. Se já está instalado (aberto como app OU já marcado no localStorage) → nunca mostra
+if (jaInstalado()) {
+    esconderBotao();
+}
+
+// 2. Navegador avisa que pode instalar → só aí mostramos o botão
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    instaladorPrompt = e;
+    mostrarBotao();
+});
+
+// 3. Clique no botão
+if (btnInstalar) {
+    btnInstalar.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (instaladorPrompt) {
+            instaladorPrompt.prompt();
+            const { outcome } = await instaladorPrompt.userChoice;
+            if (outcome === 'accepted') {
+                localStorage.setItem('pwaInstalado', '1');
+                esconderBotao();
+            }
+            instaladorPrompt = null;
+        } else {
+            alert(
+                "Para instalar o AdoraPlay agora:\n\n" +
+                "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
+                "2. Procure por 'Instalar aplicativo' ou 'Adicionar à tela inicial'."
+            );
+        }
+    });
+}
+
+// 4. Instalação concluída → marca e esconde para sempre
+window.addEventListener('appinstalled', () => {
+    localStorage.setItem('pwaInstalado', '1');
+    esconderBotao();
+    instaladorPrompt = null;
+});
+
+// ==========================================================================
+// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA COM CLASSE CSS)
+// ==========================================================================//
+/*let instaladorPrompt;
 const btnInstalar = document.querySelector('.btn-instalar-topo');[span_1](start_span)[span_1](end_span)
 
 // 1. Se já abrir dentro do app instalado, adiciona a classe para sumir na hora
