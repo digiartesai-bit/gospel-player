@@ -614,8 +614,32 @@ body {
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
+/* BOTÃO DE INSTALAR NO TOPO - CORRIGIDO PARA VISIBILIDADE */
+.btn-instalar-topo {
+    background: #D4AF37 !important; /* Dourado */
+    color: #081826 !important;     /* TEXTO ESCURO PARA CONTRASTE */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
 
-/* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO */
+/* Força o ícone a ficar escuro também */
+.btn-instalar-topo img {
+    width: 14px;
+    height: 14px;
+    /* Filtro para preto */
+    filter: brightness(0) saturate(100%) !important;
+}
+
+
+/* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO *
 .btn-instalar-topo {
     background: #D4AF37;
     color: #081826;
@@ -635,6 +659,6 @@ body {
     width: 14px;
     height: 14px;
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
-}
+} */
 .btn-instalar-topo:active {
     transform: scale(0.95);
