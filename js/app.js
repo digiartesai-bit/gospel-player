@@ -178,55 +178,59 @@ function filtrarPorAlbum(nomeAlbum) {
         }
     });
 }
+
+// ==========================================================================
+// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA E BLINDADA)
+// ==========================================================================
 let instaladorPrompt;
-const btnInstalar = document.getElementById('seu-botao-de-instalar');
+// CAPTURA CORRETA: Agora pegando o botão novo do topo pela classe dele
+const btnInstalar = document.querySelector('.btn-instalar-topo');
 
-// ==========================================================================
-// LOGICA DE INSTALAÇÃO - CORRIGIDA PARA NÃO SUMIR NO REFRESH
-// ==========================================================================
+// 1. Esconde o botão imediatamente se o usuário já estiver rodando o App Instalado
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (btnInstalar) btnInstalar.style.display = 'none';
+}
 
-// O navegador avisa que o app pode ser instalado
+// 2. O navegador avisa que o app pode ser instalado
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     instaladorPrompt = e;
     
     if (btnInstalar) {
-        btnInstalar.style.display = 'flex'; // Exibe o botão no topo[span_4](start_span)[span_4](end_span)
-        btnInstalar.classList.add('active'); // Aplica o estado ativo[span_5](start_span)[span_5](end_span)
+        // Exibe o botão no topo
+        btnInstalar.style.display = 'inline-flex'; 
     }
 });
 
-// Quando o usuário clicar em "Instalar"
+// 3. Quando o usuário clica no botão do topo
 if (btnInstalar) {
-    // Força o botão a iniciar visível para testes, caso o navegador demore a responder
-    btnInstalar.style.display = 'flex'; 
-
     btnInstalar.addEventListener('click', async (e) => {
-        e.preventDefault(); // Evita bugs de seleção de texto[span_6](start_span)[span_6](end_span)
+        e.preventDefault(); // Previne comportamentos inesperados no mobile
         
         if (instaladorPrompt) {
-            instaladorPrompt.prompt(); // Abre a janelinha de instalação[span_7](start_span)[span_7](end_span)
+            instaladorPrompt.prompt();
             const { outcome } = await instaladorPrompt.userChoice;
+            
             if (outcome === 'accepted') {
-                console.log('Usuário aceitou a instalação.');
-                btnInstalar.style.display = 'none'; // Só some se ele aceitar de verdade[span_8](start_span)[span_8](end_span)
+                btnInstalar.style.display = 'none'; // Some após aceitar
             }
             instaladorPrompt = null;
         } else {
-            // ALERTA DE TESTE: Se o prompt não estiver pronto, avisa o desenvolvedor
-            alert("Para instalar o AdoraPlay agora:\n\n" +
+            // Se o prompt falhar ou for bloqueado (Aba Anônima / Firefox)
+            alert(
+                "Para instalar o AdoraPlay agora:\n\n" +
                 "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
                 "2. Procure pela opção 'Instalar aplicativo' ou 'Adicionar à tela inicial'.\n\n" +
-                "Pronto! O app será adicionado ao seu celular.");
+                "Pronto! O app será adicionado ao seu celular."
+            );
         }
     });
 }
 
-// Comente temporariamente este evento abaixo para o sistema não ocultar seu botão enquanto você testa
-/*
+// 4. Garante que o botão suma se a instalação for concluída com sucesso (por qualquer caminho)
 window.addEventListener('appinstalled', () => {
     if (btnInstalar) {
         btnInstalar.style.display = 'none';
     }
+    instaladorPrompt = null;
 });
-*/
