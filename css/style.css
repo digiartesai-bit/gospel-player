@@ -703,7 +703,8 @@ body {
     font-size: 11px !important;
     font-weight: 600 !important; 
     
-    display: inline-flex !important;
+   /* display: inline-flex !important; */
+    display: none !important;   /* começa oculto */
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
@@ -725,7 +726,8 @@ body {
 /* Força o texto a ficar BRANCO para contrastar com o fundo escuro do seu app */
 .btn-instalar-topo span {
     color: #ffffff !important; 
-    display: inline-block !important;
+    /*display: inline-block !important;*/
+    display: inline-flex !important;
     line-height: 1 !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -750,9 +752,9 @@ body {
     transform: scale(0.95);
 }
 /* Força o botão a sumir completamente, vencendo o inline-flex */
-.esconder-btn {
+/*.esconder-btn {
     display: none !important;
-}
+}*/
 
 
 /* ==========================================================================
