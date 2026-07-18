@@ -12,15 +12,27 @@
     display: none;
 }
 
-body {
+/*body {
     background: linear-gradient(180deg, #0d233a 0%, #050e16 100%);
     background-attachment: fixed;
     color: #ffffff;
-    padding-bottom: 120px; /* Espaço pro player e menu */
+    padding-bottom: 120px; /* Espaço pro player e menu *
     min-height: 100vh;
 }
 
 /* CABEÇALHO - AJUSTADO PARA IMAGEM DE FUNDO */
+
+html{
+    background:#050e16;
+    overscroll-behavior-y:none;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(180deg,#0d233a 0%,#050e16 100%);
+    background-attachment:fixed;
+    overflow-x:hidden;
+}
 .topo{
     width:100%;
     height:220px;
