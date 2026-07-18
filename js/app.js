@@ -181,88 +181,49 @@ function filtrarPorAlbum(nomeAlbum) {
 let instaladorPrompt;
 const btnInstalar = document.getElementById('seu-botao-de-instalar');
 
-// O navegador avisa que o app preenche os requisitos para ser instalado
-/*
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Impede o prompt padrão do navegador de subir sozinho
-    e.preventDefault();
-    // Guarda o evento para usar no clique do botão
-    instaladorPrompt = e;
-    // Faz o botão "Instalar" aparecer no seu menu inferior
-    if (btnInstalar) {
-        btnInstalar.style.display = 'flex'; // Usando 'flex' para manter o alinhamento da navbar
-    }
-}); */
-// O navegador avisa que o app pode ser instalado
-/*window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    instaladorPrompt = e;
-    
-    if (btnInstalar) {
-        // Faz o botão aparecer
-        btnInstalar.style.display = 'flex'; 
-        // Adiciona a classe 'active' para ele ficar Dourado igual à casinha
-        btnInstalar.classList.add('active'); 
-    }
-});
+// ==========================================================================
+// LOGICA DE INSTALAÇÃO - CORRIGIDA PARA NÃO SUMIR NO REFRESH
+// ==========================================================================
 
-// Quando o usuário clicar em "Instalar" na sua barra inferior
-if (btnInstalar) {
-    btnInstalar.addEventListener('click', async (e) => {
-        e.preventDefault(); // Evita qualquer comportamento padrão
-        
-        if (instaladorPrompt) {
-            // Abre a janelinha oficial de instalação do sistema
-            instaladorPrompt.prompt();
-            // Verifica se o usuário aceitou ou cancelou
-            const { outcome } = await instaladorPrompt.userChoice;
-            console.log(`Escolha do usuário: ${outcome}`);
-            // Limpa o prompt para uso futuro
-            instaladorPrompt = null;
-            // Esconde o botão após a ação
-            btnInstalar.style.display = 'none';
-        }
-    });
-}
-
-// Se o aplicativo já estiver instalado no celular, garante que o botão suma
-window.addEventListener('appinstalled', () => {
-    if (btnInstalar) {
-        btnInstalar.style.display = 'none';
-    }
-    console.log('App instalado com sucesso e adicionado à tela de início!');
-});
-*/
 // O navegador avisa que o app pode ser instalado
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     instaladorPrompt = e;
     
     if (btnInstalar) {
-        // Exibe o botão
-        btnInstalar.style.display = 'flex'; 
-        // Adiciona a classe 'active' para aplicar o filtro dourado definido no CSS
-        btnInstalar.classList.add('active'); 
+        btnInstalar.style.display = 'flex'; // Exibe o botão no topo[span_4](start_span)[span_4](end_span)
+        btnInstalar.classList.add('active'); // Aplica o estado ativo[span_5](start_span)[span_5](end_span)
     }
 });
 
 // Quando o usuário clicar em "Instalar"
 if (btnInstalar) {
+    // Força o botão a iniciar visível para testes, caso o navegador demore a responder
+    btnInstalar.style.display = 'flex'; 
+
     btnInstalar.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita bugs de seleção de texto[span_6](start_span)[span_6](end_span)
+        
         if (instaladorPrompt) {
-            instaladorPrompt.prompt();
+            instaladorPrompt.prompt(); // Abre a janelinha de instalação[span_7](start_span)[span_7](end_span)
             const { outcome } = await instaladorPrompt.userChoice;
             if (outcome === 'accepted') {
-                btnInstalar.style.display = 'none'; // Some após instalar
+                console.log('Usuário aceitou a instalação.');
+                btnInstalar.style.display = 'none'; // Só some se ele aceitar de verdade[span_8](start_span)[span_8](end_span)
             }
             instaladorPrompt = null;
+        } else {
+            // ALERTA DE TESTE: Se o prompt não estiver pronto, avisa o desenvolvedor
+            alert("O prompt do PWA ainda não foi carregado pelo Android ou o app já está instalado!");
         }
     });
 }
 
-// Garante que o botão suma se a instalação for detectada pelo sistema
+// Comente temporariamente este evento abaixo para o sistema não ocultar seu botão enquanto você testa
+/*
 window.addEventListener('appinstalled', () => {
     if (btnInstalar) {
         btnInstalar.style.display = 'none';
     }
 });
+*/
