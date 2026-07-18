@@ -139,6 +139,57 @@ body {
     padding: 0 20px 15px 20px;
     scroll-behavior: smooth;
 }
+/* Container que centraliza e limita a largura da busca no mobile */
+.search-container {
+    padding: 0 20px;
+    margin-top: 24px;    /* Afasta um pouco do card de lançamentos acima */
+    margin-bottom: 24px; /* Afasta do título "Mais Ouvidas" abaixo */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* Alinhamento perfeito do seu ícone SVG */
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%); /* Garante que a lupa fique sempre centralizada verticalmente */
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+/* O campo de texto combinando com o fundo azul escuro do app */
+#search-input {
+    width: 100%;
+    padding: 14px 16px 14px 46px; /* 46px na esquerda para dar espaço à lupa */
+    background-color: #112131;    /* Um tom azul ligeiramente mais claro que o fundo geral */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;          /* Borda arredondada suave combinando com o card de cima */
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Efeitos de foco (quando o usuário clica para digitar) */
+#search-input:focus {
+    border-color: #e5b642;       /* Tom dourado do seu logo para dar identidade */
+    background-color: #15283b;
+    box-shadow: 0 0 10px rgba(229, 182, 66, 0.1);
+}
+
+#search-input:focus ~ .search-icon {
+    opacity: 0.9;                /* Destaca a lupa quando o campo está ativo */
+}
+
 
 /* CARDS */
 .card {
