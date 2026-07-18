@@ -617,83 +617,58 @@ body {
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
-
 /* ==========================================================================
-   BOTÃO DE INSTALAR NO TOPO - CORREÇÃO DE ALINHAMENTO E TAMANHO
+   TESTE DE DIAGNÓSTICO: BOTÃO TRANSPARENTE
    ========================================================================== */
 .btn-instalar-topo {
-    background: #D4AF37 !important; 
-    color: #081826 !important; 
-    border: none !important;
-    padding: 8px 16px !important;
+    /* Deixa o fundo invisível e adiciona uma borda vermelha fina para vermos onde o botão está */
+    background: transparent !important; 
+    border: 2px solid #ff0000 !important; 
+    
+    padding: 10px 20px !important;
     border-radius: 20px !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 700 !important; 
     
-    /* Força o alinhamento em linha e centraliza verticalmente tudo dentro dele */
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
     
-    /* Garante que o botão tenha uma altura física mínima confortável */
-    min-height: 36px !important;
-    height: auto !important;
-    width: auto !important;
+    min-height: 40px !important;
+    min-width: 140px !important;
     
     cursor: pointer !important;
-    z-index: 100 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    z-index: 9999 !important; 
     
-    /* Anti-seleção ativo */
     user-select: none !important;
     -webkit-user-select: none !important;
 }
 
-/* Garante que o texto fique centralizado e visível */
+/* Força o texto a ficar BRANCO para contrastar com o fundo escuro do seu app */
 .btn-instalar-topo span {
-    color: #081826 !important;
+    color: #ffffff !important; 
     display: inline-block !important;
     line-height: 1 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     pointer-events: none !important;
 }
 
-/* Força o ícone SVG a ter tamanho fixo para não amassar nem sumir */
+/* Força o ícone a ficar BRANCO (removendo o filtro antigo que deixava escuro) */
 .btn-instalar-topo img {
     width: 16px !important;
     height: 16px !important;
-    display: block !important;
-    flex-shrink: 0 !important; /* Impede que o botão esmague o ícone */
-    
-    /* Mantém o filtro para transformar o ícone em azul escuro */
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     pointer-events: none !important;
+    
+    /* Inverte para branco para podermos enxergar contra o fundo escuro */
+    filter: brightness(0) invert(1) !important; 
 }
 
 .btn-instalar-topo:active {
     transform: scale(0.95);
 }
-
-
-/* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO *
-.btn-instalar-topo {
-    background: #D4AF37;
-    color: #081826;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-    transition: transform 0.2s;
-}
-.btn-instalar-topo img {
-    width: 14px;
-    height: 14px;
-    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
-} */
-
