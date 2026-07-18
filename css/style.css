@@ -417,13 +417,15 @@ body {
 }
 
 /* Estado Ativo no Menu */
+
+/* Exemplo de como deve estar no seu CSS para o .active funcionar */
 .menu button.active {
-    color: #D4AF37;
+    color: #D4AF37; /* Cor dourada do texto */
 }
 
 .menu button.active img {
-    opacity: 1;
-    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Fica dourado */
+    opacity: 1; /* Garante que o ícone fique brilhante */
+    /* Se o seu ícone for um SVG com a cor definida no CSS, aqui você aplica o filtro dourado */
 }
 
 /* Aplica os 3 pontinhos se o título da música for muito longo */
