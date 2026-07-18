@@ -16,7 +16,7 @@ body {
     background: linear-gradient(180deg, #0d233a 0%, #050e16 100%);
     background-attachment: fixed;
     color: #ffffff;
-    padding-bottom: 200px; /* Espaço pro player e menu */
+    padding-bottom: 120px; /* Espaço pro player e menu */
     min-height: 100vh;
 }
 
@@ -300,7 +300,7 @@ body {
 /* PLAYER COM EFEITO VIDRO (GLASSMORPHISM) - AJUSTADO PARA EVITAR QUEBRA */
 .mini-player {
     position: fixed;
-    bottom: 80px;
+    bottom: 20px;
     left: 15px;
     right: 15px;
     background: rgba(18, 48, 74, 0.85); /* Fundo semi-transparente */
