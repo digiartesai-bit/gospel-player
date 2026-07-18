@@ -182,6 +182,7 @@ let instaladorPrompt;
 const btnInstalar = document.getElementById('seu-botao-de-instalar');
 
 // O navegador avisa que o app preenche os requisitos para ser instalado
+/*
 window.addEventListener('beforeinstallprompt', (e) => {
     // Impede o prompt padrão do navegador de subir sozinho
     e.preventDefault();
@@ -190,6 +191,18 @@ window.addEventListener('beforeinstallprompt', (e) => {
     // Faz o botão "Instalar" aparecer no seu menu inferior
     if (btnInstalar) {
         btnInstalar.style.display = 'flex'; // Usando 'flex' para manter o alinhamento da navbar
+    }
+}); */
+// O navegador avisa que o app pode ser instalado
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    instaladorPrompt = e;
+    
+    if (btnInstalar) {
+        // Faz o botão aparecer
+        btnInstalar.style.display = 'flex'; 
+        // Adiciona a classe 'active' para ele ficar Dourado igual à casinha
+        btnInstalar.classList.add('active'); 
     }
 });
 
