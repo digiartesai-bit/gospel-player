@@ -41,15 +41,16 @@ function filtrarMusicas() {
         return;
     }
 
-    // Filtra procurando por Título, Álbum ou Categoria
+    // Filtra procurando por músicas que COMECEM com o termo digitado
     const resultadosFiltrados = catalogoMusicas.filter(musica => {
         const titulo = normalizarTexto(musica.titulo);
         const album = normalizarTexto(musica.album);
         const categoria = normalizarTexto(musica.categoria);
 
-        return titulo.includes(termoFormatado) || 
-               album.includes(termoFormatado) || 
-               categoria.includes(termoFormatado);
+        // .startsWith() garante que buscará apenas termos que iniciam com o que foi digitado
+        return titulo.startsWith(termoFormatado) || 
+               album.startsWith(termoFormatado) || 
+               categoria.startsWith(termoFormatado);
     });
 
     renderizarSugestoes(resultadosFiltrados, containerSugestoes, inputBusca);
