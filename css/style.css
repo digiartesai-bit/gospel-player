@@ -373,12 +373,42 @@ body {
     background: rgba(255, 255, 255, 0.08);
 }
 
-.card img {
+//mudado dia 18/07 - 20:10 para testar auto relevo //
+/*.card img {
     width: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}*/
+/* ===================================================
+   EFEITO ALTO RELEVO 3D NAS CAPAS (ALBUM E MUSICA)
+   =================================================== */
+
+.card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    
+    /* ALTERADO: Adiciona o efeito de alto relevo (Neumorfismo) */
+    /* Sombra Clara (Luz) + Sombra Escura (Sombra) */
+    box-shadow: 
+        -3px -3px 7px rgba(255, 255, 255, 0.05), /* Luz sutil no topo/esquerda */
+        3px 3px 10px rgba(0, 0, 0, 0.5);          /* Sombra projetada na base/direita */
+        
+    /* Transição suave para a animação de clique */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efeito de "Afundar" ao clicar (Opcional, mas recomendado) */
+.card:active img {
+    transform: scale(0.97); /* Diminui ligeiramente o tamanho */
+    
+    /* Inverte ou suaviza as sombras para simular que o objeto foi pressionado */
+    box-shadow: 
+        -1px -1px 3px rgba(255, 255, 255, 0.03), 
+        1px 1px 5px rgba(0, 0, 0, 0.6);
 }
 
 .card p {
