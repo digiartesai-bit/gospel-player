@@ -749,6 +749,11 @@ body {
 .btn-instalar-topo:active {
     transform: scale(0.95);
 }
+/* Força o botão a sumir completamente, vencendo o inline-flex */
+.esconder-btn {
+    display: none !important;
+}
+
 
 /* ==========================================================================
    O RESTO DO CONTEÚDO RESPONSIVO (ADICIONE NO FIM DO SEU STYLE.CSS)
