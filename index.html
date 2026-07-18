@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#081826">
     <!-- Vincula o arquivo de configuração do ícone -->
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 
-<!-- Garante compatibilidade e cor da barra no Safari (iPhone) -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="#0d233a">
-<link rel="apple-touch-icon" href="assets/icone-192.png">
+    <!-- Garante compatibilidade e cor da barra no Safari (iPhone) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0d233a">
+    <link class="apple-touch-icon" href="assets/icone-192.png">
 
     <title>AdoraPlay</title>
     <meta name="description" content="Sua música. Sua adoração. Em qualquer lugar." />
@@ -25,7 +25,6 @@
     <!-- Fonte Google: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -34,8 +33,9 @@
 <header class="topo">
     <div class="header-controls">
         <!-- O botão de instalar agora fica fixo e destacado no topo -->
+        <!-- ADICIONADO: draggable="false" para proteger o clique no mobile -->
         <button id="seu-botao-de-instalar" class="btn-instalar-topo" style="display: none;">
-            <img src="assets/icons/download.svg" alt="Instalar">
+            <img src="assets/icons/download.svg" alt="Instalar" draggable="false">
             <span>Instalar App</span>
         </button>
 
@@ -43,15 +43,6 @@
             <img src="assets/icons/profile.svg" width="24" height="24" alt="Perfil" style="filter: invert(1);">
         </button>
     </div>
-</header>
-
-<!-- CABEÇALHO -->
-<!-- CABEÇALHO COM IMAGEM ÚNICA E PERFIL EM CIMA --
-<header class="topo">
-    <!-- Ícone de perfil moderno mantido --
-    <button class="perfil">
-        <img src="assets/icons/profile.svg" width="24" height="24" alt="Perfil" style="filter: invert(1);">
-    </button>
 </header>
 
 <!-- BANNER DE DESTAQUE (Começa oculto por padrão) -->
@@ -65,7 +56,7 @@
     </button>
 </div>
 
-    <!-- TELA VIRTUAL DE LANÇAMENTOS (Começa oculta) -->
+<!-- TELA VIRTUAL DE LANÇAMENTOS (Começa oculta) -->
 <div id="telaLancamentos" style="display: none; padding: 20px;">
     <!-- Botão Voltar -->
     <button onclick="voltarParaHome()" style="background: rgba(255,255,255,0.1); border: none; color: #D4AF37; padding: 10px 18px; border-radius: 20px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 25px;">
@@ -88,23 +79,15 @@
         </button>
     </div>
 </div>
-    <!-- CONTAINER DA BUSCA (INSERIDO AQUI) -->
+
+<!-- CONTAINER DA BUSCA -->
 <div class="search-container">
     <div class="search-wrapper">
         <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
         <input type="text" id="search-input" placeholder="Buscar músicas, álbuns ou estilos..." oninput="filtrarMusicas()" autocomplete="off">
-        <!-- Nova div para os resultados flutuantes da busca -->
         <div id="resultados-busca-flutuante" class="resultados-sugestao"></div>
     </div>
 </div>
-
-<!-- CONTAINER DA BUSCA (INSERIDO AQUI) 
-<div class="search-container">
-    <div class="search-wrapper">
-        <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
-        <input type="text" id="search-input" placeholder="Buscar músicas, álbuns ou estilos..." oninput="filtrarMusicas()">
-    </div>
-</div>-->
     
 <!-- SEÇÃO: MAIS OUVIDAS -->
 <section class="secao" id="secaoMaisOuvidas" style="display: none;">
@@ -147,8 +130,7 @@
 </section>
 
 <!-- MINI PLAYER UNIFICADO COM GLASSMORPHISM -->
-<div class="mini-player" id="miniPlayer"> <!-- Removido o style="display: none;" -->
-
+<div class="mini-player" id="miniPlayer">
     <!-- Barra de Progresso Superior -->
     <div class="progress-container">
         <input type="range" id="progressBar" value="0" min="0" max="100">
@@ -195,33 +177,13 @@
     </div>
 </div>
 
-<!-- MENU DE NAVEGAÇÃO INFERIOR -->
-    <!--
-<nav class="menu">
-    <!-- ATUALIZADO AQUI: Agora ele fecha os lançamentos antes de carregar a tela --
-    <button class="active" onclick="voltarParaHome()">
-        <img src="assets/icons/home.svg" alt="Início">
-        <span>Início</span>
-    </button>
-    <button onclick="event.preventDefault();">
-        <img src="assets/icons/library.svg" alt="Biblioteca">
-        <span>Biblioteca</span>
-    </button>
-    <!-- Botão de Instalar no lugar do antigo Perfil --
-<button id="seu-botao-de-instalar" style="display: none;">
-    <img src="assets/icons/download.svg" alt="Instalar"> <!-- Troque aqui para o seu novo SVG de download/instalação --
-    <span>Instalar</span>
-</button>
-
-</nav> -->
-
 <audio id="audioPlayer"></audio>
 <script src="js/player.js"></script>
-<script src="js/visualizer.js"></script> <!-- <--- ADICIONE ESTA LINHA AQUI -->
+<script src="js/visualizer.js"></script>
 <script src="js/ranking.js"></script>
 <script src="js/app.js"></script>
 <script src="js/banner.js"></script>
-<script src="js/ajuda.js"></script> <!-- <--- ADICIONE ESTA LINHA AQUI -->
+<script src="js/ajuda.js"></script>
 <script src="js/pesquisa.js?v=1.0.1"></script>
 
 </body>
