@@ -207,6 +207,16 @@ body {
     z-index:999;
 }
 
+.resultados-sugestao div{
+    padding:14px 18px;
+    line-height:1.5;
+    cursor:pointer;
+}
+
+.resultados-sugestao div:hover{
+    background:rgba(255,255,255,.06);
+}
+
 /* CARROSSEL HORIZONTAL */
 .carrossel {
     display: flex;
