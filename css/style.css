@@ -455,3 +455,13 @@ body {
     opacity: 1 !important;
 }
 
+/* Garante que o ícone do botão de instalar fique dourado quando ele aparece */
+#seu-botao-de-instalar.active img {
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%) !important;
+    opacity: 1 !important;
+}
+
+/* Garante que o texto do botão de instalar acompanhe a cor dourada */
+#seu-botao-de-instalar.active span {
+    color: #D4AF37 !important;
+}
