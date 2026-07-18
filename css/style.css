@@ -445,3 +445,13 @@ body {
     display: block;
     max-width: 100%;
 }
+/* Força o ícone e o texto a herdarem a cor dourada quando o botão está ativo */
+.menu button.active,
+.menu button.active span,
+.menu button.active img {
+    color: #D4AF37 !important; /* Cor dourada */
+    stroke: #D4AF37 !important; /* Força o traço do SVG a ficar dourado */
+    fill: #D4AF37 !important;   /* Força o preenchimento caso o SVG tenha */
+    opacity: 1 !important;
+}
+
