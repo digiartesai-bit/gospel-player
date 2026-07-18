@@ -178,3 +178,44 @@ function filtrarPorAlbum(nomeAlbum) {
         }
     });
 }
+let instaladorPrompt;
+const btnInstalar = document.getElementById('seu-botao-de-instalar');
+
+// O navegador avisa que o app preenche os requisitos para ser instalado
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Impede o prompt padrão do navegador de subir sozinho
+    e.preventDefault();
+    // Guarda o evento para usar no clique do botão
+    instaladorPrompt = e;
+    // Faz o botão "Instalar" aparecer no seu menu inferior
+    if (btnInstalar) {
+        btnInstalar.style.display = 'flex'; // Usando 'flex' para manter o alinhamento da navbar
+    }
+});
+
+// Quando o usuário clicar em "Instalar" na sua barra inferior
+if (btnInstalar) {
+    btnInstalar.addEventListener('click', async (e) => {
+        e.preventDefault(); // Evita qualquer comportamento padrão
+        
+        if (instaladorPrompt) {
+            // Abre a janelinha oficial de instalação do sistema
+            instaladorPrompt.prompt();
+            // Verifica se o usuário aceitou ou cancelou
+            const { outcome } = await instaladorPrompt.userChoice;
+            console.log(`Escolha do usuário: ${outcome}`);
+            // Limpa o prompt para uso futuro
+            instaladorPrompt = null;
+            // Esconde o botão após a ação
+            btnInstalar.style.display = 'none';
+        }
+    });
+}
+
+// Se o aplicativo já estiver instalado no celular, garante que o botão suma
+window.addEventListener('appinstalled', () => {
+    if (btnInstalar) {
+        btnInstalar.style.display = 'none';
+    }
+    console.log('App instalado com sucesso e adicionado à tela de início!');
+});
