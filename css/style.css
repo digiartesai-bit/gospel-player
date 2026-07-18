@@ -24,8 +24,11 @@ body {
     width: 100%;
     /* Removemos o aspect-ratio para a imagem assumir sua altura real */
     background-image: url('../assets/topo.png'); 
-    background-position: center top;
-    background-size: cover; 
+   /* background-position: center top;
+    background-size: cover; */
+    background-size: contain; /* Mostra a imagem toda, sem cortar */
+    background-position: center;
+    background-color: #081826; /* Cor de fundo para preencher o que sobrar */
     background-repeat: no-repeat;
     /* Adicionamos uma altura mínima para ele aparecer bem no celular */
     min-height: 250px; 
@@ -615,32 +618,39 @@ body {
     backdrop-filter: blur(5px);
 }
 /* BOTÃO DE INSTALAR NO TOPO - CORRIGIDO PARA VISIBILIDADE */
-/* Força visibilidade total dentro do botão */
+/* FORÇA TOTAL DO BOTÃO DE INSTALAR */
 .btn-instalar-topo {
-    background: #D4AF37 !important;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-/* Garante que o texto dentro do botão seja escuro e visível */
-.btn-instalar-topo span {
-    color: #081826 !important; 
-    font-weight: 900 !important;
+    background: #D4AF37 !important; 
+    color: #081826 !important; /* Cor do texto forçada aqui */
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
     font-size: 13px !important;
-    opacity: 1 !important;
+    font-weight: 900 !important; /* Mais grosso para destacar */
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    z-index: 100 !important;
+    /* Adiciona sombra leve para separar do fundo da imagem */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
 }
 
-/* Garante que o ícone dentro do botão seja escuro e visível */
+/* Garante que o texto dentro do botão não sofra interferência */
+.btn-instalar-topo span {
+    color: #081826 !important;
+    font-weight: 900 !important;
+    pointer-events: none; /* Garante que o clique passe direto para o botão */
+}
+
+/* Garante que o ícone do download também fique escuro */
 .btn-instalar-topo img {
-    width: 16px !important;
-    height: 16px !important;
-    filter: brightness(0) saturate(100%) !important; /* Força ser preto */
-    opacity: 1 !important;
+    width: 14px !important;
+    height: 14px !important;
+    filter: brightness(0) saturate(100%) !important; /* Filtro para preto */
+    pointer-events: none;
+}
+
 
 /* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO *
 .btn-instalar-topo {
