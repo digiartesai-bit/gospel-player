@@ -2,16 +2,12 @@
 let catalogoMusicas = [];
 
 /**
- * Carrega os dados do arquivo JSON de músicas
+ * Carrega os dados do arquivo JSON de músicas (sem renderizar nada na tela ao iniciar)
  */
 async function inicializarPesquisa() {
     try {
-        // Altere o caminho abaixo para o local exato do seu arquivo .json
         const response = await fetch('musicas.json'); 
         catalogoMusicas = await response.json();
-        
-        // Carrega todas as músicas na tela logo ao abrir o app
-        renderizarResultados(catalogoMusicas);
     } catch (error) {
         console.error("Erro ao carregar o arquivo JSON de músicas:", error);
     }
@@ -33,13 +29,15 @@ function normalizarTexto(texto) {
  */
 function filtrarMusicas() {
     const inputBusca = document.getElementById('search-input');
-    if (!inputBusca) return;
+    const containerSugestoes = document.getElementById('resultados-busca-flutuante');
+    if (!inputBusca || !containerSugestoes) return;
 
     const termoFormatado = normalizarTexto(inputBusca.value);
 
-    // Se o campo estiver vazio, exibe o catálogo completo novamente
+    // Se o campo estiver vazio, esconde a caixinha e limpa tudo
     if (termoFormatado === "") {
-        renderizarResultados(catalogoMusicas);
+        containerSugestoes.innerHTML = "";
+        containerSugestoes.style.display = "none";
         return;
     }
 
@@ -54,46 +52,64 @@ function filtrarMusicas() {
                categoria.includes(termoFormatado);
     });
 
-    renderizarResultados(resultadosFiltrados);
+    renderizarSugestoes(resultadosFiltrados, containerSugestoes, inputBusca);
 }
 
 /**
- * Monta o HTML dos cards de música dinamicamente na tela
+ * Monta apenas a lista de nomes das músicas na caixinha flutuante
  */
-function renderizarResultados(lista) {
-    const container = document.getElementById('lista-musicas');
-    if (!container) return;
-
-    container.innerHTML = ""; // Limpa a lista atual
+function renderizarSugestoes(lista, container, input) {
+    container.innerHTML = ""; // Limpa os resultados anteriores
+    container.style.display = "block"; // Mostra a caixinha
 
     // Se a busca não retornar nada
     if (lista.length === 0) {
-        container.innerHTML = `<p class="sem-resultado">Nenhum louvor encontrado com esse termo 🤷</p>`;
+        container.innerHTML = `<div class="sugestao-sem-resultado">Nenhum louvor encontrado 🤷</div>`;
         return;
     }
 
-    // Cria o HTML baseado exatamente na estrutura do seu JSON
+    // Cria apenas a linha com o nome da música
     lista.forEach(musica => {
-        const card = document.createElement('div');
-        card.className = 'musica-card';
+        const item = document.createElement('div');
+        item.className = 'sugestao-item';
+        item.innerText = musica.titulo; // Exibe apenas o nome da música
         
-        // Vincula o clique ao player (ajuste o nome da sua função global de dar play aqui)
-        if (typeof tocarMusica === "function") {
-            card.onclick = () => tocarMusica(musica);
-        }
+        // Ao clicar, localiza o índice na playlist global, toca a música e limpa a busca
+        item.onclick = () => {
+            // Verifica se a lista global 'musicas' do app existe
+            if (typeof musicas !== "undefined" && musicas.length > 0) {
+                // Alinha as playlists para garantir consistência de navegação (Próximo/Anterior)
+                if (typeof carregarPlaylist === "function") {
+                    carregarPlaylist(musicas);
+                }
+                
+                // Encontra a posição exata da música pelo ID correspondente
+                const indiceNoGlobal = musicas.findIndex(m => m.id === musica.id);
+                
+                // Caso encontre, executa a função de reprodução do player.js
+                if (indiceNoGlobal >= 0 && typeof tocar === "function") {
+                    tocar(indiceNoGlobal);
+                }
+            }
 
-        card.innerHTML = `
-            <div class="capa-wrapper">
-                <img src="${musica.capa_musica}" alt="${musica.titulo}" class="capa-resultado" onerror="this.src='assets/capas/default.jpg'">
-            </div>
-            <div class="musica-info">
-                <h3>${musica.titulo}</h3>
-                <p>${musica.artista} • ${musica.album}</p>
-            </div>
-        `;
-        container.appendChild(card);
+            // Limpa o input e fecha a lista de busca
+            input.value = "";
+            container.innerHTML = "";
+            container.style.display = "none";
+        };
+
+        container.appendChild(item);
     });
 }
 
-// Executa a carga inicial assim que o arquivo script for interpretado
+// Fecha as sugestões se o usuário clicar em qualquer outro lugar da tela
+document.addEventListener('click', function(e) {
+    const containerSugestoes = document.getElementById('resultados-busca-flutuante');
+    const inputBusca = document.getElementById('search-input');
+    if (containerSugestoes && e.target !== containerSugestoes && e.target !== inputBusca) {
+        containerSugestoes.style.display = "none";
+    }
+});
+
+// Executa a carga inicial do JSON assim que a página estiver pronta
 document.addEventListener('DOMContentLoaded', inicializarPesquisa);
