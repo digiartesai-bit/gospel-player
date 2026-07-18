@@ -214,7 +214,10 @@ if (btnInstalar) {
             instaladorPrompt = null;
         } else {
             // ALERTA DE TESTE: Se o prompt não estiver pronto, avisa o desenvolvedor
-            alert("O prompt do PWA ainda não foi carregado pelo Android ou o app já está instalado!");
+            alert("Para instalar o AdoraPlay agora:\n\n" +
+                "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
+                "2. Procure pela opção 'Instalar aplicativo' ou 'Adicionar à tela inicial'.\n\n" +
+                "Pronto! O app será adicionado ao seu celular.");
         }
     });
 }
