@@ -74,14 +74,23 @@
         </button>
     </div>
 </div>
-    
-<!-- CONTAINER DA BUSCA (INSERIDO AQUI) -->
+    <!-- CONTAINER DA BUSCA (INSERIDO AQUI) -->
+<div class="search-container">
+    <div class="search-wrapper">
+        <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
+        <input type="text" id="search-input" placeholder="Buscar músicas, álbuns ou estilos..." oninput="filtrarMusicas()" autocomplete="off">
+        <!-- Nova div para os resultados flutuantes da busca -->
+        <div id="resultados-busca-flutuante" class="resultados-sugestao"></div>
+    </div>
+</div>
+
+<!-- CONTAINER DA BUSCA (INSERIDO AQUI) 
 <div class="search-container">
     <div class="search-wrapper">
         <img src="assets/icons/search.svg" alt="Buscar" class="search-icon">
         <input type="text" id="search-input" placeholder="Buscar músicas, álbuns ou estilos..." oninput="filtrarMusicas()">
     </div>
-</div>
+</div>-->
     
 <!-- SEÇÃO: MAIS OUVIDAS -->
 <section class="secao" id="secaoMaisOuvidas" style="display: none;">
