@@ -18,7 +18,7 @@
     color: #ffffff;
     padding-bottom: 120px; /* Espaço pro player e menu *
     min-height: 100vh;
-}
+}*/
 
 /* CABEÇALHO - AJUSTADO PARA IMAGEM DE FUNDO */
 
@@ -550,17 +550,16 @@ body {
     left: 0;
     right: 0;
     background: rgba(6, 18, 29, 0.85); /* Efeito vidro no menu */
-  /*  backdrop-filter: blur(10px);
+   /* backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-around;
     padding: 12px 0 20px 0; /* Padding inferior maior para iPhones (Safe Area) */
-    /*
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+   /* border-top: 1px solid rgba(255, 255, 255, 0.05);
     z-index: 101;
 }
 
-.menu button {
+/*.menu button {
     background: none;
     border: none;
     color: #64748b;
@@ -575,22 +574,22 @@ body {
     transition: color 0.3s;
 }
 
-.menu button img {
+/*.menu button img {
     width: 22px;
     height: 22px;
     opacity: 0.5;
     transition: opacity 0.3s, filter 0.3s;
 }
 
-/* Estado Ativo no Menu *
-.menu button.active {
+/* Estado Ativo no Menu */
+/*.menu button.active {
     color: #D4AF37;
 }
 
-.menu button.active img {
+/*.menu button.active img {
     opacity: 1;
-    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%); /* Fica dourado */
-/* } */
+    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(91%) contrast(85%);
+      }  /* Fica dourado */
 
 /* Aplica os 3 pontinhos se o título da música for muito longo */
 #miniTitulo {
