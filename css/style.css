@@ -19,12 +19,26 @@ body {
     padding-bottom: 140px; /* Espaço pro player e menu */
     min-height: 100vh;
 }
-
-/* CABEÇALHO - AJUSTADO PARA IMAGEM DE FUNDO */
 .topo {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9; /* Mantém a proporção da imagem no celular */
+    /* Removemos o aspect-ratio para a imagem assumir sua altura real */
+    background-image: url('../assets/topo.png'); 
+    background-position: center top;
+    background-size: cover; 
+    background-repeat: no-repeat;
+    /* Adicionamos uma altura mínima para ele aparecer bem no celular */
+    min-height: 250px; 
+    box-sizing: border-box;
+    /* Opcional: coloca uma sombra no fundo para destacar o que vem abaixo */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* CABEÇALHO - AJUSTADO PARA IMAGEM DE FUNDO *
+.topo {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Mantém a proporção da imagem no celular *
     background-image: url('../assets/topo.png'); 
     background-position: center;
     background-size: contain; 
