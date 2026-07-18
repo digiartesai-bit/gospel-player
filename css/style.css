@@ -189,6 +189,47 @@ body {
 #search-input:focus ~ .search-icon {
     opacity: 0.9;                /* Destaca a lupa quando o campo está ativo */
 }
+/* CONTAINER FLUTUANTE DE SUGESTÕES */
+.resultados-sugestao {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #112131;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0 0 12px 12px;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 999;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    display: none; /* Começa escondido */
+}
+
+/* CADA ITEM DA SUGESTÃO (APENAS TEXTO) */
+.sugestao-item {
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+}
+
+.sugestao-item:last-child {
+    border-bottom: none;
+}
+
+.sugestao-item:active {
+    background-color: #15283b;
+    color: #e5b642;
+}
+
+.sugestao-sem-resultado {
+    padding: 14px 16px;
+    color: #94a3b8;
+    font-size: 13px;
+    text-align: center;
+}
 
 
 /* CARDS */
