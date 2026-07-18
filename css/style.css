@@ -678,23 +678,27 @@ body {
 .btn-instalar-topo {
     /* Deixa o fundo invisível e adiciona uma borda vermelha fina para vermos onde o botão está */
     background: transparent !important; 
-    border: 2px solid #FFD700 !important; 
+    border: 1.2px solid #FFD700 !important; 
     
-    padding: 10px 20px !important;
-    border-radius: 20px !important;
-    font-size: 14px !important;
-    font-weight: 700 !important; 
+    padding: 5px 12px !important;
+    border-radius: 15px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important; 
     
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     
-    min-height: 40px !important;
-    min-width: 140px !important;
+    min-height: 28px !important;
+    height: auto !important;
+    width: auto !important;
     
+   /* cursor: pointer !important;
+    z-index: 9999 !important; */
     cursor: pointer !important;
-    z-index: 9999 !important; 
+    z-index: 100 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
     
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -712,8 +716,8 @@ body {
 
 /* Força o ícone a ficar BRANCO (removendo o filtro antigo que deixava escuro) */
 .btn-instalar-topo img {
-    width: 16px !important;
-    height: 16px !important;
+    width: 12px !important;
+    height: 12px !important;
     display: inline-block !important;
     flex-shrink: 0 !important;
     visibility: visible !important;
