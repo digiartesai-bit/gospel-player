@@ -188,7 +188,7 @@ function jaInstalado() {
     return (
         window.matchMedia('(display-mode: standalone)').matches ||
         window.navigator.standalone === true ||             // iOS//
-        localStorage.getItem('pwaInstalado') === '1'        // fallback pós-instalação//
+       /* localStorage.getItem('pwaInstalado') === '1'     */   // fallback pós-instalação//
     );
 }
 
