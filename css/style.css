@@ -749,3 +749,41 @@ body {
 .btn-instalar-topo:active {
     transform: scale(0.95);
 }
+
+/* ==========================================================================
+   O RESTO DO CONTEÚDO RESPONSIVO (ADICIONE NO FIM DO SEU STYLE.CSS)
+   ========================================================================== */
+@media screen and (min-width: 768px) {
+    
+    /* Evita que as capas dos álbuns/músicas fiquem gigantes na horizontal */
+    .mais-ouvidas-container, 
+    .grid-musicas, 
+    section div { 
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 20px !important;
+        justify-content: center !important;
+    }
+
+    /* Ajusta o tamanho dos cards de música para caberem vários lado a lado */
+    .card-musica, [class*="item-musica"] {
+        width: 150px !important; /* Tamanho fixo perfeito para visualização */
+        flex-shrink: 0 !important;
+    }
+
+    /* Centraliza e limita a barra de busca para não esticar demais */
+    .barra-busca, input[type="search"] {
+        max-width: 500px !important;
+        margin: 0 auto 20px auto !important;
+    }
+
+    /* O PLAYER FIXO: Para não virar uma linha infinita e feia na tela deitada */
+    .player-fixo, [class*="player-container"] {
+        max-width: 650px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* Centraliza perfeitamente */
+        border-radius: 12px 12px 0 0 !important; /* Bordinhas arredondadas no topo */
+        bottom: 10px !important; /* Flutua de leve na tela */
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
+    }
+}
