@@ -178,45 +178,42 @@ function filtrarPorAlbum(nomeAlbum) {
         }
     });
 }
-
 // ==========================================================================
-// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA E BLINDADA)
+// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA COM CLASSE CSS)
 // ==========================================================================
 let instaladorPrompt;
-// CAPTURA CORRETA: Agora pegando o botão novo do topo pela classe dele
-const btnInstalar = document.querySelector('.btn-instalar-topo');
+const btnInstalar = document.querySelector('.btn-instalar-topo');[span_1](start_span)[span_1](end_span)
 
-// 1. Esconde o botão imediatamente se o usuário já estiver rodando o App Instalado
+// 1. Se já abrir dentro do app instalado, adiciona a classe para sumir na hora
 if (window.matchMedia('(display-mode: standalone)').matches) {
-    if (btnInstalar) btnInstalar.style.display = 'none';
+    if (btnInstalar) btnInstalar.classList.add('esconder-btn');
 }
 
 // 2. O navegador avisa que o app pode ser instalado
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    instaladorPrompt = e;
+window.addEventListener('beforeinstallprompt', (e) => {[span_2](start_span)[span_2](end_span)
+    e.preventDefault();[span_3](start_span)[span_3](end_span)
+    instaladorPrompt = e;[span_4](start_span)[span_4](end_span)
     
+    // Remove a classe de esconder caso o prompt esteja ativo (por segurança)
     if (btnInstalar) {
-        // Exibe o botão no topo
-        btnInstalar.style.display = 'inline-flex'; 
+        btnInstalar.classList.remove('esconder-btn');
     }
 });
 
 // 3. Quando o usuário clica no botão do topo
-if (btnInstalar) {
-    btnInstalar.addEventListener('click', async (e) => {
-        e.preventDefault(); // Previne comportamentos inesperados no mobile
+if (btnInstalar) {[span_5](start_span)[span_5](end_span)
+    btnInstalar.addEventListener('click', async (e) => {[span_6](start_span)[span_6](end_span)
+        e.preventDefault();[span_7](start_span)[span_7](end_span)
         
-        if (instaladorPrompt) {
-            instaladorPrompt.prompt();
-            const { outcome } = await instaladorPrompt.userChoice;
+        if (instaladorPrompt) {[span_8](start_span)[span_8](end_span)
+            instaladorPrompt.prompt();[span_9](start_span)[span_9](end_span)
+            const { outcome } = await instaladorPrompt.userChoice;[span_10](start_span)[span_10](end_span)
             
             if (outcome === 'accepted') {
-                btnInstalar.style.display = 'none'; // Some após aceitar
+                btnInstalar.classList.add('esconder-btn'); // Adiciona a classe ao aceitar
             }
-            instaladorPrompt = null;
+            instaladorPrompt = null;[span_11](start_span)[span_11](end_span)
         } else {
-            // Se o prompt falhar ou for bloqueado (Aba Anônima / Firefox)
             alert(
                 "Para instalar o AdoraPlay agora:\n\n" +
                 "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
@@ -227,10 +224,11 @@ if (btnInstalar) {
     });
 }
 
-// 4. Garante que o botão suma se a instalação for concluída com sucesso (por qualquer caminho)
-window.addEventListener('appinstalled', () => {
-    if (btnInstalar) {
-        btnInstalar.style.display = 'none';
+// 4. Garante que suma se a instalação for concluída com sucesso
+window.addEventListener('appinstalled', () => {[span_12](start_span)[span_12](end_span)
+    if (btnInstalar) {[span_13](start_span)[span_13](end_span)
+        btnInstalar.classList.add('esconder-btn');
     }
     instaladorPrompt = null;
 });
+
