@@ -30,11 +30,25 @@
 </head>
 
 <body>
+<!-- CABEÇALHO COM PERFIL E BOTÃO DE INSTALAR EM DESTAQUE -->
+<header class="topo">
+    <div class="header-controls">
+        <!-- O botão de instalar agora fica fixo e destacado no topo -->
+        <button id="seu-botao-de-instalar" class="btn-instalar-topo" style="display: none;">
+            <img src="assets/icons/download.svg" alt="Instalar">
+            <span>Instalar App</span>
+        </button>
+
+        <button class="perfil">
+            <img src="assets/icons/profile.svg" width="24" height="24" alt="Perfil" style="filter: invert(1);">
+        </button>
+    </div>
+</header>
 
 <!-- CABEÇALHO -->
-<!-- CABEÇALHO COM IMAGEM ÚNICA E PERFIL EM CIMA -->
+<!-- CABEÇALHO COM IMAGEM ÚNICA E PERFIL EM CIMA --
 <header class="topo">
-    <!-- Ícone de perfil moderno mantido -->
+    <!-- Ícone de perfil moderno mantido --
     <button class="perfil">
         <img src="assets/icons/profile.svg" width="24" height="24" alt="Perfil" style="filter: invert(1);">
     </button>
@@ -182,8 +196,9 @@
 </div>
 
 <!-- MENU DE NAVEGAÇÃO INFERIOR -->
+    <!--
 <nav class="menu">
-    <!-- ATUALIZADO AQUI: Agora ele fecha os lançamentos antes de carregar a tela -->
+    <!-- ATUALIZADO AQUI: Agora ele fecha os lançamentos antes de carregar a tela --
     <button class="active" onclick="voltarParaHome()">
         <img src="assets/icons/home.svg" alt="Início">
         <span>Início</span>
@@ -192,13 +207,13 @@
         <img src="assets/icons/library.svg" alt="Biblioteca">
         <span>Biblioteca</span>
     </button>
-    <!-- Botão de Instalar no lugar do antigo Perfil -->
+    <!-- Botão de Instalar no lugar do antigo Perfil --
 <button id="seu-botao-de-instalar" style="display: none;">
-    <img src="assets/icons/download.svg" alt="Instalar"> <!-- Troque aqui para o seu novo SVG de download/instalação -->
+    <img src="assets/icons/download.svg" alt="Instalar"> <!-- Troque aqui para o seu novo SVG de download/instalação --
     <span>Instalar</span>
 </button>
 
-</nav>
+</nav> -->
 
 <audio id="audioPlayer"></audio>
 <script src="js/player.js"></script>
