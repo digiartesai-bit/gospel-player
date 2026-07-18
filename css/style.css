@@ -675,8 +675,9 @@ body {
 
 @media (min-width: 768px) {
     .topo {
-        height: 320px;       /* Aumenta a altura no PC para mostrar mais da imagem */
-        max-height: 320px;
-        background-position: center 20%; /* Ajusta o foco vertical da imagem se necessário */
+        height: 350px; 
+        max-height: 350px;
+        background-size: contain; /* Força a imagem inteira a aparecer na largura */
+        background-color: #0d233a; /* Cor de fundo idêntica às bordas da imagem para disfarçar as laterais */
     }
 }
