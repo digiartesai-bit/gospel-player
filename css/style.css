@@ -617,40 +617,47 @@ body {
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
-/* BOTÃO DE INSTALAR NO TOPO - CORRIGIDO PARA VISIBILIDADE */
-/* FORÇA TOTAL DO BOTÃO DE INSTALAR */
+/* ==========================================================================
+   BOTÃO DE INSTALAR NO TOPO - CORRIGIDO E PROTEGIDO
+   ========================================================================== */
 .btn-instalar-topo {
     background: #D4AF37 !important; 
-    color: #081826 !important; /* Cor do texto forçada aqui */
+    color: #081826 !important; 
     border: none !important;
     padding: 8px 16px !important;
     border-radius: 20px !important;
     font-size: 13px !important;
-    font-weight: 900 !important; /* Mais grosso para destacar */
+    font-weight: 700 !important; /* Bold limpo, 900 pode distorcer fontes no mobile */
     display: flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 8px !important;
     cursor: pointer !important;
     z-index: 100 !important;
-    /* Adiciona sombra leve para separar do fundo da imagem */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    
+    /* BLOQUEIA O MENU DO ANDROID DE APARECER (Causa do problema) */
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
 
-/* Garante que o texto dentro do botão não sofra interferência */
+/* Garante que o texto fique nítido e não selecionável */
 .btn-instalar-topo span {
     color: #081826 !important;
-    font-weight: 900 !important;
-    pointer-events: none; /* Garante que o clique passe direto para o botão */
-}
-
-/* Garante que o ícone do download também fique escuro */
-.btn-instalar-topo img {
-    width: 14px !important;
-    height: 14px !important;
-    filter: brightness(0) saturate(100%) !important; /* Filtro para preto */
     pointer-events: none;
 }
 
+/* CORREÇÃO DO ÍCONE: Força ele a ficar na cor correta (Azul Escuro idêntico ao texto) */
+.btn-instalar-topo img {
+    width: 16px !important;
+    height: 16px !important;
+    /* Este filtro converte a cor para exatamente #081826, independente da cor original do SVG */
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
+    pointer-events: none;
+}
+
+.btn-instalar-topo:active {
+    transform: scale(0.95);
+}
 
 /* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO *
 .btn-instalar-topo {
@@ -673,5 +680,4 @@ body {
     height: 14px;
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 } */
-.btn-instalar-topo:active {
-    transform: scale(0.95);
+.bt
