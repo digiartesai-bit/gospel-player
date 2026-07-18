@@ -675,54 +675,53 @@ body {
 /* ==========================================================================
    TESTE DE DIAGNÓSTICO: BOTÃO TRANSPARENTE
    ========================================================================== */
-/* ==========================================================================
-   BOTÃO DE INSTALAR NO TOPO - DESIGN VAZADO DOURADO (GHOST BUTTON)
-   ========================================================================== */
 .btn-instalar-topo {
-    /* Remove o fundo amarelo e adiciona a borda dourada fina */
+    /* Deixa o fundo invisível e adiciona uma borda vermelha fina para vermos onde o botão está */
     background: transparent !important; 
-    border: 1.5px solid #D4AF37 !important; 
+    border: 2px solid #FFD700 !important; 
     
-    padding: 8px 16px !important;
+    padding: 10px 20px !important;
     border-radius: 20px !important;
-    font-size: 13px !important;
-    font-weight: 600 !important; 
+    font-size: 14px !important;
+    font-weight: 700 !important; 
     
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
     
-    min-height: 36px !important;
-    height: auto !important;
-    width: auto !important;
+    min-height: 40px !important;
+    min-width: 140px !important;
     
     cursor: pointer !important;
-    z-index: 100 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    z-index: 9999 !important; 
     
     user-select: none !important;
     -webkit-user-select: none !important;
 }
 
-/* Força o texto a ficar na cor dourada */
+/* Força o texto a ficar BRANCO para contrastar com o fundo escuro do seu app */
 .btn-instalar-topo span {
-    color: #D4AF37 !important; 
+    color: #ffffff !important; 
     display: inline-block !important;
     line-height: 1 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     pointer-events: none !important;
 }
 
-/* Força o ícone SVG a acompanhar a cor dourada */
+/* Força o ícone a ficar BRANCO (removendo o filtro antigo que deixava escuro) */
 .btn-instalar-topo img {
-    width: 14px !important;
-    height: 14px !important;
-    display: block !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: inline-block !important;
     flex-shrink: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     pointer-events: none !important;
     
-    /* Filtro calibrado para transformar o ícone exatamente na cor dourada (#D4AF37) */
-    filter: brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(95%) contrast(85%) !important;
+    /* Inverte para branco para podermos enxergar contra o fundo escuro */
+    filter: brightness(0) invert(1) !important; 
 }
 
 .btn-instalar-topo:active {
