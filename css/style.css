@@ -617,11 +617,66 @@ body {
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
+
 /* ==========================================================================
-   TESTE DE DIAGNÓSTICO: BOTÃO TRANSPARENTE
+   BOTÃO DE INSTALAR NO TOPO - VERSÃO FINAL DESIGN PREMIUM
    ========================================================================== */
 .btn-instalar-topo {
-    /* Deixa o fundo invisível e adiciona uma borda vermelha fina para vermos onde o botão está */
+    background-color: #D4AF37 !important; /* Dourado lindo de volta */
+    color: #081826 !important; /* Texto em azul escuro para contraste */
+    border: none !important;
+    
+    padding: 8px 16px !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important; 
+    
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    
+    min-height: 36px !important;
+    height: auto !important;
+    width: auto !important;
+    
+    cursor: pointer !important;
+    z-index: 100 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* Garante o texto escuro sobre o fundo dourado */
+.btn-instalar-topo span {
+    color: #081826 !important; 
+    display: inline-block !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+}
+
+/* Força o ícone a ficar no mesmo tom azul escuro do texto */
+.btn-instalar-topo img {
+    width: 14px !important;
+    height: 14px !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+    pointer-events: none !important;
+    
+    /* Filtro refinado para converter o SVG em azul escuro (#081826) */
+    filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
+}
+
+.btn-instalar-topo:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================================================
+   TESTE DE DIAGNÓSTICO: BOTÃO TRANSPARENTE
+   ========================================================================== *
+.btn-instalar-topo {
+    /* Deixa o fundo invisível e adiciona uma borda vermelha fina para vermos onde o botão está *
     background: transparent !important; 
     border: 2px solid #ff0000 !important; 
     
@@ -645,7 +700,7 @@ body {
     -webkit-user-select: none !important;
 }
 
-/* Força o texto a ficar BRANCO para contrastar com o fundo escuro do seu app */
+/* Força o texto a ficar BRANCO para contrastar com o fundo escuro do seu app *
 .btn-instalar-topo span {
     color: #ffffff !important; 
     display: inline-block !important;
@@ -655,7 +710,7 @@ body {
     pointer-events: none !important;
 }
 
-/* Força o ícone a ficar BRANCO (removendo o filtro antigo que deixava escuro) */
+/* Força o ícone a ficar BRANCO (removendo o filtro antigo que deixava escuro) *
 .btn-instalar-topo img {
     width: 16px !important;
     height: 16px !important;
@@ -665,10 +720,10 @@ body {
     opacity: 1 !important;
     pointer-events: none !important;
     
-    /* Inverte para branco para podermos enxergar contra o fundo escuro */
+    /* Inverte para branco para podermos enxergar contra o fundo escuro *
     filter: brightness(0) invert(1) !important; 
 }
 
 .btn-instalar-topo:active {
     transform: scale(0.95);
-}
+} */
