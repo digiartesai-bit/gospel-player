@@ -187,8 +187,8 @@ const btnInstalar = document.querySelector('.btn-instalar-topo');
 function jaInstalado() {
     return (
         window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true ||             // iOS
-        localStorage.getItem('pwaInstalado') === '1'        // fallback pós-instalação
+        window.navigator.standalone === true ||             // iOS//
+        localStorage.getItem('pwaInstalado') === '1'        // fallback pós-instalação//
     );
 }
 
@@ -202,19 +202,19 @@ function esconderBotao() {
     if (btnInstalar) btnInstalar.classList.remove('mostrar-btn');
 }
 
-// 1. Se já está instalado (aberto como app OU já marcado no localStorage) → nunca mostra
+// 1. Se já está instalado (aberto como app OU já marcado no localStorage) → nunca mostra//
 if (jaInstalado()) {
     esconderBotao();
 }
 
-// 2. Navegador avisa que pode instalar → só aí mostramos o botão
+// 2. Navegador avisa que pode instalar → só aí mostramos o botão//
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     instaladorPrompt = e;
     mostrarBotao();
 });
 
-// 3. Clique no botão
+// 3. Clique no botão//
 if (btnInstalar) {
     btnInstalar.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -236,64 +236,9 @@ if (btnInstalar) {
     });
 }
 
-// 4. Instalação concluída → marca e esconde para sempre
+// 4. Instalação concluída → marca e esconde para sempre//
 window.addEventListener('appinstalled', () => {
     localStorage.setItem('pwaInstalado', '1');
     esconderBotao();
     instaladorPrompt = null;
 });
-
-// ==========================================================================
-// CONTROLE DE INSTALAÇÃO DO PWA (VERSÃO CORRIGIDA COM CLASSE CSS)
-// ==========================================================================//
-/*let instaladorPrompt;
-const btnInstalar = document.querySelector('.btn-instalar-topo');[span_1](start_span)[span_1](end_span)
-
-// 1. Se já abrir dentro do app instalado, adiciona a classe para sumir na hora
-if (window.matchMedia('(display-mode: standalone)').matches) {
-    if (btnInstalar) btnInstalar.classList.add('esconder-btn');
-}
-
-// 2. O navegador avisa que o app pode ser instalado
-window.addEventListener('beforeinstallprompt', (e) => {[span_2](start_span)[span_2](end_span)
-    e.preventDefault();[span_3](start_span)[span_3](end_span)
-    instaladorPrompt = e;[span_4](start_span)[span_4](end_span)
-    
-    // Remove a classe de esconder caso o prompt esteja ativo (por segurança)
-    if (btnInstalar) {
-        btnInstalar.classList.remove('esconder-btn');
-    }
-});
-
-// 3. Quando o usuário clica no botão do topo
-if (btnInstalar) {[span_5](start_span)[span_5](end_span)
-    btnInstalar.addEventListener('click', async (e) => {[span_6](start_span)[span_6](end_span)
-        e.preventDefault();[span_7](start_span)[span_7](end_span)
-        
-        if (instaladorPrompt) {[span_8](start_span)[span_8](end_span)
-            instaladorPrompt.prompt();[span_9](start_span)[span_9](end_span)
-            const { outcome } = await instaladorPrompt.userChoice;[span_10](start_span)[span_10](end_span)
-            
-            if (outcome === 'accepted') {
-                btnInstalar.classList.add('esconder-btn'); // Adiciona a classe ao aceitar
-            }
-            instaladorPrompt = null;[span_11](start_span)[span_11](end_span)
-        } else {
-            alert(
-                "Para instalar o AdoraPlay agora:\n\n" +
-                "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
-                "2. Procure pela opção 'Instalar aplicativo' ou 'Adicionar à tela inicial'.\n\n" +
-                "Pronto! O app será adicionado ao seu celular."
-            );
-        }
-    });
-}
-
-// 4. Garante que suma se a instalação for concluída com sucesso
-window.addEventListener('appinstalled', () => {[span_12](start_span)[span_12](end_span)
-    if (btnInstalar) {[span_13](start_span)[span_13](end_span)
-        btnInstalar.classList.add('esconder-btn');
-    }
-    instaladorPrompt = null;
-});
-
