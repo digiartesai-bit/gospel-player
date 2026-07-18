@@ -617,8 +617,9 @@ body {
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
+
 /* ==========================================================================
-   BOTÃO DE INSTALAR NO TOPO - CORRIGIDO E PROTEGIDO
+   BOTÃO DE INSTALAR NO TOPO - CORREÇÃO DE ALINHAMENTO E TAMANHO
    ========================================================================== */
 .btn-instalar-topo {
     background: #D4AF37 !important; 
@@ -627,37 +628,52 @@ body {
     padding: 8px 16px !important;
     border-radius: 20px !important;
     font-size: 13px !important;
-    font-weight: 700 !important; /* Bold limpo, 900 pode distorcer fontes no mobile */
-    display: flex !important;
+    font-weight: 700 !important; 
+    
+    /* Força o alinhamento em linha e centraliza verticalmente tudo dentro dele */
+    display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     gap: 8px !important;
+    
+    /* Garante que o botão tenha uma altura física mínima confortável */
+    min-height: 36px !important;
+    height: auto !important;
+    width: auto !important;
+    
     cursor: pointer !important;
     z-index: 100 !important;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
     
-    /* BLOQUEIA O MENU DO ANDROID DE APARECER (Causa do problema) */
+    /* Anti-seleção ativo */
     user-select: none !important;
     -webkit-user-select: none !important;
 }
 
-/* Garante que o texto fique nítido e não selecionável */
+/* Garante que o texto fique centralizado e visível */
 .btn-instalar-topo span {
     color: #081826 !important;
-    pointer-events: none;
+    display: inline-block !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
 }
 
-/* CORREÇÃO DO ÍCONE: Força ele a ficar na cor correta (Azul Escuro idêntico ao texto) */
+/* Força o ícone SVG a ter tamanho fixo para não amassar nem sumir */
 .btn-instalar-topo img {
     width: 16px !important;
     height: 16px !important;
-    /* Este filtro converte a cor para exatamente #081826, independente da cor original do SVG */
+    display: block !important;
+    flex-shrink: 0 !important; /* Impede que o botão esmague o ícone */
+    
+    /* Mantém o filtro para transformar o ícone em azul escuro */
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%) !important;
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 .btn-instalar-topo:active {
     transform: scale(0.95);
 }
+
 
 /* NOVO BOTÃO DE INSTALAR PREMIUM NO TOPO *
 .btn-instalar-topo {
@@ -680,4 +696,4 @@ body {
     height: 14px;
     filter: brightness(0) saturate(100%) invert(8%) sepia(21%) saturate(2326%) hue-rotate(167deg) brightness(96%) contrast(97%);
 } */
-.bt
+
