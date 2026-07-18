@@ -194,7 +194,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 }); */
 // O navegador avisa que o app pode ser instalado
-window.addEventListener('beforeinstallprompt', (e) => {
+/*window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     instaladorPrompt = e;
     
@@ -231,4 +231,38 @@ window.addEventListener('appinstalled', () => {
         btnInstalar.style.display = 'none';
     }
     console.log('App instalado com sucesso e adicionado à tela de início!');
+});
+*/
+// O navegador avisa que o app pode ser instalado
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    instaladorPrompt = e;
+    
+    if (btnInstalar) {
+        // Exibe o botão
+        btnInstalar.style.display = 'flex'; 
+        // Adiciona a classe 'active' para aplicar o filtro dourado definido no CSS
+        btnInstalar.classList.add('active'); 
+    }
+});
+
+// Quando o usuário clicar em "Instalar"
+if (btnInstalar) {
+    btnInstalar.addEventListener('click', async (e) => {
+        if (instaladorPrompt) {
+            instaladorPrompt.prompt();
+            const { outcome } = await instaladorPrompt.userChoice;
+            if (outcome === 'accepted') {
+                btnInstalar.style.display = 'none'; // Some após instalar
+            }
+            instaladorPrompt = null;
+        }
+    });
+}
+
+// Garante que o botão suma se a instalação for detectada pelo sistema
+window.addEventListener('appinstalled', () => {
+    if (btnInstalar) {
+        btnInstalar.style.display = 'none';
+    }
 });
