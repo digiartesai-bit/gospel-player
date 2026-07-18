@@ -162,8 +162,8 @@ body {
 }
 
 .btn-instalar-topo img {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     flex-shrink: 0;
     filter: brightness(0)
            saturate(100%)
