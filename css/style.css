@@ -121,7 +121,7 @@ body {
     max-height: 220px;
     background-image: url('../assets/topo.png');
     /* ALTERADO: Alinha a imagem pela base, subindo o conteúdo importante */
-    background-position: center bottom; 
+    background-position: center center; 
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -679,6 +679,7 @@ body {
         height: 350px; 
         max-height: 350px;
         background-size: contain; /* Força a imagem inteira a aparecer na largura */
+        background-position: center botton;
         background-color: #0d233a; /* Cor de fundo idêntica às bordas da imagem para disfarçar as laterais */
     }
 }
