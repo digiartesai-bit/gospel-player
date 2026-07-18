@@ -69,16 +69,34 @@ body {
     z-index: 10;
 }
 
-/* BANNER DE DESTAQUE - REDUZIDO */
+/* BANNER DE DESTAQUE - REDUZIDO *
 .banner {
     margin: 10px 20px;
-    padding: 14px 18px; /* Espaçamento interno mais compacto */
+    padding: 14px 18px; /* Espaçamento interno mais compacto *
     border-radius: 16px;
     background: linear-gradient(135deg, #1f4f77 0%, #12304a 100%);
     position: relative;
     overflow: hidden;
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+} */
+/* ==========================================================================
+   AJUSTE DO BANNER PARA PREENCHIMENTO COMPLETO NA HORIZONTAL (16:9)
+   ========================================================================== */
+.banner {
+    width: 100% !important;        /* Força a largura a ocupar toda a tela */
+    max-width: 100vw !important;    /* Garante que ignore limites de blocos pais */
+    box-sizing: border-box !important;
+    
+    /* Se o banner usar uma imagem de fundo, use COVER para preencher tudo */
+    background-size: cover !important; 
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+
+    /* Mantém a proporção 16:9 flexível no mobile */
+    aspect-ratio: 16 / 9 !important;
+    height: auto !important; /* Deixa a altura responder à largura */
 }
+
 
 .banner small {
     display: inline-block;
