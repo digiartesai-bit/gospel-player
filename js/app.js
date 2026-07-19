@@ -129,18 +129,24 @@ function renderizarUltimasOuvidas() {
 function renderizarItemMusica(musica, index, container) {
     const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
+    // 🔴 IMPORTANTE: A div PAI NÃO possui 'onclick' ou 'cursor: pointer'
     container.innerHTML += `
-    <div class="musica">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+    <div class="card-lancamento" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; margin-bottom: 15px;">
+        
+        <!-- LADO ESQUERDO: Apenas informação (NÃO CLICÁVEL) -->
+        <div style="display: flex; align-items: center; gap: 16px; pointer-events: none;">
+            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 56px; height: 56px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
             <div>
-                <strong>${musica.titulo}</strong><br>
-                <small>${musica.artista}</small>
+                <h3 style="color: #fff; font-size: 16px; font-weight: 700; margin: 0 0 4px 0;">${musica.titulo}</h3>
+                <p style="color: #94a3b8; font-size: 13px; margin: 0;">${musica.artista}</p>
             </div>
         </div>
-        <button onclick="event.stopPropagation(); tocar(${index});" style="cursor: pointer;">
-            <img src="assets/icons/play.svg" alt="Tocar" width="16" height="16" style="pointer-events: none;">
+
+        <!-- LADO DIREITO: UNICO ELEMENTO CLICÁVEL (Botão Amarelo) -->
+        <button onclick="event.stopPropagation(); tocar(${index});" style="background: #D4AF37; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); position: relative; z-index: 10;">
+            <img src="assets/icons/play.svg" alt="Play" width="16" height="16" style="filter: brightness(0); pointer-events: none;">
         </button>
+
     </div>`;
 }
 
