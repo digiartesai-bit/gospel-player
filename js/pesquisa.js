@@ -1,168 +1,136 @@
-// Variável global para armazenar os dados vindos do JSON
-let catalogoMusicas = [];
-
 /**
- * Carrega os dados do arquivo JSON de músicas (sem renderizar nada na tela ao iniciar)
+ * pesquisa.js - Gerenciamento da Busca Instantânea e Flutuante
  */
-async function inicializarPesquisa() {
-    try {
-        const response = await fetch('musicas.json'); 
-        catalogoMusicas = await response.json();
-    } catch (error) {
-        console.error("Erro ao carregar o arquivo JSON de músicas:", error);
-    }
-}
 
-/**
- * Remove acentos, caracteres especiais e espaços extras para facilitar a busca
- */
-function normalizarTexto(texto) {
-    return texto
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .trim();
-}
-
-/**
- * Função principal disparada a cada letra digitada no input
- */
-function filtrarMusicas() {
-    const inputBusca = document.getElementById('search-input');
-    const containerSugestoes = document.getElementById('resultados-busca-flutuante');
-    if (!inputBusca || !containerSugestoes) return;
-
-    const termoFormatado = normalizarTexto(inputBusca.value);
-
-    // Se o campo estiver vazio, esconde a caixinha e limpa tudo
-    if (termoFormatado === "") {
-        containerSugestoes.innerHTML = "";
-        containerSugestoes.style.display = "none";
-        return;
-    }
-
-    // Filtra procurando por músicas que COMECEM com o termo digitado
-    const resultadosFiltrados = catalogoMusicas.filter(musica => {
-        const titulo = normalizarTexto(musica.titulo);
-        const album = normalizarTexto(musica.album);
-        const categoria = normalizarTexto(musica.categoria);
-
-        // .startsWith() garante que buscará apenas termos que iniciam com o que foi digitado
-        return titulo.startsWith(termoFormatado) || 
-               album.startsWith(termoFormatado) || 
-               categoria.startsWith(termoFormatado);
-    });
-
-    renderizarSugestoes(resultadosFiltrados, containerSugestoes, inputBusca);
-}
-
-/** teste mudança 18/07 21:10
- * Monta apenas a lista de nomes das músicas na caixinha flutuante
- */
-/*function renderizarSugestoes(lista, container, input) {
-    container.innerHTML = ""; // Limpa os resultados anteriores
-    container.style.display = "block"; // Mostra a caixinha
-
-    // Se a busca não retornar nada
-    if (lista.length === 0) {
-        container.innerHTML = `<div class="sugestao-sem-resultado">Nenhum louvor encontrado 🤷</div>`;
-        return;
-    }
-
-    // Cria apenas a linha com o nome da música
-    lista.forEach(musica => {
-        const item = document.createElement('div');
-        item.className = 'sugestao-item';
-        item.innerText = musica.titulo; // Exibe apenas o nome da música
-        
-        // Ao clicar, localiza o índice na playlist global, toca a música e limpa a busca
-        item.onclick = () => {
-            // Verifica se a lista global 'musicas' do app existe
-            if (typeof musicas !== "undefined" && musicas.length > 0) {
-                // Alinha as playlists para garantir consistência de navegação (Próximo/Anterior)
-                if (typeof carregarPlaylist === "function") {
-                    carregarPlaylist(musicas);
-                }
-                
-                // Encontra a posição exata da música pelo ID correspondente
-                const indiceNoGlobal = musicas.findIndex(m => m.id === musica.id);
-                
-                // Caso encontre, executa a função de reprodução do player.js
-                if (indiceNoGlobal >= 0 && typeof tocar === "function") {
-                    tocar(indiceNoGlobal);
-                }
-            }
-
-            // Limpa o input e fecha a lista de busca
-            input.value = "";
-            container.innerHTML = "";
-            container.style.display = "none";
-        };
-
-        container.appendChild(item);
-    });
-} */
-
-/**
- * Monta a lista compacta de nomes das músicas com a categoria na caixinha flutuante
- */
-function renderizarSugestoes(lista, container, input) {
-    container.innerHTML = ""; // Limpa os resultados anteriores
-    container.style.display = "block"; // Mostra a caixinha
-
-    // Se a busca não retornar nada
-    if (lista.length === 0) {
-        container.innerHTML = `<div class="sugestao-sem-resultado">Nenhum louvor encontrado 🤷</div>`;
-        return;
-    }
-
-    // Cria a linha com o nome da música e sua categoria lateral
-    lista.forEach(musica => {
-        const item = document.createElement('div');
-        item.className = 'sugestao-item';
-        
-        // ALTERADO: Injeta o título e adiciona a tag estilizada com a categoria
-        item.innerHTML = `
-            <span>${musica.titulo}</span>
-            <span class="busca-estilo">${musica.categoria || 'Louvor'}</span>
-        `;
-        
-        // Ao clicar, localiza o índice na playlist global, toca a música e limpa a busca
-        item.onclick = () => {
-            // Verifica se a lista global 'musicas' do app existe
-            if (typeof musicas !== "undefined" && musicas.length > 0) {
-                // Alinha as playlists para garantir consistência de navegação (Próximo/Anterior)
-                if (typeof carregarPlaylist === "function") {
-                    carregarPlaylist(musicas);
-                }
-                
-                // Encontra a posição exata da música pelo ID correspondente
-                const indiceNoGlobal = musicas.findIndex(m => m.id === musica.id);
-                
-                // Caso encontre, executa a função de reprodução do player.js
-                if (indiceNoGlobal >= 0 && typeof tocar === "function") {
-                    tocar(indiceNoGlobal);
-                }
-            }
-
-            // Limpa o input e fecha a lista de busca
-            input.value = "";
-            container.innerHTML = "";
-            container.style.display = "none";
-        };
-
-        container.appendChild(item);
-    });
-}
-
-// Fecha as sugestões se o usuário clicar em qualquer outro lugar da tela
-document.addEventListener('click', function(e) {
-    const containerSugestoes = document.getElementById('resultados-busca-flutuante');
-    const inputBusca = document.getElementById('search-input');
-    if (containerSugestoes && e.target !== containerSugestoes && e.target !== inputBusca) {
-        containerSugestoes.style.display = "none";
-    }
+document.addEventListener('DOMContentLoaded', () => {
+  initPesquisa();
 });
 
-// Executa a carga inicial do JSON assim que a página estiver pronta
-document.addEventListener('DOMContentLoaded', inicializarPesquisa);
+function initPesquisa() {
+  const searchInput = document.getElementById('search-input');
+  const resultadosContainer = document.getElementById('resultados-busca-flutuante');
+
+  if (!searchInput || !resultadosContainer) return;
+
+  let debounceTimer = null;
+
+  // Evento ao digitar no campo de busca
+  searchInput.addEventListener('input', (e) => {
+    const termo = e.target.value.trim();
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      executarBusca(termo, resultadosContainer);
+    }, 250);
+  });
+
+  // Fechar resultados ao clicar fora do container de busca
+  document.addEventListener('click', (e) => {
+    const searchWrapper = searchInput.closest('.search-wrapper');
+    if (searchWrapper && !searchWrapper.contains(e.target)) {
+      resultadosContainer.style.display = 'none';
+    }
+  });
+
+  // Fechar ao pressionar a tecla ESC
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      resultadosContainer.style.display = 'none';
+      searchInput.blur();
+    }
+  });
+
+  // Reabrir resultados ao focar no input se houver texto
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim().length > 0) {
+      resultadosContainer.style.display = 'block';
+    }
+  });
+}
+
+/**
+ * Normaliza e filtra a lista de músicas
+ */
+function executarBusca(termo, container) {
+  if (!termo || termo.length < 1) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    return;
+  }
+
+  const musicas = window.musicasGlobais || [];
+  const termoNormalizado = removerAcentos(termo.toLowerCase());
+
+  const resultados = musicas.filter((musica) => {
+    const titulo = removerAcentos((musica.titulo || '').toLowerCase());
+    const artista = removerAcentos((musica.artista || '').toLowerCase());
+    const album = removerAcentos((musica.album || '').toLowerCase());
+
+    return titulo.includes(termoNormalizado) ||
+           artista.includes(termoNormalizado) ||
+           album.includes(termoNormalizado);
+  });
+
+  renderizarResultadosBusca(resultados, container);
+}
+
+/**
+ * Renderiza as sugestões encontradas na caixa flutuante
+ */
+function renderizarResultadosBusca(resultados, container) {
+  if (resultados.length === 0) {
+    container.innerHTML = '<div class="sugestao-item sem-resultado"><small>Nenhuma música encontrada</small></div>';
+    container.style.display = 'block';
+    return;
+  }
+
+  // Limita a exibição às 6 primeiras correspondências
+  const ultimosResultados = resultados.slice(0, 6);
+
+  container.innerHTML = ultimosResultados.map((musica) => {
+    const capa = musica.capa || 'assets/icons/album.svg';
+    const idOuIndex = musica.id !== undefined ? musica.id : window.musicasGlobais.indexOf(musica);
+
+    return `
+      <div class="sugestao-item" role="button" tabindex="0" onclick="selecionarDaBusca(${idOuIndex})">
+        <img src="${capa}" alt="Capa" onerror="this.src='assets/icons/album.svg'" class="sugestao-capa">
+        <div class="sugestao-info">
+          <strong>${escaparHTML(musica.titulo || 'Sem título')}</strong>
+          <small>${escaparHTML(musica.artista || 'Artista desconhecido')}</small>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.style.display = 'block';
+}
+
+/**
+ * Toca a música selecionada na busca e oculta o dropdown
+ */
+function selecionarDaBusca(indexOuId) {
+  const container = document.getElementById('resultados-busca-flutuante');
+  if (container) container.style.display = 'none';
+
+  if (typeof window.tocarEstaMusica === 'function') {
+    window.tocarEstaMusica(indexOuId);
+  } else if (typeof window.tocarMusicaPorIndex === 'function') {
+    window.tocarMusicaPorIndex(indexOuId);
+  }
+}
+
+/**
+ * Remove acentos de uma string para busca insensível a diacríticos
+ */
+function removerAcentos(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+/**
+ * Utilitário de sanitização de strings
+ */
+function escaparHTML(texto) {
+  const div = document.createElement('div');
+  div.textContent = texto;
+  return div.innerHTML;
+}
