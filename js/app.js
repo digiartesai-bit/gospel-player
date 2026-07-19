@@ -222,10 +222,9 @@ window.addEventListener('appinstalled', () => {
 });
 
 // ===================================================
-// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP
+// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP (CORRIGIDO)
 // ===================================================
 window.addEventListener('DOMContentLoaded', () => {
-    // Seleciona os três carrosséis criados dinamicamente
     const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal');
 
     carrosseis.forEach(slider => {
@@ -233,6 +232,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
         let isDown = false;
         let startX, scrollLeft;
+
+        // 🔥 NOVO: Evita que as imagens ou links travem o clique e arraste
+        slider.querySelectorAll('img, p, .card').forEach(elemento => {
+            elemento.addEventListener('dragstart', (e) => e.preventDefault());
+        });
 
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
@@ -253,49 +257,12 @@ window.addEventListener('DOMContentLoaded', () => {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            // Multiplicado por 2 para o movimento acompanhar perfeitamente o ponteiro
-            const movimento = (x - startX) * 2; 
-            slider.scrollLeft = scrollLeft - movimento;
-        });
-    });
-});// ===================================================
-// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP
-// ===================================================
-window.addEventListener('DOMContentLoaded', () => {
-    // Seleciona os três carrosséis criados dinamicamente
-    const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal');
-
-    carrosseis.forEach(slider => {
-        if (!slider) return;
-
-        let isDown = false;
-        let startX, scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.style.cursor = 'grabbing';
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-
-        const resetarArraste = () => {
-            isDown = false;
-            slider.style.cursor = 'grab';
-        };
-
-        slider.addEventListener('mouseleave', resetarArraste);
-        slider.addEventListener('mouseup', resetarArraste);
-
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            // Multiplicado por 2 para o movimento acompanhar perfeitamente o ponteiro
             const movimento = (x - startX) * 2; 
             slider.scrollLeft = scrollLeft - movimento;
         });
     });
 });
+
 // ==========================================================================
 // CONTROLE DE INSTALAÇÃO DO PWA
 // ==========================================================================
