@@ -765,25 +765,27 @@ body {
     }
 } /* CORRIGIDO: Chave adicionada para fechar a media query */
 
-/* ==========================================
-   FORÇAR CARROSSEL HORIZONTAL DE VOLTA 
-   ========================================== */
+/* ===================================================
+   CORREÇÃO DOS CARROSSEIS HORIZONTAIS (APP.JS INLINE)
+   =================================================== */
 
-/* Procura por qualquer div ou seção que guarde os cards */
-[id*="lista"], [class*="container"], [class*="grid"], .secao {
-    /* Identifica se os filhos imediatos são cards */
-    &:has(> .card) {
-        display: flex !important;
-        flex-wrap: nowrap !important; /* IMPEDE terminantemente a quebra de linha */
-        overflow-x: auto !important;  /* ATIVA a rolagem na horizontal */
-        gap: 16px !important;         /* Espaçamento perfeito entre os cards */
-        padding: 10px 20px !important;/* Alinha o espaçamento com as laterais da tela */
-        width: 100% !important;
-        -webkit-overflow-scrolling: touch !important; /* Rolagem suave em iPhones/Android */
-    }
+/* Seleciona os contêineres onde o JS injeta os cards */
+#albuns, #continueOuvindo, #favoritosHorizontal {
+    display: flex !important;       /* Força o layout em linha */
+    flex-wrap: nowrap !important;   /* Proíbe terminantemente a quebra de linha */
+    overflow-x: auto !important;    /* Ativa a rolagem horizontal */
+    gap: 15px !important;           /* Mantém o espaçamento constante */
+    padding: 10px 20px !important;  /* Alinha com as margens laterais do app */
+    width: 100% !important;
+    
+    /* Ativa o deslizamento elástico/suave em celulares */
+    -webkit-overflow-scrolling: touch !important; 
 }
 
-/* Garante que os cards não tentem encolher para caber na tela */
-.card {
-    flex-shrink: 0 !important; /* Força o tamanho mínimo horizontal */
+/* Ajusta o comportamento dos cards inseridos pelo JavaScript */
+#albuns .card, #continueOuvindo .card, #favoritosHorizontal .card {
+    display: block !important;     /* Altera de inline-block para bloco flexível */
+    flex-shrink: 0 !important;     /* Impede que o card encolha e suma */
+    margin-right: 0 !important;    /* Reseta a margem antiga que controlava o espaço */
+    width: 100px !important;       /* Trava a largura exata definida no JS */
 }
