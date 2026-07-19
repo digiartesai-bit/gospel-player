@@ -222,7 +222,7 @@ window.addEventListener('appinstalled', () => {
 });
 
 // ===================================================
-// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP (CORRIGIDO)
+// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP (BLINDADO)
 // ===================================================
 window.addEventListener('DOMContentLoaded', () => {
     const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal');
@@ -233,26 +233,23 @@ window.addEventListener('DOMContentLoaded', () => {
         let isDown = false;
         let startX, scrollLeft;
 
-        // 🔥 NOVO: Evita que as imagens ou links travem o clique e arraste
-        slider.querySelectorAll('img, p, .card').forEach(elemento => {
-            elemento.addEventListener('dragstart', (e) => e.preventDefault());
+        // 1. Desativa completamente o comportamento nativo de "arrastar fantasma" de imagens e textos
+        slider.addEventListener('dragstart', (e) => e.preventDefault());
+        slider.querySelectorAll('*').forEach(el => {
+            el.addEventListener('dragstart', (e) => e.preventDefault());
         });
 
+        // 2. Inicia o clique no carrossel
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
             slider.style.cursor = 'grabbing';
+            // Previne seleções de texto indesejadas ao arrastar
+            e.preventDefault(); 
             startX = e.pageX - slider.offsetLeft;
             scrollLeft = slider.scrollLeft;
         });
 
-        const resetarArraste = () => {
-            isDown = false;
-            slider.style.cursor = 'grab';
-        };
-
-        slider.addEventListener('mouseleave', resetarArraste);
-        slider.addEventListener('mouseup', resetarArraste);
-
+        // 3. Move o carrossel acompanhando o mouse
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
@@ -261,8 +258,31 @@ window.addEventListener('DOMContentLoaded', () => {
             slider.scrollLeft = scrollLeft - movimento;
         });
     });
+
+    // 4. CORREÇÃO GLOBAL: Ao soltar o mouse em QUALQUER lugar da tela, limpa o estado de arrasto
+    window.addEventListener('mouseup', () => {
+        carrosseis.forEach(slider => {
+            if (slider) {
+                slider.style.cursor = 'grab';
+            }
+        });
+        // Desativa a flag globalmente
+        carrosseis._isDownGlobal = false; 
+    });
 });
 
+// Ajuste auxiliar para escutar o mouse up global dentro de cada laço de forma simples
+window.addEventListener('mousedown', (e) => {
+    const dentroDeCarrossel = e.target.closest('#albuns, #continueOuvindo, #favoritosHorizontal');
+    if (!dentroDeCarrossel) return;
+    
+    const slider = dentroDeCarrossel;
+    const resetarGlobal = () => {
+        slider.style.cursor = 'grab';
+        window.removeEventListener('mouseup', resetarGlobal);
+    };
+    window.addEventListener('mouseup', resetarGlobal);
+});
 // ==========================================================================
 // CONTROLE DE INSTALAÇÃO DO PWA
 // ==========================================================================
