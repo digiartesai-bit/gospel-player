@@ -71,8 +71,9 @@ function compartilharMusicaAtual() {
         abrirWhatsAppComoFallback();
     }
 }
+
 // ==========================================================================
-// RECURSO 3: EXIBIR E ATUALIZAR FAVORITOS (GLOBAL)
+// RECURSO 3: EXIBIR E ATUALIZAR FAVORITOS (TOTALMENTE AUTÔNOMO)
 // ==========================================================================
 window.renderizarFavoritosHorizontais = function() {
     const secaoFavoritos = document.getElementById("secaoFavoritos");
@@ -82,30 +83,34 @@ window.renderizarFavoritosHorizontais = function() {
 
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
+    // Se não houver favoritos salvos, garante que a div fique escondida
     if (favoritos.length === 0) {
         secaoFavoritos.style.display = "none";
         return;
     }
 
-    // 🔥 Puxa a lista global que expusemos no app.js ou no player.js
-    const listaDeMusicas = window.musicas || window.playlist || [];
-    
+    // Limpa o carrossel para desenhar do zero
     favoritosHorizontal.innerHTML = "";
 
+    // Pega a lista global de músicas para podermos achar o index correto ao clicar
+    const listaDeMusicas = window.musicas || window.playlist || [];
+
     favoritos.forEach((musica) => {
-        // Encontra o index correto na lista global de músicas
+        // Encontra o index correspondente no player para saber qual faixa tocar
         let indexReal = listaDeMusicas.findIndex(m => m.audio === musica.audio);
-        if (indexReal === -1) indexReal = 0;
+        if (indexReal === -1) indexReal = 0; // Fallback de segurança
 
-        const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
+        // Usa a capa salva na própria música dos favoritos
+        const capaMusica = musica.capa || "assets/icons/album.svg";
 
+        // Monta o HTML do card usando as informações diretas do localStorage
         favoritosHorizontal.innerHTML += `
         <div class="card" onclick="tocar(${indexReal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
-            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
+            <img src="${capaMusica}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
             <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
         </div>`;
     });
 
-    // 🔥 Força a seção inteira a aparecer removendo o 'none' e usando o padrão do seu app
+    // 🔥 FORÇA A EXIBIÇÃO: Remove o display: none e faz a seção abrir na tela!
     secaoFavoritos.style.display = "block";
 };
