@@ -23,7 +23,6 @@ fetch("musicas.json")
     }
     
     carregarTela();
-    carregarRanking();
 
     // INICIALIZAÇÃO DO PLAYER: Chama a função assim que os dados estão prontos!
     if (typeof inicializarPlayerComTop1 === "function") {
@@ -126,6 +125,7 @@ function renderizarUltimasOuvidas() {
     });
 }
 
+// RENDERIZAÇÃO DOS ITENS DA LISTA (Com clique exclusivo no botão Play)
 function renderizarItemMusica(musica, index, container) {
     const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
@@ -138,8 +138,8 @@ function renderizarItemMusica(musica, index, container) {
                 <small>${musica.artista}</small>
             </div>
         </div>
-        <button onclick="tocar(${index})">
-            <img src="assets/icons/play.svg" alt="Tocar" width="16" height="16">
+        <button onclick="event.stopPropagation(); tocar(${index});" style="cursor: pointer;">
+            <img src="assets/icons/play.svg" alt="Tocar" width="16" height="16" style="pointer-events: none;">
         </button>
     </div>`;
 }
@@ -173,7 +173,58 @@ function filtrarPorAlbum(nomeAlbum) {
 
 
 // ==========================================================================
-// 3. INSTALAÇÃO DO PROMPT DO PWA (CONFIGURAÇÃO SECUNDÁRIA)
+// 3. CONTROLE DA TELA VIRTUAL DE LANÇAMENTOS DA SEMANA
+// ==========================================================================
+let idMusicaLancamento = null;
+
+function abrirTelaLancamentos() {
+    const banner = document.querySelector(".banner");
+    const telaLancamentos = document.getElementById("telaLancamentos");
+    const secoesHome = document.querySelectorAll(".secao");
+
+    // Esconde a Home/Banner e abre a Tela de Lançamentos
+    if (banner) banner.style.display = "none";
+    secoesHome.forEach(sec => sec.style.display = "none");
+    if (telaLancamentos) telaLancamentos.style.display = "block";
+
+    // Pega a última música cadastrada no JSON como Lançamento da Semana
+    if (musicas && musicas.length > 0) {
+        idMusicaLancamento = musicas.length - 1; 
+        const lancamento = musicas[idMusicaLancamento];
+
+        const elTitulo = document.getElementById("lancamentoTitulo");
+        const elArtista = document.getElementById("lancamentoArtista");
+        const elCapa = document.getElementById("lancamentoCapa");
+
+        if (elTitulo) elTitulo.textContent = lancamento.titulo;
+        if (elArtista) elArtista.textContent = lancamento.artista;
+        if (elCapa) {
+            const capa = typeof obterCapaMusica === "function" ? obterCapaMusica(lancamento) : (lancamento.capa_musica || lancamento.capa || "assets/icons/album.svg");
+            elCapa.src = capa;
+        }
+    }
+}
+
+function tocarLancamento() {
+    if (idMusicaLancamento !== null && typeof tocar === "function") {
+        tocar(idMusicaLancamento);
+    }
+}
+
+function voltarParaHome() {
+    const banner = document.querySelector(".banner");
+    const telaLancamentos = document.getElementById("telaLancamentos");
+
+    // Oculta tela de lançamentos e restaura a navegação principal
+    if (telaLancamentos) telaLancamentos.style.display = "none";
+    if (banner) banner.style.display = "block";
+
+    carregarTela();
+}
+
+
+// ==========================================================================
+// 4. INSTALAÇÃO DO PROMPT DO PWA (CONFIGURAÇÃO SECUNDÁRIA)
 // ==========================================================================
 let instaladorPrompt;
 const btnInstalar = document.getElementById('seu-botao-de-instalar');
