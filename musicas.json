@@ -14,11 +14,11 @@
     "id": 2,
     "titulo": "A Cada Manhã",
     "artista": "AdoraPlay",
-    "album": "Adoração",
+    "album": "Celebração",
     "audio": "https://pub-030873deecd54e338400b701408a6d69.r2.dev/A_cada_manh%C3%A3.mp3",
-    "capa": "assets/capas/adoracao.jpg",
+    "capa": "assets/capas/celebracao.jpg",
     "capa_musica": "assets/capamusica/a_cada_manha.jpg",
-    "categoria": "Adoracao",
+    "categoria": "Celebracao",
     "data_cadastro": "2026-07-08"
   },
   {
