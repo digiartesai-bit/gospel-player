@@ -309,11 +309,12 @@ body {
     width:100%;
     height:50px;
     padding:0 18px 0 48px;
-    border:none;
+    border: 1px solid rgba(255, 255, 255, 0.08); //era none //
     outline:none;
-    border-radius:30px;
-    background:#132b44;
-    color:#fff;
+    border-radius:12px; //era 30 //
+    /* MUDADO: Fundo escuro semi-transparente */
+    background-color: rgba(255, 255, 255, 0.06); /* era background:#132b44; */
+    color:#ffffff;
     font-size:15px;
     box-shadow:0 4px 14px rgba(0,0,0,.25);
     transition:.25s;
@@ -324,8 +325,11 @@ body {
 }
 
 #search-input:focus{
-    background:#173551;
-    box-shadow:0 0 0 2px rgba(212,175,55,.35);
+  /*  background:#173551;
+    box-shadow:0 0 0 2px rgba(212,175,55,.35); */
+    background-color: rgba(255, 255, 255, 0.1); /* Clarea um pouquinho */
+    border-color: rgba(212, 175, 55, 0.4);      /* Brilho dourado sutil na borda */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
 }
 
 .resultados-sugestao{
