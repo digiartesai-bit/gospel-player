@@ -311,30 +311,39 @@ body {
     padding: 0 18px 0 48px;
     outline: none;
     border-radius: 12px;
-    color: #ffffff;
+    color: #ffffff !important;
     font-size: 15px;
     transition: all 0.25s ease;
     
-    /* FORÇANDO O ESTADO INICIAL: Vidro fumê bem discreto logo de cara */
-    background-color: rgba(255, 255, 255, 0.06) !important;
+    /* Remove qualquer estilo e sombra nativa do sistema operacional (Safari/Chrome) */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* FORÇANDO O ESTADO INICIAL: Força o fundo escuro transparente usando background puro */
+    background: rgba(255, 255, 255, 0.06) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .25) !important;
 }
 
 #search-input::placeholder {
     color: #a8b7c7;
 }
 
-#search-input::placeholder{
-    color:#a8b7c7;
-}
-
 /* ESTADO QUANDO ESTÁ ATIVO / SELECIONADO */
 #search-input:focus {
-    /* Clarea ligeiramente o vidro e adiciona o contorno dourado suave */
-    background-color: rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
     border-color: rgba(212, 175, 55, 0.4) !important;
-    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15) !important;
+}
+
+/* BLINDAGEM EXTRA: Evita que o preenchimento automático do Chrome/Edge mude a cor para branco */
+#search-input:-webkit-autofill,
+#search-input:-webkit-autofill:hover, 
+#search-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(19, 43, 68, 0.9) inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .resultados-sugestao{
