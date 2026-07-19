@@ -341,23 +341,30 @@ body {
 }
 
 .resultados-sugestao div{
-    padding:8px 14px;
-    line-height:1.4;
+    padding:6px 14px;
+    line-height:1.2;
     cursor:pointer;
     display: flex;
     justify-content: space-between; /* Empurra o título para a esquerda e o estilo para a direita */
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+}
+
+/* TÍTULO DA MÚSICA: Leve redução se necessário */
+.resultados-sugestao div span:first-child {
+    font-size: 13px; /* Garante que o título não seja muito grande */
+    color: #ffffff;
 }
 
 /* Pequeno ajuste para destacar o estilo da música de forma discreta */
 .resultados-sugestao .busca-estilo {
-    font-size: 11px;
+    font-size: 10px;
     color: #D4AF37; /* Dourado do seu app para dar destaque */
-    background: rgba(212, 175, 55, 0.1);
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 600;
+    background: rgba(212, 175, 55, 0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+      letter-spacing: 0.5px;  /* MUDADO: Letras ligeiramente mais espaçadas para legibilidade */
     text-transform: uppercase;
     flex-shrink: 0; /* Impede que a tag esmague em títulos muito longos. adicionado 10/07 21:10 */
 } 
