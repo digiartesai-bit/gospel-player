@@ -152,12 +152,14 @@
         </div>
 
         <!-- Centro: Favorito -->
-        <button id="btnFavorito" class="btn-icon" onclick="toggleFavorito()">
-            <img src="assets/icons/heart.svg" id="imgFavorito" alt="Favoritar">
-        </button>
+        <!-- Adicione o atributo title no botão do coração -->
+<button class="btn-icon" id="btnFavoritar" title="Adicionar aos favoritos">
+    <img src="assets/icons/heart.svg" alt="Favoritar">
+</button>
         <!-- 🔥 ADICIONE ESTE BOTÃO DO WHATSAPP LOGO AO LADO: -->
-<button class="btn-icon" id="btnCompartilhar" onclick="compartilharMusicaAtual()" title="Compartilhar no WhatsApp">
-    <img src="assets/icons/whatsapp.svg" alt="Compartilhar">
+<button class="btn-icon" id="btnCompartilhar" onclick="compartilharMusicaAtual()" title="Compartilhar">
+    <!-- O filter: none garante que a cor original do SVG apareça -->
+    <img src="assets/icons/whatsapp.svg" alt="Compartilhar" style="filter: none !important;">
 </button>
 
         <!-- Direita: Controles -->
