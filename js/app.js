@@ -14,6 +14,7 @@ fetch("musicas.json")
 .then(response => response.json())
 .then(data => {
     musicas = data;
+    window.musicas = data; // 🔥 ADICIONE ESTA LINHA: Torna a lista visível para outros arquivos!
     
     if (typeof carregarPlaylist === "function") {
         carregarPlaylist(musicas);
