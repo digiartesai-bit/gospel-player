@@ -1,37 +1,50 @@
 // ==========================================================================
-// RECURSO 1: LIBERDADE DE REPRODUÇÃO - CLIQUE E ARRASTE NO DESKTOP
+// RECURSO 1: LIBERDADE DE REPRODUÇÃO - CLIQUE E ARRASTE NO DESKTOP (SEM TRAVAR CLIQUE)
 // ==========================================================================
 window.addEventListener('DOMContentLoaded', () => {
-    const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal');
+    const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal, #maisOuvidas');
 
     carrosseis.forEach(slider => {
         if (!slider) return;
 
-        slider.addEventListener('dragstart', (e) => e.preventDefault());
-        slider.querySelectorAll('*').forEach(el => {
-            el.addEventListener('dragstart', (e) => e.preventDefault());
-        });
+        let isDown = false;
+        let startX, scrollLeft, foiArrasto = false;
 
         slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            foiArrasto = false;
             slider.style.cursor = 'grabbing';
-            let startX = e.pageX - slider.offsetLeft;
-            let scrollLeft = slider.scrollLeft;
-
-            const aoMoverMouse = (moveEvent) => {
-                const x = moveEvent.pageX - slider.offsetLeft;
-                const movimento = (x - startX) * 2; 
-                slider.scrollLeft = scrollLeft - movimento;
-            };
-
-            const aoSoltarMouse = () => {
-                slider.style.cursor = 'grab';
-                document.removeEventListener('mousemove', aoMoverMouse);
-                document.removeEventListener('mouseup', aoSoltarMouse);
-            };
-
-            document.addEventListener('mousemove', aoMoverMouse);
-            document.addEventListener('mouseup', aoSoltarMouse);
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
         });
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2;
+            if (Math.abs(walk) > 5) {
+                foiArrasto = true; // Se moveu mais de 5px, considera arrasto e cancela clique
+            }
+            slider.scrollLeft = scrollLeft - walk;
+        });
+
+        // Evita abrir/tocar se foi apenas um movimento de arrasto
+        slider.addEventListener('click', (e) => {
+            if (foiArrasto) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
     });
 });
 
@@ -42,13 +55,12 @@ function compartilharMusicaAtual() {
     const titulo = document.getElementById("miniTitulo")?.textContent || "";
     const artista = document.getElementById("miniArtista")?.textContent || "AdoraPlay";
     
-    if (!titulo) return; 
+    if (!titulo || titulo === "Nenhuma música") return; 
 
     const baseUrl = "https://digiartesai-bit.github.io/adora-play/";
     const urlAppComMusica = `${baseUrl}?musica=${encodeURIComponent(titulo)}`;
     const textoMensagem = `Ouça "${titulo}" de ${artista} no AdoraPlay! 🎶`;
 
-    // Função interna para o Plano B (WhatsApp Web/API)
     const abrirWhatsAppComoFallback = () => {
         const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlAppComMusica}`);
         const urlWhatsapp = `https://api.whatsapp.com/send?text=${textoCompleto}`;
@@ -63,8 +75,6 @@ function compartilharMusicaAtual() {
         })
         .then(() => console.log('Compartilhado com sucesso!'))
         .catch((error) => {
-            console.log('Nativo falhou ou cancelado, abrindo WhatsApp...', error);
-            // 🔥 Se o nativo falhar (AbortError), ele abre o WhatsApp imediatamente!
             abrirWhatsAppComoFallback();
         });
     } else {
@@ -73,7 +83,7 @@ function compartilharMusicaAtual() {
 }
 
 // ==========================================================================
-// RECURSO 3: EXIBIR E ATUALIZAR FAVORITOS (TOTALMENTE AUTÔNOMO)
+// RECURSO 3: EXIBIR E ATUALIZAR FAVORITOS (100% COMPATÍVEL COM MÚSICAS)
 // ==========================================================================
 window.renderizarFavoritosHorizontais = function() {
     const secaoFavoritos = document.getElementById("secaoFavoritos");
@@ -83,27 +93,22 @@ window.renderizarFavoritosHorizontais = function() {
 
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
-    // Se não houver favoritos salvos, garante que a div fique escondida
     if (favoritos.length === 0) {
         secaoFavoritos.style.display = "none";
         return;
     }
 
-    // Limpa o carrossel para desenhar do zero
     favoritosHorizontal.innerHTML = "";
-
-    // Pega a lista global de músicas para podermos achar o index correto ao clicar
     const listaDeMusicas = window.musicas || window.playlist || [];
 
     favoritos.forEach((musica) => {
-        // Encontra o index correspondente no player para saber qual faixa tocar
-        let indexReal = listaDeMusicas.findIndex(m => m.audio === musica.audio);
-        if (indexReal === -1) indexReal = 0; // Fallback de segurança
+        // Busca o index exato na lista global
+        let indexReal = listaDeMusicas.findIndex(m => m.audio === musica.audio || m.titulo === musica.titulo);
+        if (indexReal === -1) indexReal = 0;
 
-        // Usa a capa salva na própria música dos favoritos
-        const capaMusica = musica.capa || "assets/icons/album.svg";
+        // Pega a capa de forma inteligente (suporta capa_musica e capa)
+        const capaMusica = musica.capa_musica || musica.capa || "assets/icons/album.svg";
 
-        // Monta o HTML do card usando as informações diretas do localStorage
         favoritosHorizontal.innerHTML += `
         <div class="card" onclick="tocar(${indexReal})" style="cursor: pointer; width: 100px; display: inline-block; margin-right: 15px; vertical-align: top;">
             <img src="${capaMusica}" onerror="this.src='assets/icons/album.svg'" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px; display: block;">
@@ -111,6 +116,5 @@ window.renderizarFavoritosHorizontais = function() {
         </div>`;
     });
 
-    // 🔥 FORÇA A EXIBIÇÃO: Remove o display: none e faz a seção abrir na tela!
     secaoFavoritos.style.display = "block";
 };
