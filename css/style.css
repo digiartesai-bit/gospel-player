@@ -780,6 +780,7 @@ body {
     
     /* Ativa o deslizamento elástico/suave em celulares */
     -webkit-overflow-scrolling: touch !important; 
+    cursor: grab;
 }
 
 /* Ajusta o comportamento dos cards inseridos pelo JavaScript */
