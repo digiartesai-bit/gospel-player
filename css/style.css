@@ -357,9 +357,10 @@ body {
     background: rgba(212, 175, 55, 0.1);
     padding: 2px 8px;
     border-radius: 10px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-}
+    flex-shrink: 0; /* Impede que a tag esmague em títulos muito longos. adicionado 10/07 21:10 */
+} 
 
 .resultados-sugestao div:hover{
     background:rgba(255,255,255,.06);
