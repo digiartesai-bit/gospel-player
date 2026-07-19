@@ -91,7 +91,9 @@ window.renderizarFavoritosHorizontais = function() {
     favoritosHorizontal.innerHTML = "";
 
     // Como a lista global de músicas fica no app.js, usamos window.playlist para descobrir o index real
-    const listaDeMusicas = window.playlist || [];
+   /* const listaDeMusicas = window.playlist || [];*/
+    // 19/07 13:15 mudou para //
+    const listaDeMusicas = window.playlist || musicas || [];
 
     favoritos.forEach((musica) => {
         let indexReal = listaDeMusicas.findIndex(m => m.audio === musica.audio);
