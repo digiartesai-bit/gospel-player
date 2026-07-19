@@ -7,7 +7,9 @@ const listaMusicas = document.getElementById("listaMusicas");
 let musicas = [];
 let filtroAtivo = null;
 
-// Carrega as músicas do JSON
+// ==========================================================================
+// 1. CARREGAMENTO DOS DADOS (JSON) E SELEÇÃO DE MÚSICA COMPARTILHADA
+// ==========================================================================
 fetch("musicas.json")
 .then(response => response.json())
 .then(data => {
@@ -26,11 +28,29 @@ fetch("musicas.json")
     if (typeof inicializarPlayerComTop1 === "function") {
         inicializarPlayerComTop1();
     }
+
+    // 🔥 VERIFICA SE O APP FOI ABERTO COM UMA MÚSICA COMPARTILHADA NO LINK
+    const urlParams = new URLSearchParams(window.location.search);
+    const musicaParaTocar = urlParams.get('musica');
+
+    if (musicaParaTocar) {
+        // Encontra o índice da música correspondente na lista que acabou de baixar
+        const indexMusica = musicas.findIndex(m => m.titulo === musicaParaTocar);
+        
+        // Se a música for encontrada no banco de dados, dá o play automático!
+        if (indexMusica !== -1 && typeof tocar === "function") {
+            setTimeout(() => {
+                tocar(indexMusica);
+            }, 500); // Meio segundo de atraso para garantir que a interface está pronta
+        }
+    }
 })
 .catch(err => console.error("Erro ao carregar músicas:", err));
 
 
-// Renderiza a tela principal
+// ==========================================================================
+// 2. FUNÇÕES DE RENDERIZAÇÃO DA INTERFACE (UI)
+// ==========================================================================
 function carregarTela() {
     document.querySelectorAll(".secao").forEach(sec => sec.style.display = "block");
 
@@ -40,13 +60,11 @@ function carregarTela() {
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // 1. Renderiza os Favoritos horizontais
+    // Renderiza as seções da página principal
     renderizarFavoritosHorizontais();
-
-    // 2. Renderiza o histórico real de 3 músicas
     renderizarUltimasOuvidas();
     
-    // 3. Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
+    // Renderiza a seção de "Adicionados Recentemente" (as 3 últimas criadas no JSON)
     const ultimasAdicionadas = [...musicas].slice(-3).reverse(); 
     
     ultimasAdicionadas.forEach((musica) => {
@@ -56,7 +74,7 @@ function carregarTela() {
         }
     });
 
-    // 4. Renderiza a Navegação por Álbum (Mostra a capa padrão do Álbum)
+    // Renderiza a Navegação por Álbum
     const albunsAdicionados = new Set();
     musicas.forEach((musica) => {
         if (musica.album && !albunsAdicionados.has(musica.album)) {
@@ -73,7 +91,6 @@ function carregarTela() {
     });
 }
 
-// Renderiza o histórico de reprodução
 function renderizarUltimasOuvidas() {
     const secaoContinue = document.getElementById("secaoContinue") || document.querySelector(".continue-ouvindo");
     if (!continueOuvindo) return;
@@ -92,7 +109,6 @@ function renderizarUltimasOuvidas() {
         let indexOriginal = musicas.findIndex(m => m.audio === musica.audio);
         if (indexOriginal === -1) indexOriginal = 0;
 
-        // Gera o caminho da capa individual da música de forma dinâmica
         const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
         continueOuvindo.innerHTML += `
@@ -103,9 +119,7 @@ function renderizarUltimasOuvidas() {
     });
 }
 
-// Renderiza o item de música da lista vertical de adicionados recentemente (com a capa da música!)
 function renderizarItemMusica(musica, index, container) {
-    // Gera o caminho da capa individual de forma dinâmica
     const capaMusica = typeof obterCapaMusica === "function" ? obterCapaMusica(musica) : "assets/icons/album.svg";
 
     container.innerHTML += `
@@ -123,7 +137,6 @@ function renderizarItemMusica(musica, index, container) {
     </div>`;
 }
 
-// Renderiza os Favoritos horizontais (com a capa da música!)
 function renderizarFavoritosHorizontais() {
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
@@ -151,7 +164,6 @@ function renderizarFavoritosHorizontais() {
     });
 }
 
-// Filtra por álbum ao clicar na seção de álbuns
 function filtrarPorAlbum(nomeAlbum) {
     const titulo = document.getElementById("tituloListaMusicas");
     if (!listaMusicas) return;
@@ -179,41 +191,34 @@ function filtrarPorAlbum(nomeAlbum) {
     });
 }
 
+
+// ==========================================================================
+// 3. INSTALAÇÃO DO PROMPT DO PWA (CONFIGURAÇÃO SECUNDÁRIA)
+// ==========================================================================
 let instaladorPrompt;
 const btnInstalar = document.getElementById('seu-botao-de-instalar');
 
-// O navegador avisa que o app preenche os requisitos para ser instalado
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Impede o prompt padrão do navegador de subir sozinho
     e.preventDefault();
-    // Guarda o evento para usar no clique do botão
     instaladorPrompt = e;
-    // Faz o botão "Instalar" aparecer no seu menu inferior
     if (btnInstalar) {
-        btnInstalar.style.display = 'flex'; // Usando 'flex' para manter o alinhamento da navbar
+        btnInstalar.style.display = 'flex';
     }
 });
 
-// Quando o usuário clicar em "Instalar" na sua barra inferior
 if (btnInstalar) {
     btnInstalar.addEventListener('click', async (e) => {
-        e.preventDefault(); // Evita qualquer comportamento padrão
-        
+        e.preventDefault();
         if (instaladorPrompt) {
-            // Abre a janelinha oficial de instalação do sistema
             instaladorPrompt.prompt();
-            // Verifica se o usuário aceitou ou cancelou
             const { outcome } = await instaladorPrompt.userChoice;
             console.log(`Escolha do usuário: ${outcome}`);
-            // Limpa o prompt para uso futuro
             instaladorPrompt = null;
-            // Esconde o botão após a ação
             btnInstalar.style.display = 'none';
         }
     });
 }
 
-// Se o aplicativo já estiver instalado no celular, garante que o botão suma
 window.addEventListener('appinstalled', () => {
     if (btnInstalar) {
         btnInstalar.style.display = 'none';
@@ -221,16 +226,17 @@ window.addEventListener('appinstalled', () => {
     console.log('App instalado com sucesso e adicionado à tela de início!');
 });
 
-// ===================================================
-// LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP (SOLUÇÃO DEFINITIVA)
-// ===================================================
+
+// ==========================================================================
+// 4. LIBERDADE DE REPRODUÇÃO: CLIQUE E ARRASTE NO DESKTOP (DEFINITIVO)
+// ==========================================================================
 window.addEventListener('DOMContentLoaded', () => {
     const carrosseis = document.querySelectorAll('#albuns, #continueOuvindo, #favoritosHorizontal');
 
     carrosseis.forEach(slider => {
         if (!slider) return;
 
-        // Evita o comportamento fantasma nativo do navegador em imagens e textos
+        // Desativa o comportamento de arrasto padrão do navegador em imagens e textos
         slider.addEventListener('dragstart', (e) => e.preventDefault());
         slider.querySelectorAll('*').forEach(el => {
             el.addEventListener('dragstart', (e) => e.preventDefault());
@@ -242,121 +248,55 @@ window.addEventListener('DOMContentLoaded', () => {
             let startX = e.pageX - slider.offsetLeft;
             let scrollLeft = slider.scrollLeft;
 
-            // Função interna para mover o carrossel
             const aoMoverMouse = (moveEvent) => {
                 const x = moveEvent.pageX - slider.offsetLeft;
                 const movimento = (x - startX) * 2; 
                 slider.scrollLeft = scrollLeft - movimento;
             };
 
-            // Função interna para limpar TODOS os gatilhos assim que soltar o clique
             const aoSoltarMouse = () => {
                 slider.style.cursor = 'grab';
-                // Remove os ouvidores do documento para não deixar o rastro ativo
                 document.removeEventListener('mousemove', aoMoverMouse);
                 document.removeEventListener('mouseup', aoSoltarMouse);
             };
 
-            // Registra os movimentos diretamente no escopo global do documento enquanto o clique durar
             document.addEventListener('mousemove', aoMoverMouse);
             document.addEventListener('mouseup', aoSoltarMouse);
         });
     });
 });
 
-// ===================================================
-// FUNÇÃO: COMPARTILHAR MÚSICA ATUAL NO WHATSAPP (OTIMIZADA PARA META TAGS)
-// ===================================================
+
+// ==========================================================================
+// 5. FUNÇÃO: COMPARTILHAR MÚSICA COM LINK DIRETO PARA O PLAYER
+// ==========================================================================
 function compartilharMusicaAtual() {
-    const titulo = document.getElementById("miniTitulo")?.textContent || "Um lindo louvor";
+    // Pega o título e artista que estão em reprodução no player
+    const titulo = document.getElementById("miniTitulo")?.textContent || "";
     const artista = document.getElementById("miniArtista")?.textContent || "AdoraPlay";
     
-    // Pega o link limpo da página inicial para garantir a leitura do Open Graph
-    const urlApp = "https://digiartesai-bit.github.io/adora-play/";
+    if (!titulo) return; 
+
+    // Base do seu site no GitHub Pages
+    const baseUrl = "https://digiartesai-bit.github.io/adora-play/";
     
+    // Cria o link dinâmico passando o parâmetro ?musica=Nome_Da_Musica
+    const urlAppComMusica = `${baseUrl}?musica=${encodeURIComponent(titulo)}`;
     const textoMensagem = `Ouça "${titulo}" de ${artista} no AdoraPlay! 🎶`;
 
     if (navigator.share) {
-        // No celular, as propriedades separadas ajudam o sistema a puxar a imagem og:image
+        // Mobile: Abre a gaveta de compartilhamento nativa do smartphone
         navigator.share({
             title: 'AdoraPlay',
             text: textoMensagem,
-            url: urlApp
+            url: urlAppComMusica
         })
         .then(() => console.log('Compartilhado!'))
         .catch((error) => console.log('Erro ao compartilhar:', error));
     } else {
-        // No Desktop, damos uma quebra de linha (\n) antes do link. 
-        // Isso ajuda o robô do WhatsApp a isolar o link e carregar a prévia visual!
-        const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlApp}`);
+        // Desktop: Abre o WhatsApp Web diretamente com a mensagem isolada do link
+        const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlAppComMusica}`);
         const urlWhatsapp = `https://api.whatsapp.com/send?text=${textoCompleto}`;
-        
         window.open(urlWhatsapp, '_blank');
     }
 }
-
-// ==========================================================================
-// CONTROLE DE INSTALAÇÃO DO PWA
-// ==========================================================================
-/*let instaladorPrompt;
-const btnInstalar = document.querySelector('.btn-instalar-topo');
-
-function jaInstalado() {
-    return (
-        window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true ||             // iOS//
-        localStorage.getItem('pwaInstalado') === '1'       // fallback pós-instalação//
-    );
-}
-
-function mostrarBotao() {
-    if (btnInstalar && !jaInstalado()) {
-        btnInstalar.classList.add('mostrar-btn');
-    }
-}
-
-function esconderBotao() {
-    if (btnInstalar) btnInstalar.classList.remove('mostrar-btn');
-}
-
-// 1. Se já está instalado (aberto como app OU já marcado no localStorage) → nunca mostra//
-if (jaInstalado()) {
-    esconderBotao();
-}
-
-// 2. Navegador avisa que pode instalar → só aí mostramos o botão//
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    instaladorPrompt = e;
-    mostrarBotao();
-});
-
-// 3. Clique no botão//
-if (btnInstalar) {
-    btnInstalar.addEventListener('click', async (e) => {
-        e.preventDefault();
-        if (instaladorPrompt) {
-            instaladorPrompt.prompt();
-            const { outcome } = await instaladorPrompt.userChoice;
-            if (outcome === 'accepted') {
-                localStorage.setItem('pwaInstalado', '1');
-                esconderBotao();
-            }
-            instaladorPrompt = null;
-        } else {
-            alert(
-                "Para instalar o AdoraPlay agora:\n\n" +
-                "1. Toque nos 3 pontinhos (Menu) do seu navegador.\n" +
-                "2. Procure por 'Instalar aplicativo' ou 'Adicionar à tela inicial'."
-            );
-        }
-    });
-}
-
-// 4. Instalação concluída → marca e esconde para sempre//
-window.addEventListener('appinstalled', () => {
-    localStorage.setItem('pwaInstalado', '1');
-    esconderBotao();
-    instaladorPrompt = null;
-});*/
-
