@@ -363,10 +363,17 @@ function salvarNoHistorico(musica) {
         historico.pop();
     }
 
-    localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
+    /* localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
     
-    if (typeof renderizarUltimasOuvidas === "function") {
+   if (typeof renderizarUltimasOuvidas === "function") {
         renderizarUltimasOuvidas();
+    }
+} */ // alterado 19/07 13:00 para //
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    atualizarBotaoFavorito();
+    // 🔥 CORREÇÃO: Adicionado 'window.' antes da checagem e da chamada
+    if (typeof window.renderizarFavoritosHorizontais === "function") {
+        window.renderizarFavoritosHorizontais();
     }
 }
 
