@@ -305,31 +305,36 @@ body {
     filter:invert(78%) sepia(12%) saturate(260%) hue-rotate(178deg);
 }
 
-#search-input{
-    width:100%;
-    height:50px;
-    padding:0 18px 0 48px;
-    border: 1px solid rgba(255, 255, 255, 0.08); //era none //
-    outline:none;
-    border-radius:12px; //era 30 //
-    /* MUDADO: Fundo escuro semi-transparente */
-    background-color: rgba(255, 255, 255, 0.06); /* era background:#132b44; */
-    color:#ffffff;
-    font-size:15px;
-    box-shadow:0 4px 14px rgba(0,0,0,.25);
-    transition:.25s;
+#search-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 18px 0 48px;
+    outline: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    
+    /* FORÇANDO O ESTADO INICIAL: Vidro fumê bem discreto logo de cara */
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+}
+
+#search-input::placeholder {
+    color: #a8b7c7;
 }
 
 #search-input::placeholder{
     color:#a8b7c7;
 }
 
-#search-input:focus{
-  /*  background:#173551;
-    box-shadow:0 0 0 2px rgba(212,175,55,.35); */
-    background-color: rgba(255, 255, 255, 0.1); /* Clarea um pouquinho */
-    border-color: rgba(212, 175, 55, 0.4);      /* Brilho dourado sutil na borda */
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+/* ESTADO QUANDO ESTÁ ATIVO / SELECIONADO */
+#search-input:focus {
+    /* Clarea ligeiramente o vidro e adiciona o contorno dourado suave */
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(212, 175, 55, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
 }
 
 .resultados-sugestao{
