@@ -22,12 +22,11 @@ let tocando = false;
 
 // Estados das novas funções
 let modoShuffle = false;
-let modoRepeat = false; // false = sem repetição, true = repete a música atual
+let modoRepeat = false;
 
 // Variável de controle para contar apenas uma vez por reprodução
 let streamRegistrado = false;
 
-// Simplificado para ler diretamente "capa_musica" do seu JSON
 function obterCapaMusica(musica) {
     if (!musica) return "assets/icons/album.svg";
     if (musica.capa_musica) {
@@ -36,9 +35,9 @@ function obterCapaMusica(musica) {
     return musica.capa || "assets/icons/album.svg";
 }
 
-// Garante o carregamento da playlist dinâmica do app.js
 function carregarPlaylist(lista) { 
     playlist = [...lista]; 
+    window.playlist = playlist;
     atualizarBotoesModo();
 }
 
@@ -48,30 +47,31 @@ if (window.playlist && window.playlist.length > 0) {
 
 // Toca uma música com base no índice
 function tocar(indice) {
-    if (!playlist || playlist.length === 0) return;
+    if (!playlist || playlist.length === 0) {
+        if (window.musicas && window.musicas.length > 0) {
+            carregarPlaylist(window.musicas);
+        } else {
+            return;
+        }
+    }
+    
     if (indice < 0 || indice >= playlist.length) return;
     
     musicaAtual = indice;
     const musica = playlist[indice];
     
-    // Reseta a trava do stream para a nova música que vai começar
     streamRegistrado = false;
     
-    // Salva no histórico local do navegador ao dar play
     salvarNoHistorico(musica);
     
-    // Define o áudio
     audioPlayer.src = musica.audio;
     
-    // Exibe o mini-player IMEDIATAMENTE
     if (miniPlayer) {
         miniPlayer.style.display = "flex";
     }
     
-    // Atualiza as informações na tela na mesma hora
     atualizarMiniPlayer();
     
-    // Inicia a reprodução tratando possíveis bloqueios do navegador
     audioPlayer.play()
         .then(() => {
             tocando = true;
@@ -84,35 +84,25 @@ function tocar(indice) {
         });
 }
 
-// Controla o Play e o Pause com segurança inteligente
 function playPause() {
-    // 1. SE NÃO HOUVER MÚSICA CARREGADA (Player está vazio/com endereço local no início)
     if (!audioPlayer.src || audioPlayer.src === "" || audioPlayer.src === window.location.href) {
         if (typeof musicas !== "undefined" && musicas.length > 0) {
-            
-            // Abastece a playlist para que a navegação funcione perfeitamente
             carregarPlaylist(musicas);
-            
-            let indiceParaTocar = 0; // Início padrão: primeiro item do JSON
+            let indiceParaTocar = 0;
 
-            // Busca dinamicamente qual é a música TOP 1 do ranking de mais ouvidas
             if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
                 const top1 = maisOuvidas[0]; 
-                
-                // Localiza o índice correspondente no array geral de músicas
                 const idxTop1 = musicas.findIndex(m => m.id === top1.id);
                 if (idxTop1 >= 0) {
                     indiceParaTocar = idxTop1;
                 }
             }
 
-            // Inicia a reprodução
             tocar(indiceParaTocar);
-            return; // Interrompe para evitar conflito com o bloco padrão abaixo
+            return;
         }
     }
 
-    // 2. LÓGICA PADRÃO (Para quando uma música já está carregada/em andamento)
     if (tocando) {
         audioPlayer.pause();
         tocando = false;
@@ -131,7 +121,6 @@ function playPause() {
     }
 }
 
-// Atualiza o estado visual do player
 function atualizarMiniPlayer() {
     if (!miniPlayer) return;
     miniPlayer.style.display = "flex";
@@ -150,12 +139,10 @@ function atualizarMiniPlayer() {
         };
     }
     
-    // Atualiza o ícone interno do botão Play/Pause central (sempre em contraste escuro)
     if (btnPlay) {
         let img = btnPlay.querySelector("img");
         if (img) {
             img.src = tocando ? "assets/icons/pause.svg" : "assets/icons/play.svg";
-            // Ajusta o alinhamento visual perfeito dependendo do ícone ativo
             img.style.marginLeft = tocando ? "0px" : "2px";
         }
     }
@@ -164,7 +151,6 @@ function atualizarMiniPlayer() {
     atualizarBotaoFavorito();
 }
 
-// Pula para a próxima música
 function proxima() { 
     if (playlist.length === 0) return;
 
@@ -185,7 +171,6 @@ function proxima() {
     tocar(musicaAtual); 
 }
 
-// Volta para a música anterior
 function anterior() { 
     if (playlist.length === 0) return;
 
@@ -206,7 +191,6 @@ function anterior() {
     tocar(musicaAtual); 
 }
 
-// FUNÇÃO: Ativa / Desativa o Modo Aleatório (Shuffle)
 function alternarShuffle() {
     modoShuffle = !modoShuffle;
     if (modoShuffle) {
@@ -215,7 +199,6 @@ function alternarShuffle() {
     atualizarBotoesModo();
 }
 
-// FUNÇÃO: Ativa / Desativa a Repetição
 function alternarRepeat() {
     modoRepeat = !modoRepeat;
     if (modoRepeat) {
@@ -224,7 +207,6 @@ function alternarRepeat() {
     atualizarBotoesModo();
 }
 
-// Visual dos botões de Shuffle e Repeat com brilho dourado inteligente
 function atualizarBotoesModo() {
     const btnShuffle = document.getElementById("btnShuffle");
     const btnRepeat = document.getElementById("btnRepeat");
@@ -256,23 +238,17 @@ function formatarTempo(segundos) {
     return `${min}:${seg < 10 ? '0' : ''}${seg}`;
 }
 
-// Eventos de Progresso do Áudio
 if (audioPlayer) {
-    
-    // GARANTIA DE REPEAT: Reseta a trava no momento exato em que o áudio ganha o Play (nova música ou repetição)
     audioPlayer.addEventListener("play", () => {
-        // Se a música está no primeiro segundo (iniciando do zero ou via repeat), libera nova contagem
         if (audioPlayer.currentTime < 1) {
             streamRegistrado = false;
         }
     });
 
-    // Dispara continuamente enquanto a música toca
     audioPlayer.addEventListener("timeupdate", () => {
         const current = audioPlayer.currentTime;
         const duration = audioPlayer.duration;
 
-        // 1. Atualiza a barra de progresso visual
         if (progressBar) {
             progressBar.value = duration ? (current / duration) * 100 : 0;
         }
@@ -280,18 +256,18 @@ if (audioPlayer) {
         if (currentTime) currentTime.textContent = formatarTempo(current);
         if (durationTime) durationTime.textContent = formatarTempo(duration || 0);
 
-        // 2. REGISTRO DINÂMICO DE STREAM (90% Ouvido)
         if (duration && !streamRegistrado) {
             const porcentagemOuvida = (current / duration) * 100;
             
             if (porcentagemOuvida >= 90) {
-                registrarReproducao(playlist[musicaAtual].id);
-                streamRegistrado = true; // Trava para não computar em loops dentro da mesma rodada
+                if (playlist[musicaAtual] && playlist[musicaAtual].id) {
+                    registrarReproducao(playlist[musicaAtual].id);
+                }
+                streamRegistrado = true;
             }
         }
     });
 
-    // Quando a música acaba
     audioPlayer.addEventListener("ended", () => {
         if (modoRepeat) {
             audioPlayer.currentTime = 0;
@@ -327,13 +303,14 @@ function toggleFavorito() {
     localStorage.setItem('favoritos', JSON.stringify(favoritos));
     atualizarBotaoFavorito();
 
-    if (typeof renderizarFavoritosHorizontais === "function") {
-        renderizarFavoritosHorizontais();
+    if (typeof window.renderizarFavoritosHorizontais === "function") {
+        window.renderizarFavoritosHorizontais();
     }
 }
 
 function atualizarBotaoFavorito() {
-    const imgFavorito = document.getElementById("imgFavorito");
+    const btnFavoritar = document.getElementById("btnFavoritar");
+    const imgFavorito = btnFavoritar ? btnFavoritar.querySelector("img") : document.getElementById("imgFavorito");
     if (!imgFavorito) return;
     
     const musica = playlist[musicaAtual];
@@ -342,7 +319,6 @@ function atualizarBotaoFavorito() {
     const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
     const ehFavorito = favoritos.some(f => f.titulo.trim() === musica.titulo.trim());
     
-    // Favorito Ativo (Vermelho/Dourado Brilhante) vs Inativo (Dourado Translúcido)
     const filtroAtivo = "brightness(1.2) saturate(10) drop-shadow(0px 0px 4px rgba(212, 175, 55, 0.8))";
     const filtroInativo = "brightness(0) saturate(100%) invert(84%) sepia(23%) saturate(1067%) hue-rotate(352deg) brightness(85%) contrast(85%)";
 
@@ -350,10 +326,17 @@ function atualizarBotaoFavorito() {
     imgFavorito.style.opacity = ehFavorito ? "1" : "0.5";
 }
 
-// ==========================================
+// Vincula o clique do botão favoritar
+document.addEventListener("DOMContentLoaded", () => {
+    const btnFavoritar = document.getElementById("btnFavoritar");
+    if (btnFavoritar) {
+        btnFavoritar.onclick = toggleFavorito;
+    }
+});
+
 // GESTÃO DE HISTÓRICO
-// ==========================================
 function salvarNoHistorico(musica) {
+    if (!musica) return;
     let historico = JSON.parse(localStorage.getItem('historico_adoraplay')) || [];
 
     historico = historico.filter(m => m.audio !== musica.audio);
@@ -363,28 +346,18 @@ function salvarNoHistorico(musica) {
         historico.pop();
     }
 
-    /* localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
+    localStorage.setItem('historico_adoraplay', JSON.stringify(historico));
     
-   if (typeof renderizarUltimasOuvidas === "function") {
+    if (typeof renderizarUltimasOuvidas === "function") {
         renderizarUltimasOuvidas();
-    }
-} */ // alterado 19/07 13:00 para //
-    localStorage.setItem('favoritos', JSON.stringify(favoritos));
-    atualizarBotaoFavorito();
-    // 🔥 CORREÇÃO: Adicionado 'window.' antes da checagem e da chamada
-    if (typeof window.renderizarFavoritosHorizontais === "function") {
-        window.renderizarFavoritosHorizontais();
     }
 }
 
-// Envia o id da música para a API de estatísticas
 async function registrarReproducao(id) {
     try {
-        const resposta = await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
+        await fetch("https://adoraplay-api.digiartesai.workers.dev/", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id })
         });
     } catch (erro) {
@@ -392,19 +365,12 @@ async function registrarReproducao(id) {
     }
 }
 
-// ==========================================
-// INICIALIZAÇÃO DA TOP 1 (CHAMADA LOGO APÓS O FETCH DO APP.JS)
-// ==========================================
 function inicializarPlayerComTop1() {
-    // 1. Garante que a lista de músicas global existe e tem itens
     if (typeof musicas !== "undefined" && musicas.length > 0) {
-        
-        // 2. Abastece a playlist do player
         carregarPlaylist(musicas);
         
-        let indiceTop1 = 0; // Padrão: primeira música da lista
+        let indiceTop1 = 0;
 
-        // 3. Tenta localizar a música Top 1 do seu ranking
         if (typeof maisOuvidas !== "undefined" && maisOuvidas.length > 0) {
             const top1 = maisOuvidas[0];
             const idxTop1 = musicas.findIndex(m => m.id === top1.id);
@@ -413,16 +379,13 @@ function inicializarPlayerComTop1() {
             }
         }
 
-        // 4. Define o índice atual sem iniciar o áudio
         musicaAtual = indiceTop1;
         const musica = playlist[musicaAtual];
 
-        // 5. Carrega o caminho do arquivo de áudio silenciosamente
         if (audioPlayer && musica) {
             audioPlayer.src = musica.audio;
         }
 
-        // 6. Atualiza o visual (Capa, Título, Artista) mantendo o estado de pausa
         atualizarMiniPlayer();
     }
 }
