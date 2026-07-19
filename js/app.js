@@ -265,20 +265,19 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===================================================
-// FUNÇÃO: COMPARTILHAR MÚSICA ATUAL
+// FUNÇÃO: COMPARTILHAR MÚSICA ATUAL NO WHATSAPP (OTIMIZADA PARA META TAGS)
 // ===================================================
 function compartilharMusicaAtual() {
-    // Captura os dados da música que está tocando agora no seu mini-player
     const titulo = document.getElementById("miniTitulo")?.textContent || "Um lindo louvor";
     const artista = document.getElementById("miniArtista")?.textContent || "AdoraPlay";
     
-    // Pega o link atual do seu app (ex: https://digiartesai-bit.github.io/adora-play/)
-    const urlApp = window.location.origin + window.location.pathname;
+    // Pega o link limpo da página inicial para garantir a leitura do Open Graph
+    const urlApp = "https://digiartesai-bit.github.io/adora-play/";
     
     const textoMensagem = `Ouça "${titulo}" de ${artista} no AdoraPlay! 🎶`;
 
-    // Se for mobile, tenta usar o compartilhamento nativo do sistema
     if (navigator.share) {
+        // No celular, as propriedades separadas ajudam o sistema a puxar a imagem og:image
         navigator.share({
             title: 'AdoraPlay',
             text: textoMensagem,
@@ -287,9 +286,10 @@ function compartilharMusicaAtual() {
         .then(() => console.log('Compartilhado!'))
         .catch((error) => console.log('Erro ao compartilhar:', error));
     } else {
-        // Se for Desktop, abre direto o WhatsApp Web com a mensagem pronta!
-        const textoCompleto = encodeURIComponent(`${textoMensagem} ${urlApp}`);
-        const urlWhatsapp = `https://web.whatsapp.com/send?text=${textoCompleto}`;
+        // No Desktop, damos uma quebra de linha (\n) antes do link. 
+        // Isso ajuda o robô do WhatsApp a isolar o link e carregar a prévia visual!
+        const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlApp}`);
+        const urlWhatsapp = `https://api.whatsapp.com/send?text=${textoCompleto}`;
         
         window.open(urlWhatsapp, '_blank');
     }
