@@ -764,3 +764,26 @@ body {
         background-color: #0d233a;
     }
 } /* CORRIGIDO: Chave adicionada para fechar a media query */
+
+/* ==========================================
+   FORÇAR CARROSSEL HORIZONTAL DE VOLTA 
+   ========================================== */
+
+/* Procura por qualquer div ou seção que guarde os cards */
+[id*="lista"], [class*="container"], [class*="grid"], .secao {
+    /* Identifica se os filhos imediatos são cards */
+    &:has(> .card) {
+        display: flex !important;
+        flex-wrap: nowrap !important; /* IMPEDE terminantemente a quebra de linha */
+        overflow-x: auto !important;  /* ATIVA a rolagem na horizontal */
+        gap: 16px !important;         /* Espaçamento perfeito entre os cards */
+        padding: 10px 20px !important;/* Alinha o espaçamento com as laterais da tela */
+        width: 100% !important;
+        -webkit-overflow-scrolling: touch !important; /* Rolagem suave em iPhones/Android */
+    }
+}
+
+/* Garante que os cards não tentem encolher para caber na tela */
+.card {
+    flex-shrink: 0 !important; /* Força o tamanho mínimo horizontal */
+}
