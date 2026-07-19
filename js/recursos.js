@@ -48,21 +48,29 @@ function compartilharMusicaAtual() {
     const urlAppComMusica = `${baseUrl}?musica=${encodeURIComponent(titulo)}`;
     const textoMensagem = `Ouça "${titulo}" de ${artista} no AdoraPlay! 🎶`;
 
+    // Função interna para o Plano B (WhatsApp Web/API)
+    const abrirWhatsAppComoFallback = () => {
+        const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlAppComMusica}`);
+        const urlWhatsapp = `https://api.whatsapp.com/send?text=${textoCompleto}`;
+        window.open(urlWhatsapp, '_blank');
+    };
+
     if (navigator.share) {
         navigator.share({
             title: 'AdoraPlay',
             text: textoMensagem,
             url: urlAppComMusica
         })
-        .then(() => console.log('Compartilhado!'))
-        .catch((error) => console.log('Erro ao compartilhar:', error));
+        .then(() => console.log('Compartilhado com sucesso!'))
+        .catch((error) => {
+            console.log('Nativo falhou ou cancelado, abrindo WhatsApp...', error);
+            // 🔥 Se o nativo falhar (AbortError), ele abre o WhatsApp imediatamente!
+            abrirWhatsAppComoFallback();
+        });
     } else {
-        const textoCompleto = encodeURIComponent(`${textoMensagem}\n\n${urlAppComMusica}`);
-        const urlWhatsapp = `https://api.whatsapp.com/send?text=${textoCompleto}`;
-        window.open(urlWhatsapp, '_blank');
+        abrirWhatsAppComoFallback();
     }
 }
-
 // ==========================================================================
 // RECURSO 3: EXIBIR E ATUALIZAR FAVORITOS (GLOBAL)
 // ==========================================================================
@@ -72,7 +80,7 @@ window.renderizarFavoritosHorizontais = function() {
     
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
-    const favoritos = JSON.parse(localStorage.getItem('favorites')) || []; // Ajuste para 'favoritos' se for o caso no seu banco
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || []; // Ajuste para 'favoritos' se for o caso no seu banco
 
     if (favoritos.length === 0) {
         secaoFavoritos.style.display = "none";
