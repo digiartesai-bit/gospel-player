@@ -133,21 +133,21 @@ function renderizarItemMusica(musica, index, container) {
     container.innerHTML += `
     <div class="card-lancamento" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; margin-bottom: 15px;">
         
-        <!-- LADO ESQUERDO: Apenas informação (NÃO CLICÁVEL) -->
-        <div style="display: flex; align-items: center; gap: 16px; pointer-events: none;">
-            <img src="${capaMusica}" onerror="this.src='${musica.capa || 'assets/icons/album.svg'}'" style="width: 56px; height: 56px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-            <div>
-                <h3 style="color: #fff; font-size: 16px; font-weight: 700; margin: 0 0 4px 0;">${musica.titulo}</h3>
-                <p style="color: #94a3b8; font-size: 13px; margin: 0;">${musica.artista}</p>
-            </div>
+    container.innerHTML += `
+    <div style="display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 16px; cursor: default;">
+             
+        <img src="${musica.capa_musica || musica.capa}" style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover;">
+        <div style="flex: 1;">
+            <h4 style="margin: 0; color: #fff; font-size: 16px;">${musica.titulo}</h4>
+            <p style="margin: 3px 0 0; color: #94a3b8; font-size: 13px;">${musica.artista}</p>
         </div>
 
-        <!-- LADO DIREITO: UNICO ELEMENTO CLICÁVEL (Botão Amarelo) -->
-        <button onclick="event.stopPropagation(); tocar(${index});" style="background: #D4AF37; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); position: relative; z-index: 10;">
-            <img src="assets/icons/play.svg" alt="Play" width="16" height="16" style="filter: brightness(0); pointer-events: none;">
+       <button onclick='tocarEstaMusica(${JSON.stringify(musica)})' style="background: #D4AF37; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <img src="assets/icons/play.svg" width="12" height="12" style="filter: brightness(0); margin-left: 2px; pointer-events: none;">
         </button>
 
-    </div>`;
+    </div>
+`;
 }
 
 function filtrarPorAlbum(nomeAlbum) {
