@@ -80,22 +80,20 @@ window.renderizarFavoritosHorizontais = function() {
     
     if (!secaoFavoritos || !favoritosHorizontal) return;
 
-    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || []; // Ajuste para 'favoritos' se for o caso no seu banco
+    const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
 
     if (favoritos.length === 0) {
         secaoFavoritos.style.display = "none";
         return;
     }
 
-    secaoFavoritos.style.display = "block";
+    // 🔥 Puxa a lista global que expusemos no app.js ou no player.js
+    const listaDeMusicas = window.musicas || window.playlist || [];
+    
     favoritosHorizontal.innerHTML = "";
 
-    // Como a lista global de músicas fica no app.js, usamos window.playlist para descobrir o index real
-   /* const listaDeMusicas = window.playlist || [];*/
-    // 19/07 13:15 mudou para //
-    const listaDeMusicas = window.playlist || musicas || [];
-
     favoritos.forEach((musica) => {
+        // Encontra o index correto na lista global de músicas
         let indexReal = listaDeMusicas.findIndex(m => m.audio === musica.audio);
         if (indexReal === -1) indexReal = 0;
 
@@ -107,4 +105,7 @@ window.renderizarFavoritosHorizontais = function() {
             <p style="margin-top: 5px; font-size: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">${musica.titulo}</p>
         </div>`;
     });
+
+    // 🔥 Força a seção inteira a aparecer removendo o 'none' e usando o padrão do seu app
+    secaoFavoritos.style.display = "block";
 };
