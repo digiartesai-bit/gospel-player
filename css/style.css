@@ -349,22 +349,29 @@ body {
 /* LISTA SUSPENSA: Alinhada exatamente com a mesma cor do input */
 .resultados-sugestao {
     position: absolute;
-    top: 58px;
+    top: 54px;
     left: 0;
     right: 0;
     border-radius: 12px;
     overflow: hidden;
-    z-index: 999;
+    z-index: 99999 !important;
     
     /* IGUAL AO INPUT: Fundo escuro semi-transparente e borda sutil */
-    background: rgba(255, 255, 255, 0.06) !important;
+    background: rgba(19, 43, 68, 0.85) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     
     /* O SEGREDO DO VIDRO: Efeito borrado elegante */
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important; /* Suporte para iOS/Safari */
-    
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 🔥 O SEGREDO: Se a div estiver sem filhos/vazia, ela some 100% da tela */
+.resultados-sugestao:empty {
+    display: none !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
 .resultados-sugestao div{
     padding:6px 14px;
