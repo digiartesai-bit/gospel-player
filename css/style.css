@@ -341,9 +341,24 @@ body {
 }
 
 .resultados-sugestao div{
-    padding:14px 18px;
-    line-height:1.5;
+    padding:8px 14px;
+    line-height:1.4;
     cursor:pointer;
+    display: flex;
+    justify-content: space-between; /* Empurra o título para a esquerda e o estilo para a direita */
+    align-items: center;
+    gap: 10px;
+}
+
+/* Pequeno ajuste para destacar o estilo da música de forma discreta */
+.resultados-sugestao .busca-estilo {
+    font-size: 11px;
+    color: #D4AF37; /* Dourado do seu app para dar destaque */
+    background: rgba(212, 175, 55, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
 .resultados-sugestao div:hover{
