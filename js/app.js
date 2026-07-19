@@ -61,10 +61,12 @@ function carregarTela() {
     if (albuns) albuns.innerHTML = "";
     if (listaMusicas) listaMusicas.innerHTML = "";
 
-    // Chama a função global de favoritos que agora está no recursos.js
+    // Aguarda 200 milissegundos para garantir que o HTML e as listas se estabilizaram
+setTimeout(() => {
     if (typeof window.renderizarFavoritosHorizontais === "function") {
         window.renderizarFavoritosHorizontais();
     }
+}, 200);
 
     renderizarUltimasOuvidas();
     
