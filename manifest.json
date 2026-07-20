@@ -1,23 +1,23 @@
 {
+  "name": "AdoraPlay",
   "short_name": "AdoraPlay",
-  "name": "AdoraPlay. Conectando corações",
+  "description": "Sua música. Sua adoração. Em qualquer lugar.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#081826",
+  "theme_color": "#0d233a",
   "icons": [
     {
       "src": "assets/icone-192.png",
-      "type": "image/png",
       "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
       "src": "assets/icone-512.png",
-      "type": "image/png",
       "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "start_url": "index.html",
-  "background_color": "#050e16",
-  "theme_color": "#0d233a",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }
