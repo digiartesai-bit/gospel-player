@@ -23,7 +23,7 @@ body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-main);
-  padding-bottom: 110px; /* Espaço seguro para o Mini Player fixo */
+  padding-bottom: 90px !important; /* Ajustado para evitar que o player cubra o conteúdo */
   overflow-x: hidden;
 }
 
@@ -40,9 +40,18 @@ button {
    ========================================== */
 .topo {
   display: flex;
-  justify-content: flex-end;
+  align-items: center; /* Atualizado: alinhamento central */
+  justify-content: space-between; /* Atualizado: espaçamento entre os elementos */
   padding: 16px 20px;
-  background: var(--bg-secondary);
+  background-color: var(--bg-secondary, #0d233a);
+  /* Carrega a imagem do topo centralizada */
+  background-image: url('../assets/topo.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 80px; /* Altura mínima para o topo aparecer */
+  position: relative;
+  z-index: 10;
 }
 
 .btn-instalar-topo {
@@ -141,13 +150,7 @@ button {
   border-radius: 12px;
 }
 
-.capa-lancamento {
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: var(--border-radius);
-  margin-bottom: 16px;
-}
+/* Nota: .capa-lancamento foi movido para a trava global na seção 8 */
 
 .btn-ouvir-lancamento {
   display: inline-flex;
@@ -229,12 +232,7 @@ button {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.sugestao-capa {
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
-  object-fit: cover;
-}
+/* Nota: .sugestao-capa foi movido para a seção 8 devido ao ajuste de miniatura */
 
 .sugestao-info strong {
   display: block;
@@ -328,9 +326,16 @@ button {
   right: 0;
   background: var(--bg-secondary, #0d233a);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px 16px; /* Ajustado conforme novos comandos */
+  padding: 10px 16px;
   z-index: 1000;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Trava rígida para ícones dentro do Mini Player */
+.mini-player img {
+  max-width: 22px !important;
+  max-height: 22px !important;
+  object-fit: contain;
 }
 
 /* Progresso e Controles */
@@ -359,7 +364,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px; /* Adicionado conforme novos comandos */
+  gap: 12px;
 }
 
 .info-wrapper {
@@ -374,6 +379,8 @@ button {
   height: 44px;
   border-radius: 6px;
   object-fit: cover;
+  max-width: 44px !important;  /* Adicionado trava rígida */
+  max-height: 44px !important; /* Adicionado trava rígida */
 }
 
 .mini-info strong {
@@ -392,19 +399,19 @@ button {
 .mini-botoes {
   display: flex;
   align-items: center;
-  gap: 6px; /* Ajustado conforme novos comandos */
+  gap: 6px;
 }
 
 .btn-icon {
   background: none;
   border: none;
-  padding: 6px; /* Ajustado conforme novos comandos */
+  padding: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background 0.2s ease; /* Atualizado conforme novos comandos */
+  transition: background 0.2s ease;
   opacity: 0.8;
 }
 
@@ -420,7 +427,7 @@ button {
 }
 
 /* ==========================================
-   7. CORREÇÃO DE TAMANHO DE ÍCONES E BOTÕES
+   7. CORREÇÃO DE TAMANHO DE ÍCONES DE BOTÕES GERAIS
    ========================================== */
 .btn-icon img,
 .mini-botoes img,
@@ -437,4 +444,30 @@ img[src*="whatsapp"] {
   width: 22px !important;
   height: 22px !important;
   max-width: 22px !important;
+}
+
+/* ==========================================
+   8. NOVAS TRAVAS DE IMAGENS E MINIATURAS (NOVOS AJUSTES)
+   ========================================== */
+
+/* Trava de tamanho para capas nos carrosséis e cards */
+.carrossel-item img,
+.card-album img,
+.capa-album,
+.capa-lancamento {
+  max-width: 140px;
+  max-height: 140px;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--border-radius, 8px);
+}
+
+/* Tamanho específico para miniaturas nas listas verticais */
+.musica-capa-thumb,
+.sugestao-capa {
+  width: 44px !important;
+  height: 44px !important;
+  object-fit: cover;
+  border-radius: 6px;
 }
