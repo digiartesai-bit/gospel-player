@@ -23,7 +23,7 @@ body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-main);
-  padding-bottom: 90px !important; /* Ajustado para evitar que o player cubra o conteúdo */
+  padding-bottom: 120px !important; /* Atualizado: espaço seguro para o player */
   overflow-x: hidden;
 }
 
@@ -36,22 +36,24 @@ button {
 }
 
 /* ==========================================
-   2. CABEÇALHO E CONTROLES
+   2. CABEÇALHO E CONTROLES (TOPO)
    ========================================== */
 .topo {
   display: flex;
-  align-items: center; /* Atualizado: alinhamento central */
-  justify-content: space-between; /* Atualizado: espaçamento entre os elementos */
-  padding: 16px 20px;
-  background-color: var(--bg-secondary, #0d233a);
-  /* Carrega a imagem do topo centralizada */
-  background-image: url('../assets/topo.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  min-height: 80px; /* Altura mínima para o topo aparecer */
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px; /* Atualizado */
+  background: var(--bg-secondary, #0d233a);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Atualizado */
   position: relative;
   z-index: 10;
+}
+
+.img-topo {
+  max-height: 45px; /* Define altura máxima para não estourar */
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .btn-instalar-topo {
@@ -150,8 +152,6 @@ button {
   border-radius: 12px;
 }
 
-/* Nota: .capa-lancamento foi movido para a trava global na seção 8 */
-
 .btn-ouvir-lancamento {
   display: inline-flex;
   align-items: center;
@@ -232,8 +232,6 @@ button {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* Nota: .sugestao-capa foi movido para a seção 8 devido ao ajuste de miniatura */
-
 .sugestao-info strong {
   display: block;
   font-size: 0.9rem;
@@ -261,7 +259,7 @@ button {
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding-bottom: 10px;
+  padding-bottom: 12px; /* Atualizado */
   scrollbar-width: thin;
   cursor: grab;
 }
@@ -270,16 +268,20 @@ button {
   cursor: grabbing;
 }
 
-.carrossel-item, .card-album {
-  flex: 0 0 140px;
+/* Trava o tamanho de cada Card no Carrossel */
+.carrossel-item, .card-album, .card-ranking {
+  flex: 0 0 130px !important;
+  width: 130px !important;
+  max-width: 130px !important;
   background: var(--bg-card);
   padding: 12px;
   border-radius: var(--border-radius);
   text-align: center;
   transition: var(--transition-fast);
+  box-sizing: border-box;
 }
 
-.carrossel-item:hover, .card-album:hover {
+.carrossel-item:hover, .card-album:hover, .card-ranking:hover {
   transform: translateY(-4px);
 }
 
@@ -317,21 +319,21 @@ button {
 }
 
 /* ==========================================
-   6. MINI PLAYER FIXO (player.js)
+   6. MINI PLAYER FIXO NO RODAPÉ (player.js)
    ========================================== */
 .mini-player {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--bg-secondary, #0d233a);
+  background: #0d233a; /* Atualizado */
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 16px;
-  z-index: 1000;
+  z-index: 9999; /* Atualizado: trava rígida de sobreposição */
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Trava rígida para ícones dentro do Mini Player */
+/* Trava rígida para imagens genéricas/outros elementos no Mini Player */
 .mini-player img {
   max-width: 22px !important;
   max-height: 22px !important;
@@ -375,12 +377,12 @@ button {
 }
 
 #miniCapa {
-  width: 44px;
-  height: 44px;
+  width: 40px !important;       /* Atualizado: trava de tamanho */
+  height: 40px !important;      /* Atualizado: trava de tamanho */
+  max-width: 40px !important;
+  max-height: 40px !important;
   border-radius: 6px;
   object-fit: cover;
-  max-width: 44px !important;  /* Adicionado trava rígida */
-  max-height: 44px !important; /* Adicionado trava rígida */
 }
 
 .mini-info strong {
@@ -427,14 +429,14 @@ button {
 }
 
 /* ==========================================
-   7. CORREÇÃO DE TAMANHO DE ÍCONES DE BOTÕES GERAIS
+   7. CONTROLE E TRAVA RÍGIDA DE ÍCONES DE BOTÕES
    ========================================== */
 .btn-icon img,
 .mini-botoes img,
 #btnCompartilhar img,
 #btnFavoritar img {
-  width: 22px;
-  height: 22px;
+  width: 20px !important;  /* Atualizado */
+  height: 20px !important; /* Atualizado */
   object-fit: contain;
   display: block;
 }
@@ -447,20 +449,22 @@ img[src*="whatsapp"] {
 }
 
 /* ==========================================
-   8. NOVAS TRAVAS DE IMAGENS E MINIATURAS (NOVOS AJUSTES)
+   8. TRAVA RÍGIDA PARA CAPAS E MINIATURAS
    ========================================== */
 
-/* Trava de tamanho para capas nos carrosséis e cards */
-.carrossel-item img,
-.card-album img,
+/* Trava rígida para a imagem/capa dentro de qualquer variação de Card */
+.carrossel-item img, 
+.card-album img, 
+.card-ranking img,
 .capa-album,
 .capa-lancamento {
-  max-width: 140px;
-  max-height: 140px;
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: var(--border-radius, 8px);
+  width: 130px !important;       /* Atualizado */
+  height: 130px !important;      /* Atualizado */
+  max-width: 130px !important;   /* Atualizado */
+  max-height: 130px !important;  /* Atualizado */
+  object-fit: cover !important;
+  border-radius: 8px;
+  display: block;
 }
 
 /* Tamanho específico para miniaturas nas listas verticais */
