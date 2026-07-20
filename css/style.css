@@ -23,7 +23,7 @@ body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-main);
-  padding-bottom: 120px !important; /* Atualizado: espaço seguro para o player */
+  padding-bottom: 120px !important; /* Espaço seguro para o player não cobrir conteúdo */
   overflow-x: hidden;
 }
 
@@ -42,18 +42,20 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px; /* Atualizado */
+  padding: 12px 20px;
   background: var(--bg-secondary, #0d233a);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Atualizado */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   z-index: 10;
 }
 
+/* Trava rígida da imagem do TOPO (assets/topo.png) */
+.topo img,
 .img-topo {
-  max-height: 45px; /* Define altura máxima para não estourar */
-  width: auto;
+  max-height: 48px !important; /* Atualizado */
+  width: auto !important;      /* Atualizado */
+  display: block !important;   /* Atualizado */
   object-fit: contain;
-  display: block;
 }
 
 .btn-instalar-topo {
@@ -243,7 +245,7 @@ button {
 }
 
 /* ==========================================
-   5. SEÇÕES, CARROSSEL E LISTA (app.js)
+   5. SEÇÕES E LISTAS VERTICAIS (app.js)
    ========================================== */
 .secao {
   margin-bottom: 28px;
@@ -253,36 +255,6 @@ button {
 .secao-header h3 {
   font-size: 1.15rem;
   margin-bottom: 12px;
-}
-
-.carrossel {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 12px; /* Atualizado */
-  scrollbar-width: thin;
-  cursor: grab;
-}
-
-.carrossel:active {
-  cursor: grabbing;
-}
-
-/* Trava o tamanho de cada Card no Carrossel */
-.carrossel-item, .card-album, .card-ranking {
-  flex: 0 0 130px !important;
-  width: 130px !important;
-  max-width: 130px !important;
-  background: var(--bg-card);
-  padding: 12px;
-  border-radius: var(--border-radius);
-  text-align: center;
-  transition: var(--transition-fast);
-  box-sizing: border-box;
-}
-
-.carrossel-item:hover, .card-album:hover, .card-ranking:hover {
-  transform: translateY(-4px);
 }
 
 /* Lista Vertical de Músicas */
@@ -326,14 +298,14 @@ button {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #0d233a; /* Atualizado */
+  background: #0d233a;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 16px;
-  z-index: 9999; /* Atualizado: trava rígida de sobreposição */
+  z-index: 9999; /* Sobreposição rígida */
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Trava rígida para imagens genéricas/outros elementos no Mini Player */
+/* Trava rígida para imagens genéricas no Mini Player */
 .mini-player img {
   max-width: 22px !important;
   max-height: 22px !important;
@@ -377,8 +349,8 @@ button {
 }
 
 #miniCapa {
-  width: 40px !important;       /* Atualizado: trava de tamanho */
-  height: 40px !important;      /* Atualizado: trava de tamanho */
+  width: 40px !important;
+  height: 40px !important;
   max-width: 40px !important;
   max-height: 40px !important;
   border-radius: 6px;
@@ -429,14 +401,14 @@ button {
 }
 
 /* ==========================================
-   7. CONTROLE E TRAVA RÍGIDA DE ÍCONES DE BOTÕES
+   7. CONTROLE E TRAVA RÍGIDA DE ÍCONES DE BOTÕES GERAIS
    ========================================== */
 .btn-icon img,
 .mini-botoes img,
 #btnCompartilhar img,
 #btnFavoritar img {
-  width: 20px !important;  /* Atualizado */
-  height: 20px !important; /* Atualizado */
+  width: 20px !important;
+  height: 20px !important;
   object-fit: contain;
   display: block;
 }
@@ -449,22 +421,62 @@ img[src*="whatsapp"] {
 }
 
 /* ==========================================
-   8. TRAVA RÍGIDA PARA CAPAS E MINIATURAS
+   8. DEFESA TOTAL DOS CARROSSÉIS E CAPAS (NOVO)
    ========================================== */
 
-/* Trava rígida para a imagem/capa dentro de qualquer variação de Card */
+/* 1. Força os carrosséis a ficarem em LINHA e permitirem rolagem horizontal */
+#albuns, 
+#maisOuvidas, 
+#favoritosHorizontal, 
+#continueOuvindo,
+.carrossel {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-bottom: 12px !important;
+  cursor: grab;
+}
+
+.carrossel:active {
+  cursor: grabbing;
+}
+
+/* 2. Trava cada CARD dentro do carrossel para NÃO esticar */
+.carrossel-item, 
+.card-album, 
+.card-ranking {
+  flex: 0 0 140px !important; /* Não cresce, não encolhe, base 140px */
+  width: 140px !important;
+  max-width: 140px !important;
+  background: var(--bg-card);
+  padding: 12px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  transition: var(--transition-fast);
+  box-sizing: border-box !important;
+}
+
+.carrossel-item:hover, .card-album:hover, .card-ranking:hover {
+  transform: translateY(-4px);
+}
+
+/* 3. Trava a IMAGEM do card para ficar exatamente em 140x140 */
 .carrossel-item img, 
 .card-album img, 
 .card-ranking img,
 .capa-album,
 .capa-lancamento {
-  width: 130px !important;       /* Atualizado */
-  height: 130px !important;      /* Atualizado */
-  max-width: 130px !important;   /* Atualizado */
-  max-height: 130px !important;  /* Atualizado */
-  object-fit: cover !important;
-  border-radius: 8px;
-  display: block;
+  width: 140px !important;
+  height: 140px !important;
+  max-width: 140px !important;
+  max-height: 140px !important;
+  object-fit: cover !important; /* Corta no formato sem distorcer */
+  border-radius: 12px !important;
+  display: block !important;
 }
 
 /* Tamanho específico para miniaturas nas listas verticais */
