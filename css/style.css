@@ -487,3 +487,47 @@ img[src*="whatsapp"] {
   object-fit: cover;
   border-radius: 6px;
 }
+
+/* TRAVA RÍGIDA PARA OS CARROSSÉIS E CAPAS DA HOME */
+#albuns,
+#maisOuvidas,
+#favoritosHorizontal,
+#continueOuvindo,
+.carrossel {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  width: 100% !important;
+  padding-bottom: 12px !important;
+}
+
+/* Força cada card do carrossel a ter largura fixa de 130px */
+#albuns .card-album,
+#maisOuvidas .card-ranking,
+.carrossel-item {
+  flex: 0 0 130px !important;
+  width: 130px !important;
+  max-width: 130px !important;
+}
+
+/* Trava rígida nas imagens das capas */
+#albuns .card-album img,
+#maisOuvidas .card-ranking img,
+.carrossel-item img,
+.capa-album {
+  width: 130px !important;
+  height: 130px !important;
+  max-width: 130px !important;
+  max-height: 130px !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+}
+
+/* Trava rígida da imagem do topo */
+.img-topo {
+  max-height: 40px !important;
+  width: auto !important;
+  display: block !important;
+}
